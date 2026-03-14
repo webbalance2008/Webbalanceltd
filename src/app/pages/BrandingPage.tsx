@@ -1,0 +1,213 @@
+import { ServicePageLayout } from "../components/ServicePageLayout";
+import { Compass, PenLine, Share2, Printer, Megaphone, BookOpen } from "lucide-react";
+
+const heroImage =
+  "https://images.unsplash.com/photo-1760386129108-d17b9cdfc4fa?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxicmFuZCUyMGlkZW50aXR5JTIwbG9nbyUyMGRlc2lnbiUyMGNyZWF0aXZlfGVufDF8fHx8MTc3MzE1MzQ3M3ww&ixlib=rb-4.1.0&q=80&w=1080";
+
+export function BrandingPage() {
+  return (
+    <ServicePageLayout
+      serviceType="branding"
+      label="Branding & Marketing"
+      title="Brands That Mean Something"
+      subtitle="Identity, strategy, and marketing that makes your audience feel something"
+      heroImage={heroImage}
+      intro="A brand is more than a logo. It's the sum of every interaction someone has with your business. We craft cohesive brand identities grounded in strategy — then create the marketing assets, campaigns, and content that put them in front of the right people."
+      stats={[
+        { value: "80+", label: "Brand Identities Created" },
+        { value: "+240%", label: "Avg. Engagement Increase" },
+        { value: "48hr", label: "Initial Concepts Delivered" },
+        { value: "100%", label: "Custom, Never Templated" },
+      ]}
+      features={[
+        {
+          icon: Compass,
+          title: "Brand Strategy",
+          description:
+            "We define your brand's positioning, personality, values, and voice — creating a strategic foundation that informs all creative decisions.",
+          modal: {
+            heading: "Strategy Is the Foundation of Every Great Brand",
+            body: "Creative work without strategic grounding produces attractive work that doesn't achieve anything. Our brand strategy process answers the questions that every brand must answer before a single visual decision is made: who are you for, what do you stand for, and why does that matter?",
+            bullets: [
+              "Competitive landscape analysis: understanding your market positioning",
+              "Audience persona development: knowing exactly who you're speaking to",
+              "Brand personality and values framework",
+              "Positioning statement and brand promise articulation",
+              "Tone of voice guidelines with practical writing examples",
+              "Brand architecture decisions for multi-product or multi-service businesses",
+            ],
+          },
+        },
+        {
+          icon: PenLine,
+          title: "Logo & Identity Design",
+          description:
+            "A distinctive, versatile logo and visual identity system — including colour palettes, typography, iconography, and usage guidelines.",
+          modal: {
+            heading: "A Visual Identity Built to Last",
+            body: "Your logo is the most immediate expression of your brand — and it needs to work everywhere, at any size, in any context. We design logos and identity systems that are distinctive, versatile, and genuinely built to stand the test of time.",
+            bullets: [
+              "Primary logo, secondary logo, and icon/mark variants",
+              "Full colour, reversed, and monochrome versions as standard",
+              "Colour palette — primary, secondary, and accent with hex, RGB, and CMYK values",
+              "Typography system — primary and secondary typefaces with usage hierarchy",
+              "Custom iconography set where required",
+              "Delivered in all required file formats: SVG, EPS, PNG, PDF",
+            ],
+          },
+        },
+        {
+          icon: Share2,
+          title: "Social Media Branding",
+          description:
+            "Branded templates, profile assets, and content frameworks that make your social presence consistent and instantly recognisable.",
+          modal: {
+            heading: "A Social Presence That's Unmistakably You",
+            body: "Inconsistent social media branding fragments your audience's perception of your brand. We create the visual framework and templates that keep your social presence consistent, professional, and instantly recognisable — regardless of who is creating the content.",
+            bullets: [
+              "Profile and cover image assets sized for all relevant platforms",
+              "Post template library: multiple formats for promotions, announcements, and content",
+              "Stories and Reels format templates",
+              "Instagram grid aesthetic guidelines and planning framework",
+              "Colour and typography usage rules for user-generated or in-house content",
+              "Canva or Adobe Express template delivery for easy team use",
+            ],
+          },
+        },
+        {
+          icon: Printer,
+          title: "Print & Collateral",
+          description:
+            "Business cards, brochures, signage, packaging, and any physical touchpoint designed to carry your brand with impact.",
+          modal: {
+            heading: "Your Brand in the Physical World",
+            body: "Digital brand experiences are only half of the picture. Physical touchpoints — the menu in a customer's hand, the business card left on a desk, the packaging they keep — are often the most memorable brand moments. We design print and collateral that carries your brand identity with the same care as your digital presence.",
+            bullets: [
+              "Business card design — multiple concepts with print-ready artworking",
+              "Brochure and capability document design",
+              "Menu design for hospitality businesses",
+              "Signage, display, and event graphics",
+              "Packaging and label design",
+              "Branded merchandise and uniform design",
+              "Print supplier management and production management available",
+            ],
+          },
+        },
+        {
+          icon: Megaphone,
+          title: "Digital Marketing",
+          description:
+            "Paid social, Google Ads, email campaigns, and content marketing strategies that connect your brand with its audience at scale.",
+          modal: {
+            heading: "Reaching Your Audience Where They Actually Are",
+            body: "A brilliant brand needs to be seen. Our digital marketing service takes your brand identity and puts it in front of the right people through the right channels — whether that's paid social, search advertising, email, or content. We manage campaigns with a relentless focus on measurable return.",
+            bullets: [
+              "Meta Ads (Facebook and Instagram) campaign management and creative",
+              "Google Ads — Search, Display, and Shopping campaign management",
+              "Email marketing: campaign design, copywriting, and automation setup",
+              "Content marketing strategy and editorial production",
+              "Influencer and partnership campaign coordination",
+              "Monthly performance reporting with ROAS (return on ad spend) tracking",
+            ],
+          },
+        },
+        {
+          icon: BookOpen,
+          title: "Brand Guidelines",
+          description:
+            "A comprehensive brand guidelines document so anyone can apply your brand correctly — from in-house teams to external suppliers.",
+          modal: {
+            heading: "The Rulebook That Keeps Your Brand Consistent",
+            body: "Brand guidelines are the document that ensures your brand stays consistent long after we've delivered it. A well-crafted guidelines document empowers your team, your suppliers, and your partners to apply your brand correctly every time — without needing to come back to us for every decision.",
+            bullets: [
+              "Logo usage rules: minimum sizes, exclusion zones, incorrect usage examples",
+              "Full colour palette with application guidance",
+              "Typography hierarchy with specific use cases defined",
+              "Photography and imagery direction with do/don't examples",
+              "Tone of voice guide with writing samples across different contexts",
+              "Digital and print application examples showing the brand in context",
+              "Delivered as a designed PDF and optionally as an online brand hub",
+            ],
+          },
+        },
+      ]}
+      process={[
+        {
+          step: "01",
+          title: "Brand Discovery",
+          description:
+            "We start with a deep strategic workshop exploring your audience, competitors, ambitions, and the values you want your brand to embody.",
+          modal: {
+            heading: "Understanding Your Brand From the Ground Up",
+            body: "Brand Discovery is the most important stage of the entire process — and the one most agencies skip. Before a single visual decision is made, we need to understand your business deeply: where it has come from, where it is going, and how it needs to be perceived to get there. We run structured discovery workshops with your key stakeholders, examining your competitive landscape, your target audiences, and the values and personality your brand must communicate.",
+            bullets: [
+              "Structured discovery workshop with key stakeholders (half-day or full-day format)",
+              "Competitive audit: reviewing category norms and identifying opportunities to differentiate",
+              "Audience analysis: mapping the demographics, psychographics, and motivations of each key segment",
+              "Current brand perception review — what does your brand say right now vs. what it should say?",
+              "Brand ambition alignment: agreeing on short-term and long-term brand objectives",
+              "Discovery findings report delivered as the strategic brief that guides all creative work",
+            ],
+          },
+        },
+        {
+          step: "02",
+          title: "Creative Direction",
+          description:
+            "We present mood boards and creative directions for your brand — visual and verbal concepts that explore different ways to bring your positioning to life.",
+          modal: {
+            heading: "Setting the Creative Vision Before Committing to It",
+            body: "Creative Direction is the stage where strategy becomes vision. Rather than jumping straight into logo design — which would require revisions and expensive backtracking — we present multiple distinct creative directions using mood boards, reference imagery, typographic explorations, and colour palette proposals. This gives you a clear picture of different possible identities and lets you choose the direction that resonates most, before detailed design work begins.",
+            bullets: [
+              "Two to three distinct creative directions presented, each with a clear strategic rationale",
+              "Mood boards combining photography, texture, typography, and colour to communicate brand feel",
+              "Initial typographic exploration — typeface candidates and how they express brand personality",
+              "Colour palette proposals aligned to your audience, sector, and strategic positioning",
+              "Verbal direction: tone of voice, language examples, and key messaging pillars",
+              "Collaborative direction review session to align on the chosen creative path",
+            ],
+          },
+        },
+        {
+          step: "03",
+          title: "Identity Development",
+          description:
+            "Your chosen direction is developed into a full identity system — logo, colours, type, and all brand touchpoints refined and refined.",
+          modal: {
+            heading: "Building a Complete, Cohesive Brand Identity",
+            body: "With a clear creative direction agreed, we develop your brand into a fully realised identity system. This is the detailed design phase where every element of your visual brand is crafted, tested across contexts, and refined until it works flawlessly. We don't just design a logo — we design a complete system that will hold together across every application your brand will ever encounter.",
+            bullets: [
+              "Primary logo design with multiple rounds of refinement and stakeholder feedback",
+              "Secondary logo and wordmark variants for different contexts and orientations",
+              "Icon or brand mark development — a standalone symbol representing your brand",
+              "Finalised colour system: primary, secondary, and accent palettes with all values specified",
+              "Typography system: typeface selection, hierarchy, and usage rules across digital and print",
+              "Application testing: logo and identity tested across business cards, digital screens, signage, and merchandise",
+            ],
+          },
+        },
+        {
+          step: "04",
+          title: "Launch & Amplify",
+          description:
+            "We roll out your new brand across digital and print, and build the marketing strategy to amplify it to your target audience.",
+          modal: {
+            heading: "Taking Your New Brand Into the World",
+            body: "A brand only creates value when it is seen. The Launch & Amplify stage is about rolling out your new identity across every relevant touchpoint — digital, print, and social — and putting it in front of the people who matter most to your business. We coordinate brand launches as campaigns, building anticipation and ensuring your brand makes the impact it deserves from day one.",
+            bullets: [
+              "Brand guidelines document: a comprehensive, designed PDF covering all usage rules and standards",
+              "Website and digital asset updates reflecting the new brand identity",
+              "Social media profile and template assets rolled out across all platforms",
+              "Print collateral production: business cards, brochures, and any required physical materials",
+              "Brand launch campaign: messaging, creative, and channel strategy to announce the new identity",
+              "Ongoing marketing retainer options for continued content, paid social, and campaign management",
+            ],
+          },
+        },
+      ]}
+      ctaTitle="Ready to build a brand that truly stands out?"
+      ctaPath="/branding/start"
+      ctaLabel="Start Your Brand Project"
+    />
+  );
+}

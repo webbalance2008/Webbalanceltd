@@ -1,0 +1,279 @@
+Here's the complete, single unified prompt — ready to hand to any developer or AI builder:
+
+---
+
+## Build Prompt: Web App Quoting Form — Web Balance
+
+Build a **7-step interactive web app quoting wizard** as a single HTML file with vanilla JS. It walks a potential client through scoping a custom web application project and produces a live indicative estimate. The form sits within the Web Balance website and is reached via the "Start Your Project" link in the Web Apps nav dropdown.
+
+---
+
+### Design System
+
+**Colour Palette — Muted Monochromatic Purple**
+
+| Role | Value | Usage |
+|---|---|---|
+| Background | `#3d2d5c` | Page background |
+| Background mid | `#472f6a` | Slightly elevated surfaces |
+| Background surface | `#523575` | Card backgrounds, active areas |
+| Border default | `rgba(180,150,220,0.2)` | Inactive card borders |
+| Border active | `rgba(180,150,220,0.6)` | Selected card border |
+| Accent primary | `#b89fd4` | Active states, checkmarks, labels, CTA outlines |
+| Accent bright | `#c9b3e0` | Hover states, "I'm not sure yet" titles |
+| Accent glow | `rgba(180,150,220,0.1)` | Selected card background wash |
+| Text heading | `#d4bfed` | Main step headings |
+| Text label | `#b89fd4` | Section labels (spaced-caps) |
+| Text body | `rgba(180,150,220,0.6)` | Descriptions, subtitles |
+| Text muted | `rgba(180,150,220,0.4)` | Disclaimers, helper text |
+| "HAVE IT" badge | `rgba(180,150,220,0.2)` border + `#b89fd4` text | Existing asset indicator |
+| Progress complete | `#b89fd4` filled circle | Completed steps |
+| Progress active | `#b89fd4` outline | Current step number |
+| CTA button | `#b89fd4` outline + text | CONTINUE, SEE MY ESTIMATE |
+
+**Background**: Flat and calm — `radial-gradient(ellipse at center, #3d2d5c 0%, #2e2246 100%)`. No strong gradients. No neon. No electric purple.
+
+**Tone**: Everything is desaturated and muted. All text, borders and accents belong to the same purple family at different opacity/lightness levels — strict monochromatic discipline. No pure white anywhere.
+
+---
+
+**Typography**
+- Headings: light weight, ~56px, `#d4bfed` — not pure white
+- Section labels: spaced-caps, `letter-spacing: 0.15em`, `#b89fd4`
+- `STEP X OF 7` marker: small `#b89fd4` dash + spaced-caps label
+- Body / descriptions: `rgba(180,150,220,0.6)`
+- Disclaimers: `rgba(180,150,220,0.4)`
+
+---
+
+**Cards**
+
+Reference: the `120+ APPS DELIVERED` / `99.9% UPTIME GUARANTEED` stat cards from the Web Apps pages define the card design language exactly:
+- `1px solid rgba(180,150,220,0.2)` border
+- No drop shadows, no inner gradients
+- Large light-weight number/text in `#d4bfed`
+- Spaced-caps label below in `#b89fd4`
+- Generous padding, clean geometry
+- Barely lifted from background — very subtle depth
+
+**Selection states:**
+- Unselected: default border + transparent background
+- Hover: `rgba(180,150,220,0.05)` background tint + slightly brighter border
+- Selected: `rgba(180,150,220,0.6)` border + `rgba(180,150,220,0.1)` background wash + `#b89fd4` filled circle checkmark bottom-right
+
+**"I'm not sure yet" cards:** dashed border `rgba(180,150,220,0.3)`, question-mark icon, `#c9b3e0` title text, always available as a fallback option on every section.
+
+**"HAVE IT" badge:** small pill — `rgba(180,150,220,0.2)` background, `#b89fd4` text, `1px solid rgba(180,150,220,0.3)` border.
+
+---
+
+**Progress Bar**
+
+Horizontal stepper across the top, beneath the main nav:
+- Completed steps: `#b89fd4` filled circle with white tick
+- Active step: `#b89fd4` outline circle with `#b89fd4` number, label in `#b89fd4` below
+- Incomplete steps: dark circle, muted number, muted label
+- Connecting lines between circles, muted purple
+
+---
+
+**Bottom Navigation (every step)**
+
+Three elements, bottom of page:
+- Left: `← BACK` — outlined, muted
+- Centre: `↺ START FROM SCRATCH` — outlined with icon, muted
+- Right: `CONTINUE →` or `SEE MY ESTIMATE →` — `#b89fd4` outlined, bold spaced-caps
+
+---
+
+### Step 1 — App Type
+**Heading**: "What are you building?"
+**Subtitle**: "Tell us about the type of web application you need."
+
+**Section: APP CATEGORY** *(select one)*
+- Booking System — Take reservations & appointments 24/7
+- Customer Portal — Branded account dashboards for your clients
+- SaaS Platform — Multi-tenant software product
+- E-Commerce Store — Sell online on your own terms
+- Membership Platform — Recurring revenue & loyalty
+- Internal Tool — Replace spreadsheets with custom software
+- Something Else — I'll describe it *(dashed / I'm not sure yet style)*
+
+---
+
+### Step 2 — Goals & Scale
+**Heading**: "What matters most to you?"
+**Subtitle**: "Select your primary goal and give us a sense of scale."
+
+**Section: PRIMARY GOAL** *(pick up to 2)*
+- Automate a manual process
+- Generate direct revenue
+- Improve customer experience
+- Replace an existing system
+- Launch a new product / service
+- Build internal efficiency
+- I'm not sure yet *(dashed)*
+
+**Section: EXPECTED USERS** *(select one)*
+- Under 100 users — Internal or small team
+- 100–1,000 users — Growing user base
+- 1,000–10,000 users — Scaled product
+- 10,000+ users — Enterprise scale
+- I'm not sure yet *(dashed)*
+
+---
+
+### Step 3 — Features & Scope
+**Heading**: "What does your app need to do?"
+**Subtitle**: "Select all the core features you'll need."
+
+**Section: CORE FEATURES** *(select all that apply)*
+- User accounts & authentication
+- Admin / management dashboard
+- Payments & subscriptions (Stripe etc.)
+- Email / SMS notifications
+- File uploads & storage
+- Reporting & analytics
+- Third-party integrations / API
+- Mobile-responsive (PWA)
+- Native mobile app (iOS / Android)
+- AI / automation features
+- Multi-language / localisation
+- I'm not sure yet *(dashed)*
+
+**Section: DATA & COMPLEXITY** *(select one)*
+- Simple — A few data types, straightforward logic
+- Moderate — Multiple entities, business rules, workflows
+- Complex — Advanced logic, real-time data, high performance requirements
+- I'm not sure yet *(dashed)*
+
+---
+
+### Step 4 — AI & Automation
+**Heading**: "How much should AI do the heavy lifting?"
+**Subtitle**: "Modern apps can use AI to automate tasks, reduce manual work, and personalise experiences — this shapes your build approach and cost."
+
+**Section: AI FEATURES** *(select all that apply)*
+- AI-assisted content — Auto-generate text, summaries, descriptions
+- Smart search / recommendations — Surface the right content or products
+- Document processing — Extract data from PDFs, forms, invoices
+- Chatbot / AI assistant — Built-in support or guided flows
+- Workflow automation — Trigger actions based on conditions
+- Predictive insights — Dashboards that surface trends
+- No AI needed — Keep it straightforward *(acts as deselect-all)*
+- I'm not sure yet — advise me *(dashed)*
+
+**Section: BUILD APPROACH** *(select one)*
+- Traditional build — Custom code, full control, higher upfront
+- AI-accelerated build — Use AI coding tools to reduce hours (lower cost, same quality)
+- Low-code / no-code hybrid — Platforms like Bubble, Xano, Webflow Logic
+- Not sure — recommend the best approach *(dashed)*
+
+Small note beneath: *"We're transparent about how we build. AI-assisted development can reduce project cost by 20–40% with no compromise on quality."*
+
+---
+
+### Step 5 — Hosting & Infrastructure
+**Heading**: "Where will your app live?"
+**Subtitle**: "Choose your infrastructure preference."
+
+**Section: HOSTING** *(select one)*
+- Managed Cloud Hosting — We handle everything (AWS / GCP / Vercel)
+- Cloudflare + Edge — Ultra-fast global delivery
+- VPS / Dedicated Server — Full control, self-managed
+- Already have hosting — I'll provide access *(HAVE IT badge)*
+- I'm not sure yet *(dashed)*
+
+**Section: DATABASE & BACKEND** *(select one)*
+- Managed database — We set it up and maintain it
+- Serverless / edge functions — Fast, scalable, usage-based
+- Self-hosted / on-premise — Data stays on your infrastructure
+- I'm not sure yet *(dashed)*
+
+**Section: DOMAIN & SSL** *(select one)*
+- Need a new domain
+- Already have a domain *(HAVE IT badge)*
+- I'm not sure yet *(dashed)*
+
+---
+
+### Step 6 — Timeline
+**Heading**: "When do you need to launch?"
+**Subtitle**: "This helps us plan the right team and pace for your project."
+
+*(select one)*
+- Within 4 weeks — Urgent / MVP launch
+- 4–8 weeks — Standard turnaround *(label: Standard, in accent colour)*
+- 2–4 months — Considered pace
+- 4–6 months — Full-featured product
+- Phased launch — MVP first, then iterate
+- Flexible — No hard deadline
+- Not Sure Yet — We'll work it out together *(dashed, full-width)*
+
+---
+
+### Step 7 — Your Estimate
+**Heading**: "Your indicative estimate."
+**Subtitle**: "Based on your answers — transparent pricing before we talk."
+
+**Pricing logic** (ex-VAT, 20% VAT added on display):
+
+| Component | Value |
+|---|---|
+| App Type base | £1,500–£5,000 depending on category |
+| Per core feature selected | +£300–£800 each |
+| Data complexity — Simple | ×1.0 |
+| Data complexity — Moderate | ×1.4 |
+| Data complexity — Complex | ×1.8 |
+| Per AI feature selected | +£400–£1,200 each |
+| AI-accelerated build discount | −20% on labour total |
+| Hosting setup | +£200–£500 |
+| Urgent timeline (<4 weeks) | +20% surcharge |
+
+**Display:**
+- `SHOW FULL BREAKDOWN` toggle — expandable, per-component line items
+- `SUBTOTAL (EX-VAT)`
+- `VAT (20%)`
+- `TOTAL INVESTMENT` — large type, `#d4bfed`, `INC. VAT` label beneath in accent
+
+**Disclaimer (muted small text):** *"This is an indicative estimate based on your selections and our standard rate of £75/hr. AI-accelerated projects may be priced differently after discovery. Final pricing is confirmed after a discovery call."*
+
+**Section: PAYMENT PREFERENCE**
+
+Three cards side by side:
+
+- **50/50** *(Standard badge)* — Half on project kickoff, half on launch. Show: DUE NOW £X / DUE ON COMPLETION £X
+- **3-Month Plan** — 35% to start, balance spread across 3 monthly payments. Show: DUE NOW £X / PER MONTH ×3 £X
+- **6-Month Plan** — 35% to start, balance spread across 6 monthly payments. Show: DUE NOW £X / PER MONTH ×6 £X
+
+---
+
+### Step 8 — About You
+**Heading**: "Almost there."
+**Subtitle**: "A few last details so we can tailor our proposal."
+
+Fields (underline input style, spaced-caps labels):
+- YOUR NAME
+- EMAIL ADDRESS
+- COMPANY / BRAND
+- EXISTING WEBSITE *(optional)*
+- ANYTHING ELSE WE SHOULD KNOW? *(textarea — placeholder: "Tell us about your project, competitors you admire, inspiration, or anything that will help us understand your vision…")*
+
+Submit: `SEND MY BRIEF →` — full-width, `#b89fd4` outlined button, bold spaced-caps.
+
+---
+
+### Technical Requirements
+- Single HTML file, vanilla JS, no framework
+- All state in a JS object, updated per step
+- Progress bar updates dynamically each step
+- Estimate recalculates live as selections change
+- "Start from scratch" resets all state, returns to step 1
+- Smooth fade or slide transition between steps
+- Mobile responsive — cards stack to single column below 768px
+- Form submission via EmailJS, Formspree, or `mailto:` fallback
+- No `localStorage` or browser storage APIs
+
+---
+
+That's the complete, self-contained prompt. Hand it directly to Claude, a developer, or any AI builder and it has everything needed.
