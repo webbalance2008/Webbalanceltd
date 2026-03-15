@@ -1,7 +1,9 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import { AnimatePresence, motion } from "motion/react";
 import { ChevronLeft, ChevronRight, Play, Pause, MoveVertical } from "lucide-react";
-import laptopImg from "figma:asset/b3276bfb68b15424bc05e013879499c429a3efe5.png";
+
+// Laptop mockup — Unsplash (replaces figma:asset which is Figma-Make-only)
+const laptopImg = "https://images.unsplash.com/photo-1537183673931-f890242dbaef?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080";
 
 const CYAN     = "#00d4e8";
 const CYAN_RGB = "0, 212, 232";
