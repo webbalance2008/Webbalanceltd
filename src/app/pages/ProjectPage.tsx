@@ -5,47 +5,37 @@ import { ArrowLeft, ArrowUpRight, ArrowRight } from "lucide-react";
 import { getProjectBySlug, projects } from "../data/projects";
 import { projectImages } from "../data/projectImages";
 import { SEOHead } from "../components/SEOHead";
+import grandMeridianHero from "figma:asset/0c22f8467ac4d1e0aeb2f657367085dd0d601328.png";
+import omalleysHero      from "figma:asset/76980031e465901dbe9effca6e7bb53e38a025c8.png";
+import omalleysFullPage  from "figma:asset/23dd6b5ffeb917c8edef1b2d6d804973168104ac.png";
+import omalleysGallery1  from "figma:asset/ca31457574153df5bb492b383d3d881dac33bce1.png";
+import omalleysGallery2  from "figma:asset/2f30aee01c376604141cf010f6d7fa6fb7cd30df.png";
+import omalleysGallery3  from "figma:asset/ab589e8fafd6aefbf3e4a23af871b07eff8ddc1f.png";
+import omalleysGallery4  from "figma:asset/a7cfad25ff17d46dad7c914f163d7e3ffb68ba6e.png";
+import omalleysMobile    from "figma:asset/6f015b587d1a774f9c708c57e895474041db5fae.png";
 
-// ── Per-project image sets — Unsplash contextual placeholders ─────────────────
-// Replace each URL with actual client screenshots when available.
-// figma:asset/ imports from the original file only resolve inside Figma Make's
-// build environment and crash Rollup in external builds (e.g. Cloudflare).
+// Aberdeen Northern Hotel assets
+import aberdeenPhone    from "figma:asset/039906d38103753ff9c15f2a91ffbbe17ccaf941.png";
+import aberdeenLaptop   from "figma:asset/e28c9f6e1425ca366fbba021f5c0d6a55f7a014f.png";
+import aberdeenTablets  from "figma:asset/bda355f131c818192afdcbc00910d2438b756240.png";
+import aberdeenDesktop  from "figma:asset/0ea1b1a73d4946a50062f9be86b014c274174475.png";
+import aberdeenLogo     from "figma:asset/4365289a546d2665f328ef5640f3e852ffc908e2.png";
+import aberdeenRoom     from "figma:asset/b32d2237279d567cf9de9c6ad1ac288d62c299a0.png";
 
-const IMG = {
-  grandMeridianHero: "https://images.unsplash.com/photo-1590490360836-2e3b067c082b?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1920",
-
-  // O'Malleys Irish Bar
-  omalleysHero:     "https://images.unsplash.com/photo-1700323525751-931335e7c932?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1920",
-  omalleysFullPage: "https://images.unsplash.com/photo-1700323525751-931335e7c932?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1920",
-  omalleysGallery1: "https://images.unsplash.com/photo-1537183673931-f890242dbaef?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080",
-  omalleysGallery2: "https://images.unsplash.com/photo-1641567535859-c58187ac4954?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080",
-  omalleysGallery3: "https://images.unsplash.com/photo-1620390120324-60da20339f95?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080",
-  omalleysGallery4: "https://images.unsplash.com/photo-1757301714935-c8127a21abc6?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080",
-  omalleysMobile:   "https://images.unsplash.com/photo-1700323525751-931335e7c932?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=600",
-
-  // Aberdeen Northern Hotel
-  aberdeenPhone:   "https://images.unsplash.com/photo-1590490360836-2e3b067c082b?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=600",
-  aberdeenLaptop:  "https://images.unsplash.com/photo-1537183673931-f890242dbaef?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080",
-  aberdeenTablets: "https://images.unsplash.com/photo-1620390120324-60da20339f95?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080",
-  aberdeenDesktop: "https://images.unsplash.com/photo-1641567535859-c58187ac4954?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080",
-  aberdeenLogo:    "https://images.unsplash.com/photo-1590490360836-2e3b067c082b?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=400",
-  aberdeenRoom:    "https://images.unsplash.com/photo-1590490360836-2e3b067c082b?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1920",
-
-  // Banks O'Dee Sports & Fitness
-  banksPhonesHero: "https://images.unsplash.com/photo-1761971975769-97e598bf526b?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=600",
-  banksLaptop:     "https://images.unsplash.com/photo-1537183673931-f890242dbaef?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080",
-  banksDesktop:    "https://images.unsplash.com/photo-1641567535859-c58187ac4954?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080",
-  banksMember:     "https://images.unsplash.com/photo-1718220216044-006f43e3a9b1?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080",
-  banksGym:        "https://images.unsplash.com/photo-1761971975769-97e598bf526b?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1920",
-
-  // Romar Abrado
-  romarGallery1: "https://images.unsplash.com/photo-1522139137660-4248e04955b8?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080",
-  romarGallery2: "https://images.unsplash.com/photo-1758873271902-a63ecd5b5235?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080",
-  romarGallery3: "https://images.unsplash.com/photo-1757301714935-c8127a21abc6?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080",
-  romarGallery4: "https://images.unsplash.com/photo-1718220216044-006f43e3a9b1?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080",
-};
+// Banks O' Dee Sports & Fitness assets
+import banksPhonesHero  from "figma:asset/beb8a3b14cc753068b76ed2041a86d6cc3f6a676.png";
+import banksLaptop      from "figma:asset/38c7ff17b096c648434c58285d42b2256c7032df.png";
+import banksDesktop     from "figma:asset/4a4448c727ce87c52d5111c532f6f7b8331e7976.png";
+import banksMember      from "figma:asset/2605096395be4431eb3170cb07986251a42474c9.png";
+import banksGym         from "figma:asset/f1f32c882f2143b5d171ec65cf629a236a633872.png";
 
 import { DeviceMockups } from "../components/DeviceMockups";
+
+// Romar Abrado gallery assets
+import romarGallery1 from "figma:asset/5521fbf80e92ab43066a4372147cfa7dd90475f8.png";
+import romarGallery2 from "figma:asset/e8602033f02697622efb8f955d5cee89cc7c4048.png";
+import romarGallery3 from "figma:asset/13148c95d1ec2cafd7110511a9fcba637e86fd3a.png";
+import romarGallery4 from "figma:asset/b51729c35426c81023ef6af4f21480c467b26853.png";
 
 // Web Design department colour
 const CYAN     = "#00d4e8";
@@ -86,35 +76,35 @@ export function ProjectPage() {
   // Use the figma asset for Grand Meridian hero, otherwise use project image
   const heroImage =
     project.slug === "the-grand-meridian"
-      ? IMG.grandMeridianHero
+      ? grandMeridianHero
       : project.slug === "omalleys-irish-bar"
-      ? IMG.omalleysHero
+      ? omalleysHero
       : project.slug === "aberdeen-northern-hotel"
-      ? IMG.aberdeenLaptop
+      ? aberdeenLaptop
       : project.slug === "banks-o-dee-fitness"
-      ? IMG.banksLaptop
+      ? banksLaptop
       : projectImages[project.slug] ?? project.image;
 
   // For O'Malley's, use the full-page screenshot in scroll mode
   const screenshots =
     project.slug === "omalleys-irish-bar"
-      ? [IMG.omalleysFullPage]
+      ? [omalleysFullPage]
       : project.slug === "aberdeen-northern-hotel"
-      ? [IMG.aberdeenTablets, IMG.aberdeenDesktop]
+      ? [aberdeenTablets, aberdeenDesktop]
       : project.slug === "banks-o-dee-fitness"
-      ? [IMG.banksPhonesHero, IMG.banksDesktop]
+      ? [banksPhonesHero, banksDesktop]
       : project.gallery.length > 0 ? project.gallery : [];
 
   // Gallery images per project
   const galleryImages =
     project.slug === "omalleys-irish-bar"
-      ? [IMG.omalleysGallery1, IMG.omalleysGallery2, IMG.omalleysGallery3, IMG.omalleysGallery4]
+      ? [omalleysGallery1, omalleysGallery2, omalleysGallery3, omalleysGallery4]
       : project.slug === "aberdeen-northern-hotel"
-      ? [IMG.aberdeenLaptop, IMG.aberdeenPhone, IMG.aberdeenTablets, IMG.aberdeenDesktop, IMG.aberdeenRoom]
+      ? [aberdeenLaptop, aberdeenPhone, aberdeenTablets, aberdeenDesktop, aberdeenRoom]
       : project.slug === "banks-o-dee-fitness"
-      ? [IMG.banksLaptop, IMG.banksPhonesHero, IMG.banksDesktop, IMG.banksMember, IMG.banksGym]
+      ? [banksLaptop, banksPhonesHero, banksDesktop, banksMember, banksGym]
       : project.slug === "romar-abrado"
-      ? [IMG.romarGallery1, IMG.romarGallery2, IMG.romarGallery3, IMG.romarGallery4]
+      ? [romarGallery1, romarGallery2, romarGallery3, romarGallery4]
       : project.gallery;
 
   return (
@@ -265,7 +255,7 @@ export function ProjectPage() {
         {project.slug === "omalleys-irish-bar" && (
           <DeviceMockups
             screenshots={screenshots}
-            mobileImages={[IMG.omalleysMobile]}
+            mobileImages={[omalleysMobile]}
             projectTitle={project.title}
           />
         )}
@@ -319,7 +309,7 @@ export function ProjectPage() {
                   <SectionLabel>About the Client</SectionLabel>
                   <div className="flex flex-col items-start gap-4">
                     <img
-                      src={IMG.aberdeenLogo}
+                      src={aberdeenLogo}
                       alt="Aberdeen Northern Hotel logo"
                       className="h-32 w-auto object-contain opacity-90"
                     />

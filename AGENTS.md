@@ -436,7 +436,6 @@ Pattern used throughout the site:
 - **Do not** set `noIndex` on any page except `/404` and form confirmation pages
 - **Do not** create default exports in component files (except `App.tsx`)
 - **Do not** use CSS `transition` or `@keyframes` for animations — use Motion only
-- **Do not** use `figma:asset/` imports — see §17 below
 
 ---
 
@@ -470,36 +469,3 @@ Hosting accent:     #f59e6a  bg: #2a1a4e
 Branding accent:    #f472b6  bg: #1a1a2e
 Support accent:     #00d4e8  bg: #1a2840
 ```
-
----
-
-## 17. `figma:asset/` Imports — Critical Deployment Rule
-
-The `figma:asset/<hash>.png` import scheme is **Figma Make-specific**. It is resolved by a private Vite plugin that only runs inside Figma Make's build environment. It **does not exist** in any external build (Cloudflare Pages, Vercel, Netlify, etc.) and will cause Rollup to crash with:
-
-```
-Rollup failed to resolve import "figma:asset/…" from "…"
-```
-
-### What was done
-
-A fallback Vite plugin was added to `vite.config.ts` (`figmaAssetPlugin`) that intercepts any remaining `figma:asset/` import and returns an empty-string module so the build never crashes. This is a safety net only.
-
-### What you must do when adding images
-
-**Never use `figma:asset/` imports in new code.** Always use one of:
-
-1. **Unsplash URLs** — for generic/stock imagery. Always fetch via the `unsplash_tool`, never guess a URL.
-2. **Absolute URLs** — for hosted client images (e.g. a CDN or Supabase Storage URL).
-3. **`/public/` static assets** — place the file in `/public/images/` and reference as `/images/filename.png`.
-
-### Replacing existing `figma:asset` references
-
-All `figma:asset` imports have been replaced with Unsplash URLs in:
-- `HeroDevices.tsx` — 14 device image imports → `IMAGE_PAIRS` array of URLs
-- `About.tsx` — office background image → Unsplash URL constant
-- `DeviceMockups.tsx` — laptop frame image → Unsplash URL constant
-- `projectImages.ts` — 13 portfolio hero images → Unsplash URL map
-- `ProjectPage.tsx` — 28+ per-project gallery/detail images → `IMG` constant object
-
-To swap in real client screenshots later, simply update the URL string in the relevant `IMG.*` key or `projectImages` map entry — no import changes needed.

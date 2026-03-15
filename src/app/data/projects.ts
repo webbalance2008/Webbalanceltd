@@ -1,7 +1,55 @@
-// All figma:asset/ imports have been removed — they only resolve inside Figma Make's
-// private build environment and crash Rollup on external hosts (Cloudflare, Vercel, Netlify).
-// Gallery arrays now use Unsplash URLs as contextual placeholders.
-// To swap in real client screenshots, replace the URL string in the gallery array for that project.
+// Gallery images for Waverley Cutting Tools
+import waverleyHero from "figma:asset/839721e195d1220f6edc07451159f2a7649eb5e2.png";
+import waverlyCuttingTools from "figma:asset/8e63e0389a809b1b970fa86082fe3860d342fc9c.png";
+import waverleyServices from "figma:asset/b5e1f47ca2e6cddcfa05aa30b5715146efc6f5ca.png";
+import waverleySectors from "figma:asset/c7ca592a158ec319d4d639e521a8c4ec4b060c80.png";
+
+// Gallery images for TAC Healthcare
+import tacHealthcareLaptop from "figma:asset/f2e5488299934b3cde6947d52c00b7fb91fdbd54.png";
+import tacHealthcareMobile from "figma:asset/6badd6d96255792657cc4db1b2395452b74ba6b7.png";
+import tacHealthcareTablet from "figma:asset/3b65f1d68b447f33bdc16334120049a03880968d.png";
+import tacHealthcareResponsive from "figma:asset/529b0dc926fef48b081e439fa8f42c0bb56a7771.png";
+
+// Gallery images for Saltire Energy
+import saltireDevices from "figma:asset/e9ad5ef4c49748391f40b7c671ac985806aa126d.png";
+import saltireMobile from "figma:asset/acb2f9b7a0fa70706debe24e9df95b86261ffdf3.png";
+import saltireHand from "figma:asset/62ce67166981db32a522b9b93ba304b86cfa534d.png";
+import saltireLaptop from "figma:asset/e129f58681c6ee9fb2cbd21feeddd4f76dfaf55f.png";
+
+// Gallery images for GT Diagnostics
+import gtDiagnosticsBrochure1 from "figma:asset/ab001186cfc9624db17c78882cbcb275c7b3f728.png";
+import gtDiagnosticsBrochure2 from "figma:asset/4e7c12b185271f209fdf637f5ef36ab9eee9aeb5.png";
+import gtDiagnosticsExhibition from "figma:asset/1b3377d54e6d179e68b5cd5d8444f1abebc28b2c.png";
+import gtDiagnosticsFlyers from "figma:asset/f6f055b93cdf3e832ee000779b3dbef8695267e2.png";
+import gtDiagnosticsBanner from "figma:asset/3745657768fc505067a425753cc71eeeffce7963.png";
+import gtDiagnosticsCards from "figma:asset/7d7ec6f12dd0653b6f13fcaf2a19bcd2ca22394b.png";
+import gtDiagnosticsBrochureStack from "figma:asset/574b63ff2c81bbad612762506114ae99749a3772.png";
+import gtDiagnosticsStationery from "figma:asset/60283e2efd5b1faa957164ab3595b6e0767ab8f0.png";
+import gtDiagnosticsEmailSignatures from "figma:asset/916bea056653f730a3dba3ca91e6c1c81cbd3f7d.png";
+import gtDiagnosticsBrochureSpread from "figma:asset/06bad9a992e6409b4b9900d9abed580c35e76f40.png";
+import gtDiagnosticsWebsiteScreens from "figma:asset/c48cc6817d1aa40b7e3fb3f411edc3e00e317188.png";
+
+// Gallery images for Granite Elite
+import graniteEliteMobile from "figma:asset/52992da585a2ebf816504013ac91ae9e7beed9d3.png";
+import graniteEliteDesktop from "figma:asset/046014c6d95c38df2ea4c18eb570472db295568c.png";
+
+// Gallery images for Early Bird Vending
+import earlyBirdLaptop from "figma:asset/3873a94972031eefbcc8e1e665c1bc241175c20a.png";
+import earlyBirdTablet from "figma:asset/9930da3cfb7a10474a6fc0cf057b8181ed52dba8.png";
+import earlyBirdPhones from "figma:asset/99008ecffbead56a4e151c1c8ca9497738af79ee.png";
+import earlyBirdDevices from "figma:asset/52ffa55af67c5dca0c505b3aa30c536467ea75ee.png";
+
+// Gallery images for Puls8 Piping Solutions
+import puls8Video from "figma:asset/868bcf966774ac6b826588c631ee16271c0ce744.png";
+import puls8Tablet from "figma:asset/56c18ef7d22d376c58da9509a8718d0861ed0272.png";
+import puls8Devices from "figma:asset/11b77ecb4e65b36145a4a9f0920a6ef8407df54a.png";
+import puls8DualMac from "figma:asset/f5472d0f9c87d16a16edeb6148fc21dd77456b46.png";
+
+// Gallery images for Drumaber
+import drumaberDualPhone from "figma:asset/d82991a5128e0ddd81015a84c3569632441171a4.png";
+import drumaberLaptop from "figma:asset/575ef514cf7f88ee11c356a7e13aab9582a027e2.png";
+import drumaberDevices from "figma:asset/7775e8b70f8871a7a5eb585ecb2d28b6282401ab.png";
+import drumaberBrand from "figma:asset/fed2fbb329c8e679000f699738ced8a4adef77a5.png";
 
 export interface Project {
   id: number;
@@ -57,12 +105,7 @@ export const projects: Project[] = [
       { label: "Sales Team Hours Saved",    value: "12 hrs/wk" },
       { label: "Organic Traffic Growth",    value: "+340%" },
     ],
-    gallery: [
-      "https://images.unsplash.com/photo-1759159091728-e2c87b9d9315?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080",
-      "https://images.unsplash.com/photo-1537183673931-f890242dbaef?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080",
-      "https://images.unsplash.com/photo-1641567535859-c58187ac4954?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080",
-      "https://images.unsplash.com/photo-1620390120324-60da20339f95?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080",
-    ],
+    gallery: [waverleyHero, waverlyCuttingTools, waverleyServices, waverleySectors],
     nextSlug: "tac-healthcare",
   },
   {
@@ -93,12 +136,7 @@ export const projects: Project[] = [
       { label: "Avg. Session Duration",  value: "2m 58s" },
       { label: "Organic Ranking Gain",   value: "+210%" },
     ],
-    gallery: [
-      "https://images.unsplash.com/photo-1766299892549-b56b257d1ddd?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080",
-      "https://images.unsplash.com/photo-1537183673931-f890242dbaef?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080",
-      "https://images.unsplash.com/photo-1620390120324-60da20339f95?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080",
-      "https://images.unsplash.com/photo-1641567535859-c58187ac4954?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080",
-    ],
+    gallery: [tacHealthcareLaptop, tacHealthcareMobile, tacHealthcareTablet, tacHealthcareResponsive],
     nextSlug: "saltire-energy",
   },
   {
@@ -129,12 +167,7 @@ export const projects: Project[] = [
       { label: "Organic Visibility",     value: "+280%" },
       { label: "Avg. Session Duration",  value: "3m 20s" },
     ],
-    gallery: [
-      "https://images.unsplash.com/photo-1609233038342-03139428c6d0?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080",
-      "https://images.unsplash.com/photo-1537183673931-f890242dbaef?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080",
-      "https://images.unsplash.com/photo-1769096860785-7d089ede5daf?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080",
-      "https://images.unsplash.com/photo-1620390120324-60da20339f95?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080",
-    ],
+    gallery: [saltireDevices, saltireLaptop, saltireHand, saltireMobile],
     nextSlug: "romar-abrado",
   },
   {
@@ -196,12 +229,7 @@ export const projects: Project[] = [
       { label: "Organic Traffic Growth",    value: "+490%" },
       { label: "Bounce Rate Reduction",     value: "−41%" },
     ],
-    gallery: [
-      "https://images.unsplash.com/photo-1769096860785-7d089ede5daf?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080",
-      "https://images.unsplash.com/photo-1620390120324-60da20339f95?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080",
-      "https://images.unsplash.com/photo-1537183673931-f890242dbaef?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080",
-      "https://images.unsplash.com/photo-1641567535859-c58187ac4954?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080",
-    ],
+    gallery: [puls8Video, puls8Tablet, puls8Devices, puls8DualMac],
     nextSlug: "omalleys-irish-bar",
   },
   {
@@ -270,19 +298,7 @@ export const projects: Project[] = [
       { label: "Marketing Collateral",      value: "Complete suite" },
       { label: "Digital Presence",          value: "Live" },
     ],
-    gallery: [
-      "https://images.unsplash.com/photo-1569653402334-2e98fbaa80ee?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080",
-      "https://images.unsplash.com/photo-1766299892549-b56b257d1ddd?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080",
-      "https://images.unsplash.com/photo-1522139137660-4248e04955b8?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080",
-      "https://images.unsplash.com/photo-1537183673931-f890242dbaef?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080",
-      "https://images.unsplash.com/photo-1641567535859-c58187ac4954?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080",
-      "https://images.unsplash.com/photo-1620390120324-60da20339f95?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080",
-      "https://images.unsplash.com/photo-1718220216044-006f43e3a9b1?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080",
-      "https://images.unsplash.com/photo-1757301714935-c8127a21abc6?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080",
-      "https://images.unsplash.com/photo-1758873271902-a63ecd5b5235?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080",
-      "https://images.unsplash.com/photo-1651583634391-08433714e6fa?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080",
-      "https://images.unsplash.com/photo-1755368486528-988f184d5dad?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080",
-    ],
+    gallery: [gtDiagnosticsBrochure1, gtDiagnosticsBrochure2, gtDiagnosticsExhibition, gtDiagnosticsFlyers, gtDiagnosticsBanner, gtDiagnosticsCards, gtDiagnosticsBrochureStack, gtDiagnosticsStationery, gtDiagnosticsEmailSignatures, gtDiagnosticsBrochureSpread, gtDiagnosticsWebsiteScreens],
     nextSlug: "granite-elite",
   },
   {
@@ -313,10 +329,7 @@ export const projects: Project[] = [
       { label: "Bounce Rate Reduction",   value: "−49%" },
       { label: "Organic Traffic",         value: "+290%" },
     ],
-    gallery: [
-      "https://images.unsplash.com/photo-1651583634391-08433714e6fa?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080",
-      "https://images.unsplash.com/photo-1537183673931-f890242dbaef?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080",
-    ],
+    gallery: [graniteEliteMobile, graniteEliteDesktop],
     nextSlug: "early-bird-vending",
   },
   {
@@ -347,12 +360,7 @@ export const projects: Project[] = [
       { label: "Organic Traffic",        value: "+380%" },
       { label: "Bounce Rate Reduction",  value: "−38%" },
     ],
-    gallery: [
-      "https://images.unsplash.com/photo-1758633854748-15ed2ef681a7?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080",
-      "https://images.unsplash.com/photo-1620390120324-60da20339f95?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080",
-      "https://images.unsplash.com/photo-1537183673931-f890242dbaef?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080",
-      "https://images.unsplash.com/photo-1641567535859-c58187ac4954?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080",
-    ],
+    gallery: [earlyBirdLaptop, earlyBirdTablet, earlyBirdPhones, earlyBirdDevices],
     nextSlug: "drumaber",
   },
   {
@@ -383,12 +391,7 @@ export const projects: Project[] = [
       { label: "Organic Search Growth",   value: "+320%" },
       { label: "Bounce Rate Reduction",   value: "−55%" },
     ],
-    gallery: [
-      "https://images.unsplash.com/photo-1755368486528-988f184d5dad?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080",
-      "https://images.unsplash.com/photo-1537183673931-f890242dbaef?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080",
-      "https://images.unsplash.com/photo-1651583634391-08433714e6fa?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080",
-      "https://images.unsplash.com/photo-1522139137660-4248e04955b8?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080",
-    ],
+    gallery: [drumaberDualPhone, drumaberLaptop, drumaberDevices, drumaberBrand],
     nextSlug: "custom-tuning",
   },
   {
@@ -451,13 +454,7 @@ export const projects: Project[] = [
       { label: "Bounce Rate Reduction",      value: "−45%" },
       { label: "myWellness App Sign-Ups",    value: "+185%" },
     ],
-    gallery: [
-      "https://images.unsplash.com/photo-1761971975769-97e598bf526b?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080",
-      "https://images.unsplash.com/photo-1537183673931-f890242dbaef?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080",
-      "https://images.unsplash.com/photo-1641567535859-c58187ac4954?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080",
-      "https://images.unsplash.com/photo-1718220216044-006f43e3a9b1?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080",
-      "https://images.unsplash.com/photo-1620390120324-60da20339f95?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080",
-    ],
+    gallery: [],
     nextSlug: "aberdeen-northern-hotel",
   },
   {

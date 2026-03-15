@@ -1,37 +1,29 @@
 import { useState, useMemo, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "motion/react";
+import laptopImg1 from "figma:asset/ce59ee156d0d8072651a8da0a13ff6f04edbe8c8.png";
+import laptopImg2 from "figma:asset/a1cda730e072ed6bb06551d27d69e0aee21194e8.png";
+import laptopImg3 from "figma:asset/c20a8b4fab13529d1bfd238eead48e32ff2b73a1.png";
+import laptopImg4 from "figma:asset/5e862106f38d8c4eb17ab6c833c9381a3f52cf24.png";
+import laptopImg5 from "figma:asset/804c9037eed6d0c4bd3376c253e29007fae5eb54.png";
+import laptopImg6 from "figma:asset/2b4da7082565d85c0ac9bba5cf2663452a0107d8.png";
+import laptopImg7 from "figma:asset/3bc383f9ec318bc1ed39067a41cf1ecd7ac09ba9.png";
+import phonesImg1 from "figma:asset/ea66bb08c0cadf8488cb0b9c5240abd3e16edde5.png";
+import phonesImg2 from "figma:asset/f5e854e28cc3f55c6f2f6731702303cb00d2fa1c.png";
+import phonesImg3 from "figma:asset/4a4605f09d6b8ffd9486f6be1abe85e3cac82fdb.png";
+import phonesImg4 from "figma:asset/38ace8938bef6a8deb42bdaff8b0d108d3c726b5.png";
+import phonesImg5 from "figma:asset/c1372c3f4af48fd9e3aa884ace088cc04e7db9cf.png";
+import phonesImg6 from "figma:asset/a26482936a49a132ca48162a966e3e11e134f0d1.png";
+import phonesImg7 from "figma:asset/d21d59932fb10cf372851c5e08610b95433ce0c7.png";
 
-// ─── Device image pairs — Unsplash (replaces figma:asset, which is Figma-Make-only) ─
-// Each pair: { laptop, phone } — both cycle together per project set.
+// ─── Matched pairs (laptop + phone from the same project set) ────────────────
 const IMAGE_PAIRS: { laptop: string; phone: string }[] = [
-  {
-    laptop: "https://images.unsplash.com/photo-1537183673931-f890242dbaef?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080",
-    phone:  "https://images.unsplash.com/photo-1620390120324-60da20339f95?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=600",
-  },
-  {
-    laptop: "https://images.unsplash.com/photo-1641567535859-c58187ac4954?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080",
-    phone:  "https://images.unsplash.com/photo-1757301714935-c8127a21abc6?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=600",
-  },
-  {
-    laptop: "https://images.unsplash.com/photo-1757301714935-c8127a21abc6?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080",
-    phone:  "https://images.unsplash.com/photo-1641567535859-c58187ac4954?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=600",
-  },
-  {
-    laptop: "https://images.unsplash.com/photo-1718220216044-006f43e3a9b1?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080",
-    phone:  "https://images.unsplash.com/photo-1537183673931-f890242dbaef?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=600",
-  },
-  {
-    laptop: "https://images.unsplash.com/photo-1620390120324-60da20339f95?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080",
-    phone:  "https://images.unsplash.com/photo-1718220216044-006f43e3a9b1?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=600",
-  },
-  {
-    laptop: "https://images.unsplash.com/photo-1758873271902-a63ecd5b5235?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080",
-    phone:  "https://images.unsplash.com/photo-1522139137660-4248e04955b8?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=600",
-  },
-  {
-    laptop: "https://images.unsplash.com/photo-1522139137660-4248e04955b8?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080",
-    phone:  "https://images.unsplash.com/photo-1758873271902-a63ecd5b5235?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=600",
-  },
+  { laptop: laptopImg1, phone: phonesImg1 },
+  { laptop: laptopImg2, phone: phonesImg2 },
+  { laptop: laptopImg3, phone: phonesImg3 },
+  { laptop: laptopImg4, phone: phonesImg4 },
+  { laptop: laptopImg5, phone: phonesImg5 },
+  { laptop: laptopImg6, phone: phonesImg6 },
+  { laptop: laptopImg7, phone: phonesImg7 },
 ];
 
 // Department colours — one per dot, cycling through the 6 brand colours

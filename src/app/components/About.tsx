@@ -1,8 +1,6 @@
 import { useRef } from "react";
 import { motion, useInView } from "motion/react";
-
-// Office/team photo — Unsplash (replaces figma:asset which is Figma-Make-only)
-const officeImg = "https://images.unsplash.com/photo-1758873271902-a63ecd5b5235?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1920";
+import officeImg from "figma:asset/67a711565d0f28e25e06827e2e5f4c775d1b8654.png";
 
 export function About() {
   const ref = useRef(null);
