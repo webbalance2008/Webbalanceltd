@@ -1,8 +1,10 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 import { useParams, useNavigate, Link } from "react-router";
 import { motion, useInView, useScroll, useSpring } from "motion/react";
-import { ArrowLeft, ArrowRight, Clock, Calendar, User } from "lucide-react";
+import { ArrowLeft, ArrowRight, Clock, Calendar } from "lucide-react";
 import { getArticleBySlug, articles, type ArticleSection } from "../data/articles";
+import { SEOHead } from "../components/SEOHead";
+import { ArticleSchema, BreadcrumbSchema } from "../components/StructuredData";
 
 export function InsightArticlePage() {
   const { slug } = useParams<{ slug: string }>();
@@ -20,7 +22,7 @@ export function InsightArticlePage() {
     return (
       <div className="min-h-screen bg-[#16212e] flex items-center justify-center">
         <div className="text-center">
-          <p style={{ fontFamily: "'DM Mono', monospace" }} className="text-[#00A9A5] text-xs tracking-widest uppercase mb-4">404</p>
+          <p style={{ fontFamily: "'DM Mono', monospace" }} className="text-[#00A9A5] text-sm tracking-widest uppercase mb-4">404</p>
           <h1 style={{ fontFamily: "'Montserrat', sans-serif" }} className="text-white text-5xl mb-6 font-light">Article Not Found</h1>
           <button onClick={() => navigate("/insights")} className="text-white/40 hover:text-white text-sm flex items-center gap-2 mx-auto transition-colors" style={{ fontFamily: "'Inter', sans-serif" }}>
             <ArrowLeft size={14} /> Back to Insights
@@ -33,178 +35,193 @@ export function InsightArticlePage() {
   const relatedArticles = articles.filter((a) => article.relatedSlugs.includes(a.slug)).slice(0, 3);
 
   return (
-    <div className="bg-[#16212e] min-h-screen">
-
-      {/* ── Reading progress bar ──────────────────────────── */}
-      <motion.div
-        className="fixed top-0 left-0 right-0 h-[2px] bg-[#00d4e8] origin-left z-[60]"
-        style={{ scaleX }}
+    <>
+      <SEOHead
+        title={article.title}
+        description={article.excerpt}
+        path={`/insights/${article.slug}`}
+        ogImage={article.image}
+        type="article"
+        keywords={article.category}
       />
+      <ArticleSchema
+        title={article.title}
+        description={article.excerpt}
+        path={`/insights/${article.slug}`}
+        image={article.image}
+        datePublished={article.date}
+        authorName={article.author.name}
+      />
+      <BreadcrumbSchema
+        items={[
+          { name: "Home", path: "/" },
+          { name: "Insights", path: "/insights" },
+          { name: article.title, path: `/insights/${article.slug}` },
+        ]}
+      />
+      <div className="bg-[#16212e] min-h-screen">
 
-      {/* ── HERO ─────────────────────────────────────────── */}
-      <section className="relative h-[75vh] min-h-[500px] overflow-hidden">
-        <motion.img
-          src={article.image}
-          alt=""
-          className="absolute inset-0 w-full h-full object-cover"
-          initial={{ scale: 1.08 }}
-          animate={{ scale: 1 }}
-          transition={{ duration: 1.8, ease: [0.16, 1, 0.3, 1] }}
-          onError={(e) => { (e.currentTarget as HTMLImageElement).style.display = "none"; }}
-        />
-        {/* Dark gradient from bottom */}
-        <div className="absolute inset-0 bg-gradient-to-t from-[#374557] via-black/60 to-black/20" />
-
-        {/* Back link */}
-        <motion.button
-          initial={{ opacity: 0, x: -20 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ delay: 0.4 }}
-          onClick={() => navigate("/insights")}
-          className="absolute top-28 left-8 md:left-16 flex items-center gap-3 text-white/50 hover:text-white transition-colors group"
-        >
-          <ArrowLeft size={14} className="group-hover:-translate-x-1 transition-transform" />
-          <span style={{ fontFamily: "'DM Mono', monospace" }} className="text-xs tracking-[0.2em] uppercase">
-            All Insights
-          </span>
-        </motion.button>
-
-        {/* Category badge */}
+        {/* ── Reading progress bar ──────────────────────────── */}
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.4 }}
-          className="absolute bottom-44 left-8 md:left-16"
-        >
-          <span
-            style={{ fontFamily: "'DM Mono', monospace" }}
-            className="text-[10px] tracking-[0.3em] uppercase px-3 py-1.5 border border-[#00d4e8]/40 text-[#00d4e8]"
-          >
-            {article.category}
-          </span>
-        </motion.div>
+          className="fixed top-0 left-0 right-0 h-[2px] bg-[#00d4e8] origin-left z-[60]"
+          style={{ scaleX }}
+        />
 
-        {/* Title */}
-        <div className="absolute bottom-16 left-8 md:left-16 right-8 md:right-16 max-w-4xl">
-          <div className="overflow-hidden">
-            <motion.h1
-              initial={{ y: "100%" }}
-              animate={{ y: 0 }}
-              transition={{ duration: 1, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
-              style={{ fontFamily: "'Montserrat', sans-serif" }}
-              className="text-white text-[clamp(2.2rem,5vw,4.5rem)] leading-[1.05] tracking-[-0.02em] font-light"
+        {/* ── HERO ─────────────────────────────────────────── */}
+        <section className="relative overflow-hidden">
+          <motion.img
+            src={article.image}
+            alt=""
+            className="absolute inset-0 w-full h-full object-cover"
+            fetchPriority="high"
+            decoding="async"
+            initial={{ scale: 1.08 }}
+            animate={{ scale: 1 }}
+            transition={{ duration: 1.8, ease: [0.16, 1, 0.3, 1] }}
+            onError={(e) => { (e.currentTarget as HTMLImageElement).style.display = "none"; }}
+          />
+          {/* Dark gradient overlay */}
+          <div className="absolute inset-0 bg-gradient-to-t from-[#16212e] via-black/60 to-black/30" />
+
+          {/* Content — same flow as DepartmentHero */}
+          <div className="relative w-full max-w-[1440px] mx-auto px-8 md:px-16 pt-40 md:pt-48 pb-20 md:pb-28">
+            {/* Back link */}
+            <motion.button
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: 0.2 }}
+              onClick={() => navigate("/insights")}
+              className="flex items-center gap-3 text-white/50 hover:text-white transition-colors group mb-10"
             >
-              {article.title}
-            </motion.h1>
+              <ArrowLeft size={14} className="group-hover:-translate-x-1 transition-transform" />
+              <span style={{ fontFamily: "'DM Mono', monospace" }} className="text-sm tracking-[0.2em] uppercase">
+                All Insights
+              </span>
+            </motion.button>
+
+            {/* Category pill */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.3 }}
+              className="mb-8"
+            >
+              <span
+                className="inline-block px-4 py-1.5 border border-[#00d4e8]/40 rounded-full text-[10px] tracking-[0.35em] uppercase text-[#00d4e8]"
+                style={{ fontFamily: "'DM Mono', monospace" }}
+              >
+                {article.category}
+              </span>
+            </motion.div>
+
+            {/* Heading */}
+            <div className="overflow-hidden pb-[0.15em] mb-2">
+              <motion.h1
+                initial={{ y: 80, opacity: 0 }}
+                animate={{ y: 0, opacity: 1 }}
+                transition={{ duration: 1, delay: 0.4, ease: [0.16, 1, 0.3, 1] }}
+                style={{ fontFamily: "'Montserrat', sans-serif" }}
+                className="text-white text-[clamp(2rem,5vw,5rem)] leading-[1.15] tracking-[-0.02em] font-light max-w-4xl"
+              >
+                {article.title}
+              </motion.h1>
+            </div>
+
+            {/* Meta info (read time + date) */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.7 }}
+              className="flex flex-wrap items-center gap-6 md:gap-8 mt-8"
+            >
+              <MetaPill icon={<Clock size={12} />} text={article.readTime} />
+              <MetaPill icon={<Calendar size={12} />} text={article.date} />
+            </motion.div>
           </div>
-        </div>
-      </section>
+        </section>
 
-      {/* ── META BAR ─────────────────────────────────────── */}
-      <div className="border-b border-white/5">
-        <div className="max-w-[900px] mx-auto px-8 md:px-12 py-6 flex flex-wrap items-center gap-6 md:gap-10">
-          <MetaPill icon={<User size={12} />} text={article.author.name} />
-          <MetaPill icon={<Clock size={12} />} text={article.readTime} />
-          <MetaPill icon={<Calendar size={12} />} text={article.date} />
-        </div>
-      </div>
-
-      {/* ── ARTICLE BODY ─────────────────────────────────── */}
-      <article className="max-w-[900px] mx-auto px-8 md:px-12 py-16 md:py-24">
-        {/* Stand-first / excerpt */}
-        <motion.p
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.2 }}
-          style={{ fontFamily: "'Inter', sans-serif" }}
-          className="text-white/60 text-xl md:text-2xl leading-relaxed mb-14 pb-14 border-b border-white/5"
-        >
-          {article.excerpt}
-        </motion.p>
-
-        {/* Body sections */}
-        <div className="space-y-0">
-          {article.body.map((section, i) => (
-            <ArticleBlock key={i} section={section} index={i} />
-          ))}
-        </div>
-
-        {/* Author footer */}
-        <div className="mt-20 pt-10 border-t border-white/5 flex items-center gap-5">
-          <div className="w-12 h-12 border border-[#00d4e8]/30 flex items-center justify-center flex-shrink-0">
-            <User size={18} className="text-[#00d4e8]/60" />
-          </div>
-          <div>
-            <p style={{ fontFamily: "'Inter', sans-serif" }} className="text-white/70 text-sm">
-              {article.author.name}
-            </p>
-            <p style={{ fontFamily: "'DM Mono', monospace" }} className="text-white/25 text-[10px] tracking-[0.2em] uppercase mt-0.5">
-              {article.author.role}
-            </p>
-          </div>
-        </div>
-      </article>
-
-      {/* ── SHARE / TAGS ─────────────────────────────────── */}
-      <div className="border-t border-white/5">
-        <div className="max-w-[900px] mx-auto px-8 md:px-12 py-8 flex flex-wrap items-center justify-between gap-4">
-          <span
-            style={{ fontFamily: "'DM Mono', monospace" }}
-            className="text-xs tracking-[0.3em] uppercase px-3 py-1.5 border border-white/10 text-white/30"
+        {/* ── ARTICLE BODY ─────────────────────────────────── */}
+        <article className="max-w-[900px] mx-auto px-8 md:px-12 py-16 md:py-24">
+          {/* Stand-first / excerpt */}
+          <motion.p
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.2 }}
+            style={{ fontFamily: "'Inter', sans-serif" }}
+            className="text-white/60 text-xl md:text-2xl leading-relaxed mb-14 pb-14 border-b border-white/5"
           >
-            {article.category}
-          </span>
-          <div className="flex items-center gap-4">
-            <span style={{ fontFamily: "'DM Mono', monospace" }} className="text-white/20 text-[10px] tracking-[0.2em] uppercase">Share:</span>
-            {["LinkedIn", "Twitter", "Copy Link"].map((s) => (
-              <button key={s} style={{ fontFamily: "'DM Mono', monospace" }} className="text-white/30 hover:text-[#00d4e8] text-[10px] tracking-[0.15em] uppercase transition-colors">
-                {s}
-              </button>
+            {article.excerpt}
+          </motion.p>
+
+          {/* Body sections */}
+          <div className="space-y-0">
+            {article.body.map((section, i) => (
+              <ArticleBlock key={i} section={section} index={i} />
             ))}
           </div>
-        </div>
-      </div>
+        </article>
 
-      {/* ── RELATED ARTICLES ─────────────────────────────── */}
-      {relatedArticles.length > 0 && (
-        <section className="py-20 border-t border-white/5">
-          <div className="max-w-[1440px] mx-auto px-8 md:px-16">
-            <p
+        {/* ── SHARE / TAGS ─────────────────────────────────── */}
+        <div className="border-t border-white/5">
+          <div className="max-w-[900px] mx-auto px-8 md:px-12 py-8 flex flex-wrap items-center justify-between gap-4">
+            <span
               style={{ fontFamily: "'DM Mono', monospace" }}
-              className="text-[#00d4e8] text-[10px] tracking-[0.3em] uppercase flex items-center gap-3 mb-10"
+              className="text-sm tracking-[0.3em] uppercase px-3 py-1.5 border border-white/10 text-white/30"
             >
-              <span className="w-6 h-px bg-[#00d4e8]" />
-              Continue Reading
-            </p>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              {relatedArticles.map((related, i) => (
-                <RelatedCard key={related.id} article={related} index={i} />
+              {article.category}
+            </span>
+            <div className="flex items-center gap-4">
+              <span style={{ fontFamily: "'DM Mono', monospace" }} className="text-white/20 text-[10px] tracking-[0.2em] uppercase">Share:</span>
+              {["LinkedIn", "Twitter", "Copy Link"].map((s) => (
+                <button key={s} style={{ fontFamily: "'DM Mono', monospace" }} className="text-white/30 hover:text-[#00d4e8] text-[10px] tracking-[0.15em] uppercase transition-colors">
+                  {s}
+                </button>
               ))}
             </div>
           </div>
-        </section>
-      )}
-
-      {/* ── CTA ──────────────────────────────────────────── */}
-      <section className="py-24 border-t border-white/5">
-        <div className="max-w-[900px] mx-auto px-8 md:px-12 text-center">
-          <p style={{ fontFamily: "'DM Mono', monospace" }} className="text-[#00d4e8] text-[10px] tracking-[0.3em] uppercase mb-6">
-            Ready to act on this?
-          </p>
-          <h2 style={{ fontFamily: "'Montserrat', sans-serif" }} className="text-white text-4xl md:text-5xl mb-8 font-light">
-            Let's talk about your project.
-          </h2>
-          <Link
-            to="/contact"
-            className="inline-flex items-center gap-3 px-8 py-4 border border-[#00d4e8] text-[#00d4e8] text-xs tracking-[0.25em] uppercase hover:bg-[#00d4e8] hover:text-[#16212e] transition-all duration-300"
-            style={{ fontFamily: "'Inter', sans-serif" }}
-          >
-            Get in Touch
-            <ArrowRight size={14} />
-          </Link>
         </div>
-      </section>
-    </div>
+
+        {/* ── RELATED ARTICLES ─────────────────────────────── */}
+        {relatedArticles.length > 0 && (
+          <section className="py-20 border-t border-white/5">
+            <div className="max-w-[1440px] mx-auto px-8 md:px-16">
+              <p
+                style={{ fontFamily: "'DM Mono', monospace" }}
+                className="text-[#00d4e8] text-[10px] tracking-[0.3em] uppercase flex items-center gap-3 mb-10"
+              >
+                <span className="w-6 h-px bg-[#00d4e8]" />
+                Continue Reading
+              </p>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                {relatedArticles.map((related, i) => (
+                  <RelatedCard key={related.id} article={related} index={i} />
+                ))}
+              </div>
+            </div>
+          </section>
+        )}
+
+        {/* ── CTA ──────────────────────────────────────────── */}
+        <section className="py-24 border-t border-white/5">
+          <div className="max-w-[900px] mx-auto px-8 md:px-12 text-center">
+            <p style={{ fontFamily: "'DM Mono', monospace" }} className="text-[#00d4e8] text-[10px] tracking-[0.3em] uppercase mb-6">
+              Ready to act on this?
+            </p>
+            <h2 style={{ fontFamily: "'Montserrat', sans-serif" }} className="text-white text-4xl md:text-5xl mb-8 font-light">
+              Let's talk about your project.
+            </h2>
+            <Link
+              to="/contact"
+              className="inline-flex items-center gap-3 px-8 py-4 border border-[#00d4e8] text-[#00d4e8] text-sm tracking-[0.25em] uppercase hover:bg-[#00d4e8] hover:text-[#16212e] transition-all duration-300"
+              style={{ fontFamily: "'Inter', sans-serif" }}
+            >
+              Get in Touch
+              <ArrowRight size={14} />
+            </Link>
+          </div>
+        </section>
+      </div>
+    </>
   );
 }
 
@@ -367,7 +384,7 @@ function RelatedCard({ article, index }: { article: ReturnType<typeof getArticle
         >
           {article.title}
         </h3>
-        <div className="flex items-center gap-2 text-white/20 group-hover:text-[#00d4e8] transition-colors text-xs" style={{ fontFamily: "'DM Mono', monospace" }}>
+        <div className="flex items-center gap-2 text-white/20 group-hover:text-[#00d4e8] transition-colors text-sm" style={{ fontFamily: "'DM Mono', monospace" }}>
           <span className="tracking-[0.15em]">Read Article</span>
           <ArrowRight size={11} className="group-hover:translate-x-1 transition-transform" />
         </div>

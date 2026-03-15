@@ -12,6 +12,8 @@ export function BookingSystemsPage() {
       title="Booking & Reservation Systems"
       subtitle="Take bookings 24/7 — without the phone calls"
       heroImage={heroImage}
+      seoPath="/web-apps/booking-systems"
+      seoKeywords="booking system, reservation software, online scheduling, appointment booking app, UK"
       heroColor="#1a0f2e"
       overview="A bespoke booking system turns your availability into revenue around the clock, without a phone call or email exchange."
       overviewDetail="Whether you run a restaurant, hotel, salon, fitness studio, or professional services practice, your customers expect to book online — immediately, at any hour. Off-the-shelf booking tools are generic, often ugly, and charge per-booking fees that compound over time. We build bespoke booking and reservation systems that match your brand, fit your workflow exactly, and put you in complete control of your availability, pricing, and customer data. No monthly subscription per seat. No third-party branding. Just a system that works precisely the way your business works."
@@ -130,6 +132,11 @@ export function BookingSystemsPage() {
         },
       ]}
       ctaTitle="Let's replace your booking process with something that works."
+      concepts={[
+        { title: "Availability Calendar", description: "Real-time calendar showing open slots, booked periods, and buffer times — customers pick and confirm instantly.", layout: "calendar" },
+        { title: "Admin Dashboard", description: "Centralised view of today's bookings, upcoming reservations, revenue stats, and customer details.", layout: "dashboard" },
+        { title: "Booking Form", description: "Guided intake form capturing service type, preferred time, contact details, and special requirements.", layout: "form" },
+      ]}
     />
   );
 }

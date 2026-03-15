@@ -13,6 +13,8 @@ export function MembershipPage() {
       subtitle="Build recurring revenue and lasting loyalty"
       heroImage={heroImage}
       heroColor="#250f45"
+      seoPath="/web-apps/membership-platforms"
+      seoKeywords="membership platform, subscription app, gated content, recurring revenue, UK membership website"
       overview="A membership platform turns your audience into a recurring revenue stream — giving members exclusive access, a sense of belonging, and a reason to stay."
       overviewDetail="Membership and subscription models are among the most powerful in modern business. Whether you're offering premium content, exclusive community access, professional development resources, or subscriber-only products and discounts — a bespoke membership platform lets you monetise your audience without relying on advertising or one-off transactions. We build platforms that handle everything: gated content by membership tier, recurring billing with automatic renewals, member onboarding flows, community features, and the administrative tools your team needs to manage thousands of members without losing control. The result is a membership experience that feels premium, exclusive, and worth the subscription."
       features={[
@@ -130,6 +132,11 @@ export function MembershipPage() {
         },
       ]}
       ctaTitle="Build the membership platform your audience will pay to be part of."
+      concepts={[
+        { title: "Member Login", description: "Branded authentication with email/password, social login, and magic link options — frictionless access to your gated content.", layout: "login" },
+        { title: "Member Portal", description: "Personalised dashboard showing subscription status, content library, community feed, and account management.", layout: "portal" },
+        { title: "Admin Overview", description: "Subscriber metrics, churn rates, revenue trends, and content engagement — the data you need to grow retention.", layout: "analytics" },
+      ]}
     />
   );
 }

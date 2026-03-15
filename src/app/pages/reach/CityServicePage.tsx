@@ -1,9 +1,11 @@
 import { useState, useRef } from "react";
+import { getServiceColors } from "../../utils/serviceColors";
+import { SEOHead } from "../../components/SEOHead";
+import { ServiceSchema, BreadcrumbSchema } from "../../components/StructuredData";
 import { useParams, Link } from "react-router";
 import { motion, useInView } from "motion/react";
 import { ArrowRight, Check, ChevronDown } from "lucide-react";
 import { cities, reachServices, WHY_US_POINTS } from "../../data/ourReach";
-import { getServiceColors } from "../../utils/serviceColors";
 
 export function CityServicePage() {
   const { city: citySlug, service: serviceSlug } = useParams<{ city: string; service: string }>();
@@ -24,7 +26,7 @@ export function CityServicePage() {
         <div className="text-center">
           <p style={{ fontFamily: "'DM Mono', monospace", color: "#00d4e8" }} className="text-[10px] tracking-[0.3em] uppercase mb-4">404 — Not Found</p>
           <h1 style={{ fontFamily: "'Montserrat', sans-serif", color: "white" }} className="text-4xl mb-6">Page not found</h1>
-          <Link to="/our-reach" style={{ fontFamily: "'DM Mono', monospace", color: "#00d4e8" }} className="text-xs tracking-[0.2em] uppercase flex items-center gap-2 justify-center">
+          <Link to="/our-reach" style={{ fontFamily: "'DM Mono', monospace", color: "#00d4e8" }} className="text-sm tracking-[0.2em] uppercase flex items-center gap-2 justify-center">
             <ArrowRight size={12} className="rotate-180" /> Back to Our Reach
           </Link>
         </div>
@@ -42,6 +44,25 @@ export function CityServicePage() {
 
   return (
     <div className="min-h-screen" style={{ backgroundColor: "#16212e" }}>
+      <SEOHead
+        title={`${service.name} in ${city.name}`}
+        description={`Professional ${service.name.toLowerCase()} services in ${city.name}. Web Balance delivers tailored ${service.name.toLowerCase()} solutions for ${city.name} businesses across ${city.region}.`}
+        path={`/our-reach/${city.slug}/${service.slug}`}
+        keywords={`${service.name.toLowerCase()} ${city.name}, ${service.name.toLowerCase()} agency ${city.name}, digital services ${city.name}`}
+      />
+      <ServiceSchema
+        name={`${service.name} in ${city.name}`}
+        description={`Professional ${service.name.toLowerCase()} services for ${city.name} businesses across ${city.region}.`}
+        path={`/our-reach/${city.slug}/${service.slug}`}
+      />
+      <BreadcrumbSchema
+        items={[
+          { name: "Home", path: "/" },
+          { name: "Our Reach", path: "/our-reach" },
+          { name: city.name, path: `/our-reach/${city.slug}` },
+          { name: service.name, path: `/our-reach/${city.slug}/${service.slug}` },
+        ]}
+      />
 
       {/* ── Hero ── */}
       <section
@@ -89,7 +110,7 @@ export function CityServicePage() {
                   animate={{ y: 0 }}
                   transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
                   style={{ fontFamily: "'Montserrat', sans-serif" }}
-                  className="text-white text-[clamp(2.5rem,5vw,4rem)] leading-[0.95] font-light"
+                  className="text-white text-[clamp(2.5rem,5vw,4rem)] leading-[1.15] font-light"
                 >
                   {service.name} in {city.name}
                 </motion.h1>
@@ -118,10 +139,10 @@ export function CityServicePage() {
                 <div className="absolute top-0 left-0 right-0 h-px" style={{ background: `linear-gradient(90deg,transparent,${ACCENT},transparent)` }} />
                 <Icon size={20} strokeWidth={1.25} style={{ color: ACCENT, marginBottom: "12px" }} />
                 <p style={{ fontFamily: "'Montserrat', sans-serif", color: "white", fontSize: "18px" }} className="mb-2">{service.name}</p>
-                <p style={{ fontFamily: "'Inter', sans-serif", color: "rgba(255,255,255,0.4)", fontSize: "12px", lineHeight: 1.5 }} className="mb-6">{service.tagline}</p>
+                <p style={{ fontFamily: "'Inter', sans-serif", color: "rgba(255,255,255,0.6)", fontSize: "14px", lineHeight: 1.5 }} className="mb-6">{service.tagline}</p>
                 <Link
                   to={service.ctaPath}
-                  className="flex items-center justify-center gap-2 px-5 py-3 text-xs tracking-[0.2em] uppercase transition-all duration-200"
+                  className="flex items-center justify-center gap-2 px-5 py-3 text-sm tracking-[0.2em] uppercase transition-all duration-200"
                   style={{ fontFamily: "'DM Mono', monospace", backgroundColor: ACCENT, color: "#0a0a0a" }}
                   onMouseEnter={e => { (e.currentTarget as HTMLElement).style.backgroundColor = colours.primaryHover; }}
                   onMouseLeave={e => { (e.currentTarget as HTMLElement).style.backgroundColor = ACCENT; }}
@@ -276,7 +297,7 @@ export function CityServicePage() {
                   <Link
                     key={s.slug}
                     to={`/our-reach/${city.slug}/${s.slug}`}
-                    className="flex items-center gap-2 px-4 py-2 border text-xs tracking-[0.1em] uppercase transition-all duration-200"
+                    className="flex items-center gap-2 px-4 py-2 border text-sm tracking-[0.1em] uppercase transition-all duration-200"
                     style={{
                       fontFamily: "'DM Mono', monospace",
                       borderColor: `rgba(${c.rgb},0.2)`,
@@ -319,7 +340,7 @@ export function CityServicePage() {
             <div className="flex flex-wrap gap-4">
               <Link
                 to={service.ctaPath}
-                className="inline-flex items-center gap-3 px-8 py-4 text-xs tracking-[0.25em] uppercase transition-all duration-200"
+                className="inline-flex items-center gap-3 px-8 py-4 text-sm tracking-[0.25em] uppercase transition-all duration-200"
                 style={{ fontFamily: "'DM Mono', monospace", backgroundColor: ACCENT, color: "#0a0a0a" }}
                 onMouseEnter={e => { (e.currentTarget as HTMLElement).style.backgroundColor = colours.primaryHover; }}
                 onMouseLeave={e => { (e.currentTarget as HTMLElement).style.backgroundColor = ACCENT; }}
@@ -328,7 +349,7 @@ export function CityServicePage() {
               </Link>
               <Link
                 to={`/our-reach/${city.slug}`}
-                className="inline-flex items-center gap-3 px-8 py-4 text-xs tracking-[0.25em] uppercase transition-all duration-200 hover:bg-white/5"
+                className="inline-flex items-center gap-3 px-8 py-4 text-sm tracking-[0.25em] uppercase transition-all duration-200 hover:bg-white/5"
                 style={{ fontFamily: "'DM Mono', monospace", border: `1px solid rgba(${ACCENT_RGB},0.25)`, color: `rgba(${ACCENT_RGB},0.7)` }}
               >
                 All {city.name} Services

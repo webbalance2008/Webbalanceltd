@@ -25,7 +25,7 @@ export function Marquee() {
           <span
             key={i}
             style={{ fontFamily: "'DM Mono', monospace" }}
-            className="text-[#374557] text-xs tracking-[0.3em] uppercase flex items-center gap-10 flex-shrink-0"
+            className="text-[#374557] text-sm tracking-[0.3em] uppercase flex items-center gap-10 flex-shrink-0"
           >
             {item}
             <span className="text-[#374557]/40">◆</span>

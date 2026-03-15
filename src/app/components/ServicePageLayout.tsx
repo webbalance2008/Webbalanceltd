@@ -59,6 +59,9 @@ export interface ServicePageProps {
   ctaPath?: string;
   ctaLabel?: string;
   children?: React.ReactNode;
+  preStatsChildren?: React.ReactNode;
+  customHero?: React.ReactNode;
+  postHeroChildren?: React.ReactNode;
 }
 
 export function ServicePageLayout({
@@ -77,6 +80,9 @@ export function ServicePageLayout({
   ctaPath = "/contact",
   ctaLabel = "Start Your Project",
   children,
+  preStatsChildren,
+  customHero,
+  postHeroChildren,
 }: ServicePageProps) {
   const colors = getServiceColors(serviceType);
   const effectiveHeroColor = heroColor || colors.dark;
@@ -89,11 +95,14 @@ export function ServicePageLayout({
       }}
     >
       {/* ─── HERO ─── */}
+      {customHero || (
       <section className="relative h-[70vh] min-h-[500px] overflow-hidden">
         <motion.img
           src={heroImage}
           alt={title}
           className="absolute inset-0 w-full h-full object-cover opacity-40"
+          fetchPriority="high"
+          decoding="async"
           initial={{ scale: 1.1 }}
           animate={{ scale: 1 }}
           transition={{ duration: 1.8, ease: [0.16, 1, 0.3, 1] }}
@@ -115,7 +124,7 @@ export function ServicePageLayout({
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.3 }}
             style={{ fontFamily: "'DM Mono', monospace", color: colors.primary }}
-            className="text-xs tracking-[0.35em] uppercase mb-4 flex items-center gap-3"
+            className="text-sm tracking-[0.35em] uppercase mb-4 flex items-center gap-3"
           >
             <span className="w-6 h-px" style={{ backgroundColor: colors.primary }} />
             {label}
@@ -126,7 +135,7 @@ export function ServicePageLayout({
               animate={{ y: 0 }}
               transition={{ duration: 0.9, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
               style={{ fontFamily: "'Montserrat', sans-serif" }}
-              className="text-white text-[clamp(2.5rem,6vw,4.5rem)] leading-[0.95] tracking-[-0.02em] font-light"
+              className="text-white text-[clamp(2.5rem,6vw,4.5rem)] leading-[1.15] tracking-[-0.02em] font-light"
             >
               {title}
             </motion.h1>
@@ -142,9 +151,15 @@ export function ServicePageLayout({
           </motion.p>
         </div>
       </section>
+      )}
+      {/* ─── POST-HERO CHILDREN ─── */}
+      {postHeroChildren}
 
       {/* ─── INTRO ─── */}
       <IntroSection text={intro} colors={colors} />
+
+      {/* ─── PRE-STATS CHILDREN ─── */}
+      {preStatsChildren}
 
       {/* ─── STATS ─── */}
       {stats && stats.length > 0 && <StatsSection stats={stats} colors={colors} />}
@@ -252,7 +267,7 @@ function StatsSection({ stats, colors }: { stats: { value: string; label: string
                 </div>
                 <div
                   style={{ fontFamily: "'Inter', sans-serif" }}
-                  className="text-white/50 text-xs tracking-[0.15em] uppercase"
+                  className="text-white/50 text-sm tracking-[0.15em] uppercase"
                 >
                   {s.label}
                 </div>
@@ -390,7 +405,7 @@ function StatModalOverlay({
             <Link
               to="/contact"
               onClick={onClose}
-              className="inline-flex items-center gap-3 px-6 py-3 border text-xs tracking-[0.2em] uppercase transition-all duration-300"
+              className="inline-flex items-center gap-3 px-6 py-3 border text-sm tracking-[0.2em] uppercase transition-all duration-300"
               style={{
                 fontFamily: "'Inter', sans-serif",
                 borderColor: colors.primary,
@@ -652,7 +667,7 @@ function FeatureModalOverlay({
             <Link
               to="/contact"
               onClick={onClose}
-              className="inline-flex items-center gap-3 px-6 py-3 border text-xs tracking-[0.2em] uppercase transition-all duration-300"
+              className="inline-flex items-center gap-3 px-6 py-3 border text-sm tracking-[0.2em] uppercase transition-all duration-300"
               style={{
                 fontFamily: "'Inter', sans-serif",
                 borderColor: colors.primary,
@@ -744,7 +759,7 @@ function ProcessSection({ steps, colors }: { steps: { step: string; title: strin
                         opacity: 0.45,
                         transition: "opacity 0.3s",
                       }}
-                      className="text-xs tracking-widest group-hover:!opacity-100"
+                      className="text-sm tracking-widest group-hover:!opacity-100"
                     >
                       {s.step}
                     </span>
@@ -902,7 +917,7 @@ function ProcessModalOverlay({
             <Link
               to="/contact"
               onClick={onClose}
-              className="inline-flex items-center gap-3 px-6 py-3 border text-xs tracking-[0.2em] uppercase transition-all duration-300"
+              className="inline-flex items-center gap-3 px-6 py-3 border text-sm tracking-[0.2em] uppercase transition-all duration-300"
               style={{
                 fontFamily: "'Inter', sans-serif",
                 borderColor: colors.primary,
@@ -1001,8 +1016,8 @@ function PricingSection({ tiers, colors }: { tiers: PricingTier[]; colors: Retur
                 {tier.features.map((f) => (
                   <li
                     key={f}
-                    className="flex items-start gap-3 text-sm text-white/50"
-                    style={{ fontFamily: "'Inter', sans-serif" }}
+                    className="flex items-start gap-3"
+                    style={{ fontFamily: "'Inter', sans-serif", fontSize: "1rem", color: "rgba(255,255,255,0.6)", lineHeight: 1.5 }}
                   >
                     <span style={{ color: colors.primary }} className="mt-0.5 flex-shrink-0">✦</span>
                     {f}
@@ -1040,7 +1055,7 @@ function CtaSection({ title, path, label, colors }: { title: string; path: strin
         >
           <Link
             to={path}
-            className="inline-flex items-center gap-3 px-8 py-4 border text-xs tracking-[0.25em] uppercase transition-all duration-300"
+            className="inline-flex items-center gap-3 px-8 py-4 border text-sm tracking-[0.25em] uppercase transition-all duration-300"
             style={{
               fontFamily: "'Inter', sans-serif",
               borderColor: colors.primary,

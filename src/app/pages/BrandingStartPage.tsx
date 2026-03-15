@@ -5,11 +5,12 @@ import {
   Compass, PenLine, RefreshCw, Share2, Printer, Megaphone, BookOpen, Package,
   Clock, Zap, LucideIcon,
 } from "lucide-react";
+import { SEOHead } from "../components/SEOHead";
 
 const ACCENT      = "#f472b6";
 const ACCENT_RGB  = "244, 114, 182";
-const DEPT_BG     = "#1a1a2e";
-const TOTAL_STEPS = 6;
+const DEPT_BG     = "#16212e";
+const TOTAL_STEPS = 8;
 const VAT_RATE    = 0.20;
 
 // ─── Step 1 — Primary Service ─────────────────────────────────────────────────
@@ -37,7 +38,7 @@ const brandStatuses: { id: string; label: string; sub: string; unsure?: boolean 
   { id: "unsure",    label: "Not sure what we need",            sub: "We'll help you assess and recommend the right scope", unsure: true },
 ];
 
-// ─── Step 3 — Deliverables ────────────────────────────────────────────────────
+// ─── Step 3 — Brand Identity Deliverables ─────────────────────────────────────
 
 interface Deliverable { id: string; label: string; cost: number; group: string }
 
@@ -80,12 +81,14 @@ const timelines: { id: string; label: string; sub: string; surcharge: number; Ic
 // ─── Step meta ────────────────────────────────────────────────────────────────
 
 const stepMeta = [
-  { step: 1, label: "Service",     title: "What do you need from us?",          subtitle: "Choose the primary service — we'll build the scope from there." },
-  { step: 2, label: "Status",      title: "Where is your brand right now?",     subtitle: "Honest answers help us understand the scope from the start." },
-  { step: 3, label: "Deliverables",title: "What do you need us to produce?",    subtitle: "Select every deliverable you'd like included in the project." },
-  { step: 4, label: "Timeline",    title: "When do you need this?",             subtitle: "Shorter timelines may incur a rush fee." },
-  { step: 5, label: "Estimate",    title: "Your indicative project investment.", subtitle: "Based on your selections — clear pricing before we talk." },
-  { step: 6, label: "About You",   title: "Almost there.",                       subtitle: "A few details so we can tailor our proposal." },
+  { step: 1, label: "Service",      title: "What do you need from us?",              subtitle: "Choose the primary service — we'll build the scope from there." },
+  { step: 2, label: "Status",       title: "Where is your brand right now?",          subtitle: "Honest answers help us understand the scope from the start." },
+  { step: 3, label: "Identity",     title: "Brand identity deliverables.",             subtitle: "Select any brand foundation items you need us to create." },
+  { step: 4, label: "Assets",       title: "Marketing assets & collateral.",           subtitle: "Select any marketing materials you'd like included." },
+  { step: 5, label: "Campaign",     title: "Campaign creative.",                       subtitle: "Select any campaign-specific design work you need." },
+  { step: 6, label: "Timeline",     title: "When do you need this?",                  subtitle: "Shorter timelines may incur a rush fee." },
+  { step: 7, label: "Estimate",     title: "Your indicative project investment.",      subtitle: "Based on your selections — clear pricing before we talk." },
+  { step: 8, label: "About You",    title: "Almost there.",                            subtitle: "A few details so we can tailor our proposal." },
 ];
 
 // ─── Form state ───────────────────────────────────────────────────────────────
@@ -158,8 +161,8 @@ function ServiceCard({ opt, isActive, onClick }: { opt: ServiceOption; isActive:
         transition: "all 0.2s",
       }} />
       <Icon size={20} strokeWidth={1.25} style={{ color: isActive ? ACCENT : hov ? `rgba(${ACCENT_RGB},0.7)` : `rgba(${ACCENT_RGB},0.4)`, marginBottom: "12px", transition: "color 0.2s" }} />
-      <p style={{ fontFamily: "'Montserrat',sans-serif", fontSize: "14px", fontWeight: 600, color: isActive ? "white" : "rgba(255,255,255,0.9)", marginBottom: "4px" }}>{opt.label}</p>
-      <p style={{ fontFamily: "'Inter',sans-serif", fontSize: "12px", color: isActive ? `rgba(${ACCENT_RGB},0.7)` : "rgba(255,255,255,0.4)", lineHeight: 1.4, marginBottom: "10px" }}>{opt.sub}</p>
+      <p style={{ fontFamily: "'Montserrat',sans-serif", fontSize: "18px", fontWeight: 600, color: isActive ? "white" : "rgba(255,255,255,0.9)", marginBottom: "4px" }}>{opt.label}</p>
+      <p style={{ fontFamily: "'Inter',sans-serif", fontSize: "15px", color: isActive ? `rgba(${ACCENT_RGB},0.7)` : "rgba(255,255,255,0.9)", lineHeight: 1.5, marginBottom: "10px" }}>{opt.sub}</p>
       <p style={{ fontFamily: "'DM Mono',monospace", fontSize: "11px", letterSpacing: "0.08em", color: isActive ? ACCENT : `rgba(${ACCENT_RGB},0.35)`, transition: "color 0.2s" }}>
         from {fmt(opt.base)}
       </p>
@@ -192,8 +195,8 @@ function StatusCard({ opt, isActive, onClick }: { opt: typeof brandStatuses[0]; 
         transition: "all 0.2s",
       }} />
       {isUnsure && <HelpCircle size={14} style={{ color: isActive ? ACCENT : `rgba(${ACCENT_RGB},0.5)`, marginBottom: "8px" }} />}
-      <p style={{ fontFamily: "'Montserrat',sans-serif", fontSize: "14px", fontWeight: 600, color: isActive ? "white" : isUnsure ? `rgba(${ACCENT_RGB},0.75)` : "rgba(255,255,255,0.9)", marginBottom: "4px" }}>{opt.label}</p>
-      <p style={{ fontFamily: "'Inter',sans-serif", fontSize: "12px", color: isActive ? `rgba(${ACCENT_RGB},0.7)` : "rgba(255,255,255,0.4)" }}>{opt.sub}</p>
+      <p style={{ fontFamily: "'Montserrat',sans-serif", fontSize: "18px", fontWeight: 600, color: isActive ? "white" : isUnsure ? `rgba(${ACCENT_RGB},0.75)` : "rgba(255,255,255,0.9)", marginBottom: "4px" }}>{opt.label}</p>
+      <p style={{ fontFamily: "'Inter',sans-serif", fontSize: "15px", color: isActive ? `rgba(${ACCENT_RGB},0.7)` : "rgba(255,255,255,0.9)", lineHeight: 1.5 }}>{opt.sub}</p>
       {isActive && (
         <div className="absolute top-3 right-3 w-5 h-5 rounded-full flex items-center justify-center" style={{ backgroundColor: ACCENT, boxShadow: `0 0 8px rgba(${ACCENT_RGB},0.55)` }}>
           <Check size={11} color="#0a0a0a" strokeWidth={3} />
@@ -222,10 +225,10 @@ function TimelineCard({ opt, isActive, onClick }: { opt: typeof timelines[0]; is
         transition: "all 0.2s",
       }} />
       <Icon size={16} strokeWidth={1.5} style={{ color: isActive ? ACCENT : hov ? `rgba(${ACCENT_RGB},0.7)` : `rgba(${ACCENT_RGB},0.4)`, marginBottom: "10px", transition: "color 0.2s" }} />
-      <p style={{ fontFamily: "'Montserrat',sans-serif", fontSize: "14px", fontWeight: 600, color: isActive ? "white" : "rgba(255,255,255,0.9)", marginBottom: "4px" }}>{opt.label}</p>
-      <p style={{ fontFamily: "'Inter',sans-serif", fontSize: "12px", color: "rgba(255,255,255,0.4)" }}>{opt.sub}</p>
+      <p style={{ fontFamily: "'Montserrat',sans-serif", fontSize: "18px", fontWeight: 600, color: isActive ? "white" : "rgba(255,255,255,0.9)", marginBottom: "4px" }}>{opt.label}</p>
+      <p style={{ fontFamily: "'Inter',sans-serif", fontSize: "15px", color: "rgba(255,255,255,0.9)", lineHeight: 1.5 }}>{opt.sub}</p>
       {opt.surcharge > 0 && (
-        <p style={{ fontFamily: "'DM Mono',monospace", fontSize: "10px", letterSpacing: "0.1em", color: isActive ? ACCENT : `rgba(${ACCENT_RGB},0.4)`, marginTop: "8px", transition: "color 0.2s" }}>
+        <p style={{ fontFamily: "'DM Mono',monospace", fontSize: "11px", letterSpacing: "0.1em", color: isActive ? ACCENT : `rgba(${ACCENT_RGB},0.4)`, marginTop: "8px", transition: "color 0.2s" }}>
           +{Math.round(opt.surcharge * 100)}% rush fee
         </p>
       )}
@@ -256,8 +259,8 @@ export function BrandingStartPage() {
   const canNext = () => {
     if (step === 1) return !!data.service;
     if (step === 2) return !!data.status;
-    if (step === 3) return data.deliverables.length > 0;
-    if (step === 4) return !!data.timeline;
+    // Steps 3-5 (deliverable groups) are always skippable
+    if (step === 6) return !!data.timeline;
     return true;
   };
 
@@ -292,37 +295,72 @@ export function BrandingStartPage() {
 
   return (
     <div className="min-h-screen" style={{ backgroundColor: DEPT_BG }}>
-      {/* Progress bar */}
-      <div className="fixed top-24 left-0 right-0 z-40 h-px" style={{ backgroundColor: `rgba(${ACCENT_RGB},0.1)` }}>
-        <motion.div className="h-full" style={{ backgroundColor: ACCENT, width: `${progress}%` }} transition={{ duration: 0.4, ease: "easeOut" }} />
+      <SEOHead
+        title="Branding Quote Builder"
+        description="Walk through our branding wizard to scope your brand identity project. Logo design, brand guidelines, print, and more — get a tailored estimate in minutes."
+        path="/branding/start"
+        keywords="branding quote, logo design pricing, brand identity cost, UK branding agency"
+      />
+
+      {/* ── Progress / Step indicator bar ──────────────────────────────────── */}
+      <div className="fixed top-24 left-0 right-0 z-40 px-4 sm:px-8 md:px-16 pointer-events-none"
+        style={{ backgroundColor:"rgba(22,33,46,0.92)", backdropFilter:"blur(16px)", borderBottom:`1px solid rgba(${ACCENT_RGB},0.1)` }}>
+        <div className="max-w-[1320px] mx-auto py-3 sm:py-4">
+          {/* Mobile compact */}
+          <div className="flex sm:hidden items-center gap-3">
+            <span style={{ fontFamily:"'DM Mono',monospace", fontSize:"10px", letterSpacing:"0.2em", color:ACCENT, whiteSpace:"nowrap" }}>{step} / {TOTAL_STEPS}</span>
+            <div className="flex-1 relative" style={{ height:"2px", backgroundColor:`rgba(${ACCENT_RGB},0.1)` }}>
+              <div className="absolute inset-y-0 left-0 transition-all duration-500" style={{ width:`${progress}%`, backgroundColor:ACCENT, boxShadow:`0 0 6px rgba(${ACCENT_RGB},0.6)` }} />
+            </div>
+            <span style={{ fontFamily:"'DM Mono',monospace", fontSize:"10px", letterSpacing:"0.15em", color:"white", textTransform:"uppercase" as const, whiteSpace:"nowrap" }}>{sm.label}</span>
+          </div>
+          {/* Desktop step indicators */}
+          <div className="hidden sm:flex items-center">
+            {stepMeta.map((s, i) => {
+              const isActive = step === s.step;
+              const isDone   = step > s.step;
+              return (
+                <div key={s.step} className="flex items-center flex-1 last:flex-none">
+                  <div className="flex flex-col items-center gap-1.5">
+                    <div className="w-7 h-7 md:w-8 md:h-8 rounded-full border flex items-center justify-center transition-all duration-300"
+                      style={{ borderColor: isDone ? ACCENT : isActive ? ACCENT : "rgba(255,255,255,0.15)", backgroundColor: isDone ? ACCENT : isActive ? `rgba(${ACCENT_RGB},0.15)` : "transparent", boxShadow: isActive ? `0 0 12px rgba(${ACCENT_RGB},0.35)` : "none" }}>
+                      {isDone ? <Check size={12} color="#0a0a0a" strokeWidth={3} /> : <span style={{ fontFamily:"'DM Mono',monospace", fontSize:"10px", color:isActive?ACCENT:"rgba(255,255,255,0.5)" }}>{s.step}</span>}
+                    </div>
+                    <span className="uppercase hidden md:block" style={{ fontFamily:"'DM Mono',monospace", fontSize:"8px", color:isActive?ACCENT:isDone?"rgba(255,255,255,0.7)":"rgba(255,255,255,0.4)", letterSpacing:"0.15em", transition:"color 0.3s", whiteSpace:"nowrap" }}>{s.label}</span>
+                  </div>
+                  {i < stepMeta.length - 1 && <div className="flex-1 h-px mx-2 md:mx-3 transition-all duration-500" style={{ backgroundColor: step > s.step ? ACCENT : `rgba(${ACCENT_RGB},0.08)` }} />}
+                </div>
+              );
+            })}
+          </div>
+        </div>
       </div>
 
-      <div className="max-w-3xl mx-auto px-6 pt-40 pb-32">
-        {/* Step label */}
-        <motion.p key={`label-${step}`} initial={{ opacity: 0 }} animate={{ opacity: 1 }} style={{ fontFamily: "'DM Mono',monospace", color: ACCENT }} className="text-[10px] tracking-[0.35em] uppercase flex items-center gap-3 mb-8">
-          <span className="w-6 h-px" style={{ backgroundColor: ACCENT }} />
-          Step {sm.step} of {TOTAL_STEPS} — {sm.label}
-        </motion.p>
-
-        {/* Title */}
-        <div className="overflow-hidden pb-[0.2em] mb-2">
-          <motion.h1 key={`title-${step}`} initial={{ y: "100%", opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ duration: 0.55, ease: [0.16, 1, 0.3, 1] }}
-            style={{ fontFamily: "'Montserrat',sans-serif", color: "white" }} className="text-4xl md:text-5xl">
-            {sm.title}
-          </motion.h1>
+      {/* ── Hero heading ─────────────────────────────────────────────────── */}
+      <section className="pt-48 sm:pt-56 md:pt-64 pb-6 sm:pb-10">
+        <div className="max-w-[1320px] mx-auto px-4 sm:px-8 md:px-16">
+          <AnimatePresence mode="wait" custom={dir}>
+            <motion.div key={`hero-${step}`} custom={dir} variants={variants} initial="enter" animate="center" exit="exit" transition={{ duration:0.36, ease:[0.16,1,0.3,1] }}>
+              <p style={{ fontFamily:"'DM Mono',monospace", color:ACCENT }} className="text-[11px] tracking-[0.35em] uppercase mb-5 flex items-center gap-3">
+                <span className="w-5 h-px" style={{ backgroundColor:ACCENT }} />
+                Step {sm.step} of {TOTAL_STEPS}
+              </p>
+              <h1 style={{ fontFamily:"'Montserrat',sans-serif" }} className="text-white text-[clamp(2rem,4.5vw,3.4rem)] font-light leading-tight mb-3">{sm.title}</h1>
+              <p style={{ fontFamily:"'Inter',sans-serif" }} className="text-white/40 text-[15px] leading-relaxed">{sm.subtitle}</p>
+            </motion.div>
+          </AnimatePresence>
         </div>
-        <motion.p key={`sub-${step}`} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}
-          style={{ fontFamily: "'Inter',sans-serif", color: "rgba(255,255,255,0.45)" }} className="text-sm leading-relaxed mb-12">
-          {sm.subtitle}
-        </motion.p>
+      </section>
 
-        {/* Step content */}
+      {/* ── Step content ─────────────────────────────────────────────────── */}
+      <section className="pb-24 sm:pb-36">
+        <div className="max-w-[1320px] mx-auto px-4 sm:px-8 md:px-16">
         <AnimatePresence mode="wait" custom={dir}>
           <motion.div key={step} custom={dir} variants={variants} initial="enter" animate="center" exit="exit" transition={{ duration: 0.35, ease: "easeInOut" }}>
 
             {/* Step 1 — Service */}
             {step === 1 && (
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+              <div className="mt-6 sm:mt-8 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 sm:gap-4">
                 {serviceOptions.map(opt => (
                   <ServiceCard key={opt.id} opt={opt} isActive={data.service === opt.id} onClick={() => setData(d => ({ ...d, service: opt.id }))} />
                 ))}
@@ -331,53 +369,86 @@ export function BrandingStartPage() {
 
             {/* Step 2 — Status */}
             {step === 2 && (
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+              <div className="mt-6 sm:mt-8 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 sm:gap-4">
                 {brandStatuses.map(s => (
                   <StatusCard key={s.id} opt={s} isActive={data.status === s.id} onClick={() => setData(d => ({ ...d, status: s.id }))} />
                 ))}
               </div>
             )}
 
-            {/* Step 3 — Deliverables */}
+            {/* Step 3 — Brand Identity Deliverables */}
             {step === 3 && (
-              <div className="space-y-8">
-                {deliverableGroups.map(group => (
-                  <div key={group}>
-                    <p style={{ fontFamily: "'DM Mono',monospace", color: ACCENT }} className="text-[10px] tracking-[0.3em] uppercase mb-4">{group}</p>
-                    <div className="flex flex-wrap gap-2">
-                      {deliverables.filter(d => d.group === group).map(d => (
-                        <button key={d.id} type="button"
-                          onMouseEnter={() => setHovChips(h => ({ ...h, [d.id]: true }))}
-                          onMouseLeave={() => setHovChips(h => ({ ...h, [d.id]: false }))}
-                          onClick={() => toggleDeliverable(d.id)}
-                          className="px-4 py-2 border text-sm transition-all duration-200 flex items-center gap-2"
-                          style={chipStyle(data.deliverables.includes(d.id), hovChips[d.id])}>
-                          {d.label}
-                          <span style={{ fontFamily: "'DM Mono',monospace", fontSize: "10px", opacity: 0.6 }}>+{fmt(d.cost)}</span>
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-                ))}
+              <div className="mt-6 sm:mt-8">
+                <div className="flex flex-wrap gap-2">
+                  {deliverables.filter(d => d.group === "Brand Identity").map(d => (
+                    <button key={d.id} type="button"
+                      onMouseEnter={() => setHovChips(h => ({ ...h, [d.id]: true }))}
+                      onMouseLeave={() => setHovChips(h => ({ ...h, [d.id]: false }))}
+                      onClick={() => toggleDeliverable(d.id)}
+                      className="px-4 py-3 border text-base transition-all duration-200 flex items-center gap-2"
+                      style={chipStyle(data.deliverables.includes(d.id), hovChips[d.id])}>
+                      {d.label}
+                      <span style={{ fontFamily: "'DM Mono',monospace", fontSize: "11px", opacity: 0.6 }}>+{fmt(d.cost)}</span>
+                    </button>
+                  ))}
+                </div>
               </div>
             )}
 
-            {/* Step 4 — Timeline */}
+            {/* Step 4 — Marketing Assets & Collateral */}
             {step === 4 && (
-              <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+              <div className="mt-6 sm:mt-8">
+                <div className="flex flex-wrap gap-2">
+                  {deliverables.filter(d => d.group === "Marketing Assets").map(d => (
+                    <button key={d.id} type="button"
+                      onMouseEnter={() => setHovChips(h => ({ ...h, [d.id]: true }))}
+                      onMouseLeave={() => setHovChips(h => ({ ...h, [d.id]: false }))}
+                      onClick={() => toggleDeliverable(d.id)}
+                      className="px-4 py-3 border text-base transition-all duration-200 flex items-center gap-2"
+                      style={chipStyle(data.deliverables.includes(d.id), hovChips[d.id])}>
+                      {d.label}
+                      <span style={{ fontFamily: "'DM Mono',monospace", fontSize: "11px", opacity: 0.6 }}>+{fmt(d.cost)}</span>
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Step 5 — Campaign Creative */}
+            {step === 5 && (
+              <div className="mt-6 sm:mt-8">
+                <div className="flex flex-wrap gap-2">
+                  {deliverables.filter(d => d.group === "Campaign Creative").map(d => (
+                    <button key={d.id} type="button"
+                      onMouseEnter={() => setHovChips(h => ({ ...h, [d.id]: true }))}
+                      onMouseLeave={() => setHovChips(h => ({ ...h, [d.id]: false }))}
+                      onClick={() => toggleDeliverable(d.id)}
+                      className="px-4 py-3 border text-base transition-all duration-200 flex items-center gap-2"
+                      style={chipStyle(data.deliverables.includes(d.id), hovChips[d.id])}>
+                      {d.label}
+                      <span style={{ fontFamily: "'DM Mono',monospace", fontSize: "11px", opacity: 0.6 }}>+{fmt(d.cost)}</span>
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Step 6 — Timeline */}
+            {step === 6 && (
+              <div className="mt-6 sm:mt-8 grid grid-cols-2 md:grid-cols-3 gap-3 sm:gap-4">
                 {timelines.map(t => (
                   <TimelineCard key={t.id} opt={t} isActive={data.timeline === t.id} onClick={() => setData(d => ({ ...d, timeline: t.id }))} />
                 ))}
               </div>
             )}
 
-            {/* Step 5 — Estimate */}
-            {step === 5 && (
-              <div className="space-y-8">
+            {/* Step 7 — Estimate */}
+            {step === 7 && (
+              <div className="mt-6 sm:mt-8 space-y-8 max-w-3xl">
                 <div className="p-6 border" style={{ borderColor: `rgba(${ACCENT_RGB},0.25)`, backgroundColor: `rgba(${ACCENT_RGB},0.06)` }}>
                   <div className="flex items-start justify-between mb-6">
                     <div>
-                      <p style={{ fontFamily: "'DM Mono',monospace", color: ACCENT, fontSize: "10px", letterSpacing: "0.3em" }} className="uppercase mb-1">Project Total</p>
+                      <p style={{ fontFamily: "'DM Mono',monospace", color: ACCENT, fontSize: "11px", letterSpacing: "0.3em" }} className="uppercase mb-1">Project Total</p>
                       <p style={{ fontFamily: "'Montserrat',sans-serif", color: "white", fontSize: "14px" }}>
                         {serviceOptions.find(s => s.id === data.service)?.label ?? "Brand Project"}
                       </p>
@@ -391,7 +462,7 @@ export function BrandingStartPage() {
                   {/* Selected deliverables */}
                   {data.deliverables.length > 0 && (
                     <div className="border-t pt-4" style={{ borderColor: `rgba(${ACCENT_RGB},0.15)` }}>
-                      <p style={{ fontFamily: "'DM Mono',monospace", color: `rgba(${ACCENT_RGB},0.6)`, fontSize: "10px", letterSpacing: "0.25em" }} className="uppercase mb-3">Selected deliverables</p>
+                      <p style={{ fontFamily: "'DM Mono',monospace", color: `rgba(${ACCENT_RGB},0.6)`, fontSize: "11px", letterSpacing: "0.25em" }} className="uppercase mb-3">Selected deliverables</p>
                       <div className="space-y-2">
                         {deliverables.filter(d => data.deliverables.includes(d.id)).map(d => (
                           <div key={d.id} className="flex items-center justify-between">
@@ -399,7 +470,7 @@ export function BrandingStartPage() {
                               <Check size={11} style={{ color: ACCENT, flexShrink: 0 }} />
                               <span style={{ fontFamily: "'Inter',sans-serif", color: "rgba(255,255,255,0.65)", fontSize: "13px" }}>{d.label}</span>
                             </div>
-                            <span style={{ fontFamily: "'DM Mono',monospace", color: "rgba(255,255,255,0.4)", fontSize: "12px" }}>{fmt(d.cost)}</span>
+                            <span style={{ fontFamily: "'DM Mono',monospace", color: "rgba(255,255,255,0.4)", fontSize: "14px" }}>{fmt(d.cost)}</span>
                           </div>
                         ))}
                       </div>
@@ -423,15 +494,15 @@ export function BrandingStartPage() {
                   ))}
                 </div>
 
-                <p style={{ fontFamily: "'Inter',sans-serif", color: "rgba(255,255,255,0.3)", fontSize: "12px" }}>
+                <p style={{ fontFamily: "'Inter',sans-serif", color: "rgba(255,255,255,0.5)", fontSize: "14px" }}>
                   * Indicative pricing. Your final quote may vary following our discovery consultation.
                 </p>
               </div>
             )}
 
-            {/* Step 6 — About You */}
-            {step === 6 && (
-              <div className="space-y-5">
+            {/* Step 8 — About You */}
+            {step === 8 && (
+              <div className="mt-6 sm:mt-8 space-y-5 max-w-2xl">
                 {[
                   { field: "name" as const,     label: "Your name",      ph: "Jane Smith",             type: "text"  },
                   { field: "emailAddr" as const, label: "Email address",  ph: "jane@company.com",      type: "email" },
@@ -439,7 +510,7 @@ export function BrandingStartPage() {
                   { field: "website" as const,   label: "Website URL",    ph: "https://yoursite.co.uk", type: "url"   },
                 ].map(({ field, label, ph, type }) => (
                   <div key={field}>
-                    <label style={{ fontFamily: "'DM Mono',monospace", color: `rgba(${ACCENT_RGB},0.7)`, fontSize: "10px", letterSpacing: "0.25em" }} className="uppercase block mb-2">{label}</label>
+                    <label style={{ fontFamily: "'DM Mono',monospace", color: `rgba(${ACCENT_RGB},0.7)`, fontSize: "11px", letterSpacing: "0.25em" }} className="uppercase block mb-2">{label}</label>
                     <input type={type} value={data[field]} onChange={e => setData(d => ({ ...d, [field]: e.target.value }))} placeholder={ph}
                       className="w-full bg-transparent border px-4 py-3 text-sm outline-none transition-all duration-200"
                       style={{ borderColor: `rgba(${ACCENT_RGB},0.2)`, color: "white", fontFamily: "'Inter',sans-serif" }}
@@ -448,7 +519,7 @@ export function BrandingStartPage() {
                   </div>
                 ))}
                 <div>
-                  <label style={{ fontFamily: "'DM Mono',monospace", color: `rgba(${ACCENT_RGB},0.7)`, fontSize: "10px", letterSpacing: "0.25em" }} className="uppercase block mb-2">Tell us more about your brand vision</label>
+                  <label style={{ fontFamily: "'DM Mono',monospace", color: `rgba(${ACCENT_RGB},0.7)`, fontSize: "11px", letterSpacing: "0.25em" }} className="uppercase block mb-2">Tell us more about your brand vision</label>
                   <textarea value={data.brief} onChange={e => setData(d => ({ ...d, brief: e.target.value }))} placeholder="Your industry, target audience, competitors you admire, brands you like, any brand history or guidelines you have..."
                     rows={4} className="w-full bg-transparent border px-4 py-3 text-sm outline-none resize-none transition-all duration-200"
                     style={{ borderColor: `rgba(${ACCENT_RGB},0.2)`, color: "white", fontFamily: "'Inter',sans-serif" }}
@@ -461,50 +532,44 @@ export function BrandingStartPage() {
           </motion.div>
         </AnimatePresence>
 
-        {/* Nav buttons */}
-        <div className="flex items-center justify-between mt-14">
-          <button type="button" onClick={back} disabled={step === 1}
-            className="flex items-center gap-2 transition-opacity duration-200"
-            style={{ fontFamily: "'DM Mono',monospace", color: `rgba(${ACCENT_RGB},0.5)`, fontSize: "11px", letterSpacing: "0.2em", opacity: step === 1 ? 0 : 1 }}>
-            <ArrowLeft size={13} /> Back
-          </button>
-
-          {step < TOTAL_STEPS ? (
-            <button type="button" onClick={next} disabled={!canNext()}
-              className="flex items-center gap-3 px-8 py-4 transition-all duration-200"
-              style={{
-                fontFamily: "'DM Mono',monospace", fontSize: "11px", letterSpacing: "0.2em",
-                backgroundColor: canNext() ? ACCENT : "transparent",
-                color: canNext() ? "#0a0a0a" : `rgba(${ACCENT_RGB},0.3)`,
-                border: `1px solid ${canNext() ? ACCENT : `rgba(${ACCENT_RGB},0.2)`}`,
-                cursor: canNext() ? "pointer" : "not-allowed",
-              }}>
-              CONTINUE <ArrowRight size={13} />
+          {/* ── Navigation ────────────────────────────────────────────────────── */}
+          <div className="flex flex-col-reverse sm:flex-row sm:items-center sm:justify-between gap-4 mt-8 sm:mt-14 pt-6 sm:pt-8 border-t border-white/5">
+            <button type="button" onClick={back} disabled={step === 1}
+              className="flex items-center gap-2 transition-opacity duration-200"
+              style={{ fontFamily: "'DM Mono',monospace", color: `rgba(${ACCENT_RGB},0.5)`, fontSize: "11px", letterSpacing: "0.2em", opacity: step === 1 ? 0 : 1 }}>
+              <ArrowLeft size={13} /> BACK
             </button>
-          ) : (
-            <button type="button" onClick={() => setSubmitted(true)}
-              disabled={!data.name || !data.emailAddr}
-              className="flex items-center gap-3 px-8 py-4 transition-all duration-200"
-              style={{
-                fontFamily: "'DM Mono',monospace", fontSize: "11px", letterSpacing: "0.2em",
-                backgroundColor: (data.name && data.emailAddr) ? ACCENT : "transparent",
-                color: (data.name && data.emailAddr) ? "#0a0a0a" : `rgba(${ACCENT_RGB},0.3)`,
-                border: `1px solid ${(data.name && data.emailAddr) ? ACCENT : `rgba(${ACCENT_RGB},0.2)`}`,
-                cursor: (data.name && data.emailAddr) ? "pointer" : "not-allowed",
-              }}>
-              SEND BRIEF <Check size={13} />
-            </button>
-          )}
-        </div>
 
-        {/* Step dots */}
-        <div className="flex justify-center gap-2 mt-10">
-          {Array.from({ length: TOTAL_STEPS }, (_, i) => (
-            <div key={i} className="rounded-full transition-all duration-300"
-              style={{ width: i + 1 === step ? "20px" : "6px", height: "6px", backgroundColor: i + 1 <= step ? ACCENT : `rgba(${ACCENT_RGB},0.2)` }} />
-          ))}
+            {step < TOTAL_STEPS ? (
+              <button type="button" onClick={next} disabled={!canNext()}
+                className="flex items-center gap-3 px-8 py-4 transition-all duration-200"
+                style={{
+                  fontFamily: "'DM Mono',monospace", fontSize: "11px", letterSpacing: "0.2em",
+                  backgroundColor: canNext() ? ACCENT : "transparent",
+                  color: canNext() ? "#0a0a0a" : `rgba(${ACCENT_RGB},0.3)`,
+                  border: `1px solid ${canNext() ? ACCENT : `rgba(${ACCENT_RGB},0.2)`}`,
+                  cursor: canNext() ? "pointer" : "not-allowed",
+                }}>
+                CONTINUE <ArrowRight size={13} />
+              </button>
+            ) : (
+              <button type="button" onClick={() => setSubmitted(true)}
+                disabled={!data.name || !data.emailAddr}
+                className="flex items-center gap-3 px-8 py-4 transition-all duration-200"
+                style={{
+                  fontFamily: "'DM Mono',monospace", fontSize: "11px", letterSpacing: "0.2em",
+                  backgroundColor: (data.name && data.emailAddr) ? ACCENT : "transparent",
+                  color: (data.name && data.emailAddr) ? "#0a0a0a" : `rgba(${ACCENT_RGB},0.3)`,
+                  border: `1px solid ${(data.name && data.emailAddr) ? ACCENT : `rgba(${ACCENT_RGB},0.2)`}`,
+                  cursor: (data.name && data.emailAddr) ? "pointer" : "not-allowed",
+                }}>
+                SEND BRIEF <Check size={13} />
+              </button>
+            )}
+          </div>
+
         </div>
-      </div>
+      </section>
     </div>
   );
 }

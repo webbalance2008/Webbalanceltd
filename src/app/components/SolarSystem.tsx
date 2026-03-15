@@ -71,9 +71,9 @@ export function SolarSystem({ accentColor }: SolarSystemProps) {
         <circle cx={cx} cy={cy} r={360} fill="none" stroke="rgba(255,255,255,0.04)" strokeWidth="0.5" strokeDasharray="3 12" />
 
         {/* ── Sun ── */}
-        <circle cx={cx} cy={cy} r={40} fill={`${accentColor}08`} style={{ transition: "fill 1.2s ease" }} />
-        <circle cx={cx} cy={cy} r={22} fill={`${accentColor}18`} style={{ transition: "fill 1.2s ease" }} />
-        <circle cx={cx} cy={cy} r={10} fill={`${accentColor}60`} filter="url(#sunGlow)" style={{ transition: "fill 1.2s ease" }}>
+        <circle cx={cx} cy={cy} r={40} fill={`${accentColor}08`} />
+        <circle cx={cx} cy={cy} r={22} fill={`${accentColor}18`} />
+        <circle cx={cx} cy={cy} r={10} fill={`${accentColor}60`} filter="url(#sunGlow)">
           <animate attributeName="r" values="9;11;9" dur="4s" repeatCount="indefinite" />
           <animate attributeName="opacity" values="0.8;1;0.8" dur="4s" repeatCount="indefinite" />
         </circle>
@@ -90,7 +90,7 @@ export function SolarSystem({ accentColor }: SolarSystemProps) {
         {/* ── Planet 2 — orbit r100, period 14s (with a moon) ── */}
         <g>
           <animateTransform attributeName="transform" type="rotate" from={`0 ${cx} ${cy}`} to={`360 ${cx} ${cy}`} dur="14s" repeatCount="indefinite" />
-          <circle cx={cx + 100} cy={cy} r={3.5} fill={accentColor} opacity="0.7" filter="url(#planetGlow)" style={{ transition: "fill 1.2s ease" }}>
+          <circle cx={cx + 100} cy={cy} r={3.5} fill={accentColor} opacity="0.7" filter="url(#planetGlow)">
             <animate attributeName="opacity" values="0.6;0.85;0.6" dur="7s" repeatCount="indefinite" />
           </circle>
           {/* Moon orbiting planet 2 */}
@@ -109,10 +109,10 @@ export function SolarSystem({ accentColor }: SolarSystemProps) {
         {/* ── Planet 4 — orbit r215, period 40s (larger, accent-tinted) ── */}
         <g>
           <animateTransform attributeName="transform" type="rotate" from={`90 ${cx} ${cy}`} to={`450 ${cx} ${cy}`} dur="40s" repeatCount="indefinite" />
-          <circle cx={cx + 215} cy={cy} r={5} fill="rgba(255,255,255,0.15)" stroke={accentColor} strokeWidth="1" opacity="0.8" filter="url(#planetGlow)" style={{ transition: "stroke 1.2s ease" }}>
+          <circle cx={cx + 215} cy={cy} r={5} fill="rgba(255,255,255,0.15)" stroke={accentColor} strokeWidth="1" opacity="0.8" filter="url(#planetGlow)">
             <animate attributeName="opacity" values="0.7;1;0.7" dur="20s" repeatCount="indefinite" />
           </circle>
-          <circle cx={cx + 215} cy={cy} r={2.5} fill={accentColor} opacity="0.6" style={{ transition: "fill 1.2s ease" }} />
+          <circle cx={cx + 215} cy={cy} r={2.5} fill={accentColor} opacity="0.6" />
           {/* Moon orbiting planet 4 */}
           <g transform={`translate(${cx + 215}, ${cy})`}>
             <animateTransform attributeName="transform" type="rotate" from="0 0 0" to="360 0 0" dur="5s" repeatCount="indefinite" additive="sum" />
@@ -134,7 +134,7 @@ export function SolarSystem({ accentColor }: SolarSystemProps) {
         {/* ── Planet 6 — orbit r290 (opposite side, 65s offset) ── */}
         <g>
           <animateTransform attributeName="transform" type="rotate" from={`45 ${cx} ${cy}`} to={`405 ${cx} ${cy}`} dur="65s" repeatCount="indefinite" />
-          <circle cx={cx + 290} cy={cy} r={1.5} fill={`${accentColor}88`} style={{ transition: "fill 1.2s ease" }} />
+          <circle cx={cx + 290} cy={cy} r={1.5} fill={`${accentColor}88`} />
         </g>
 
         {/* ── Outer slow body — orbit r360, period 120s ── */}

@@ -5,6 +5,8 @@ import {
   Palette, UtensilsCrossed, Home, BookOpen, Users,
   Server, Video, Globe, Mail, RotateCcw, HelpCircle, ChevronDown, Search, FileText, ImageIcon, LucideIcon, CornerDownRight, ArrowUpDown, Clock, Sparkles, Info, PoundSterling,
 } from "lucide-react";
+import { sendEmail } from "../utils/sendEmail";
+import { SEOHead } from "../components/SEOHead";
 
 const ACCENT      = "#00d4e8";
 const ACCENT_RGB  = "0, 212, 232";
@@ -494,13 +496,13 @@ function TechCard({ option, isActive, onClick }: { option: TechOption; isActive:
             {isUnsure && (
               <HelpCircle size={12} style={{ color: isActive ? ACCENT : hov ? `rgba(${ACCENT_RGB},0.8)` : `rgba(${ACCENT_RGB},0.5)`, flexShrink: 0, transition: "color 0.2s" }} />
             )}
-            <p style={{ fontFamily:"'Montserrat',sans-serif", fontSize:"14px", fontWeight:600,
+            <p style={{ fontFamily:"'Montserrat',sans-serif", fontSize:"18px", fontWeight:600,
               color:isActive?"white":hov?"rgba(255,255,255,0.95)":isUnsure?`rgba(${ACCENT_RGB},0.75)`:"rgba(255,255,255,0.9)",
               transition:"color 0.2s" }}>
               {option.label}
             </p>
           </div>
-          <p style={{ fontFamily:"'Inter',sans-serif", fontSize:"12px", lineHeight:1.5,
+          <p style={{ fontFamily:"'Inter',sans-serif", fontSize:"15px", lineHeight:1.5,
             color:isActive?`rgba(${ACCENT_RGB},0.8)`:hov?`rgba(${ACCENT_RGB},0.6)`:isUnsure?"white":"white",
             transition:"color 0.2s" }}>
             {option.sub}
@@ -533,10 +535,10 @@ function InfraSection({ Icon, label, hint, children }: { Icon:LucideIcon; label:
     <div>
       <div className="flex items-center gap-3 mb-5">
         <Icon size={18} style={{ color:ACCENT, filter:`drop-shadow(0 0 5px rgba(${ACCENT_RGB},0.5))` }} />
-        <label style={{ fontFamily:"'DM Mono',monospace", color:ACCENT }} className="text-[12px] tracking-[0.3em] uppercase">
+        <label style={{ fontFamily:"'DM Mono',monospace", color:ACCENT }} className="text-[14px] tracking-[0.3em] uppercase">
           {label}
         </label>
-        {hint && <span style={{ fontFamily:"'Inter',sans-serif", fontSize:"12px", color:"white" }}>— {hint}</span>}
+        {hint && <span style={{ fontFamily:"'Inter',sans-serif", fontSize:"14px", color:"white" }}>— {hint}</span>}
       </div>
       {children}
     </div>
@@ -596,7 +598,18 @@ export function WebDesignStartPage() {
   const goNext = () => { if (!canAdvance()) return; setDirection(1);  setStep((s) => Math.min(s + 1, TOTAL_STEPS)); };
   const goBack = () => {                              setDirection(-1); setStep((s) => Math.max(s - 1, 1)); };
 
-  const handleSubmit = (e: React.FormEvent) => { e.preventDefault(); setSubmitted(true); };
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    setSubmitted(true);
+    const est = calculateEstimate(data);
+    sendEmail("web-design-wizard", {
+      name: data.name, email: data.emailAddr, company: data.company, website: data.website,
+      websiteType: data.websiteType, goals: data.goals.join(", "), branding: data.branding,
+      pages: data.pages.map(p => p.name).join(", "), features: data.features.join(", "),
+      hosting: data.hosting, timeline: data.timeline, paymentPlan: data.paymentPlan,
+      estimate: `£${Math.round(est.total).toLocaleString("en-GB")}`, brief: data.brief,
+    });
+  };
 
   const handleReset = () => {
     setData(initialData);
@@ -634,7 +647,7 @@ export function WebDesignStartPage() {
             <Check size={32} style={{ color:ACCENT }} />
           </div>
           <p style={{ fontFamily:"'DM Mono',monospace", color:ACCENT }}
-             className="text-xs tracking-[0.35em] uppercase mb-5">Brief Received</p>
+             className="text-sm tracking-[0.35em] uppercase mb-5">Brief Received</p>
           <h2 style={{ fontFamily:"'Montserrat',sans-serif" }}
               className="text-white text-4xl font-light mb-5 leading-tight">
             Thank you — we'll be in touch.
@@ -651,6 +664,12 @@ export function WebDesignStartPage() {
 
   return (
     <div className="min-h-screen" style={{ background:"#16212e" }}>
+      <SEOHead
+        title="Web Design Quote Builder"
+        description="Walk through our 7-step web design wizard to build a tailored quote for your bespoke website. Get a personalised estimate in minutes."
+        path="/web-design/start"
+        keywords="web design quote, website cost estimator, bespoke website wizard, UK web design pricing"
+      />
 
       {/* ── Progress ────────────────────────────────────────────────────────── */}
       <div className="fixed top-24 left-0 right-0 z-40 px-4 sm:px-8 md:px-16 pointer-events-none"
@@ -772,13 +791,13 @@ export function WebDesignStartPage() {
                             filter:isActive||isHov?`drop-shadow(0 0 6px rgba(${ACCENT_RGB},0.5))`:"none",
                             transition:"all 0.2s",
                           }} />
-                          <p style={{ fontFamily:"'Montserrat',sans-serif", fontSize:"14px", fontWeight:600,
+                          <p style={{ fontFamily:"'Montserrat',sans-serif", fontSize:"18px", fontWeight:600,
                             color:isActive?"white":isHov?"white":"rgba(255,255,255,0.9)",
                             marginBottom:"6px", letterSpacing:"0.01em", transition:"color 0.2s" }}>
                             {label}
                           </p>
-                          <p style={{ fontFamily:"'Inter',sans-serif", fontSize:"12px", lineHeight:1.4,
-                            color:isActive?`rgba(${ACCENT_RGB},0.8)`:isHov?`rgba(${ACCENT_RGB},0.65)`:"rgba(255,255,255,0.65)",
+                          <p style={{ fontFamily:"'Inter',sans-serif", fontSize:"15px", lineHeight:1.4,
+                            color:isActive?`rgba(${ACCENT_RGB},0.8)`:isHov?`rgba(${ACCENT_RGB},0.65)`:"rgba(255,255,255,0.9)",
                             transition:"color 0.2s" }}>
                             {sub}
                           </p>
@@ -816,12 +835,12 @@ export function WebDesignStartPage() {
                           transition: "all 0.2s", flexShrink: 0,
                         }} />
                         <div className="text-left">
-                          <p style={{ fontFamily:"'Montserrat',sans-serif", fontSize:"15px", fontWeight:600,
+                          <p style={{ fontFamily:"'Montserrat',sans-serif", fontSize:"18px", fontWeight:600,
                             color: isActive ? "white" : isHov ? `rgba(${ACCENT_RGB},0.95)` : `rgba(${ACCENT_RGB},0.65)`,
                             transition:"color 0.2s", marginBottom:"3px" }}>
                             I'm Not Sure Yet
                           </p>
-                          <p style={{ fontFamily:"'Inter',sans-serif", fontSize:"12px",
+                          <p style={{ fontFamily:"'Inter',sans-serif", fontSize:"15px",
                             color: isActive ? `rgba(${ACCENT_RGB},0.75)` : "white", transition:"color 0.2s" }}>
                             No problem — tell us about your goals and we'll recommend the right approach
                           </p>
@@ -843,9 +862,9 @@ export function WebDesignStartPage() {
                 <div className="mt-8 sm:mt-12 space-y-10 sm:space-y-16">
                   <div>
                     <label style={{ fontFamily:"'DM Mono',monospace", color:ACCENT }}
-                           className="block text-[12px] tracking-[0.3em] uppercase mb-5">
+                           className="block text-[14px] tracking-[0.3em] uppercase mb-5">
                       Primary Goal{" "}
-                      <span style={{ fontFamily:"'Inter',sans-serif", fontSize:"12px", color:"white", letterSpacing:0, textTransform:"none" }}>
+                      <span style={{ fontFamily:"'Inter',sans-serif", fontSize:"14px", color:"white", letterSpacing:0, textTransform:"none" }}>
                         (pick up to 2)
                       </span>
                     </label>
@@ -860,7 +879,7 @@ export function WebDesignStartPage() {
                             className="flex items-center gap-2 px-5 py-3.5 sm:py-3 border tracking-[0.08em] transition-all duration-200 w-full sm:w-auto"
                             style={{
                               fontFamily:"'Inter',sans-serif",
-                              fontSize:"13px",
+                              fontSize:"16px",
                               ...(isUnsureGoal ? unsureChipStyle(isActive, isHov) : chipStyle(isActive, isHov)),
                             }}>
                             {isUnsureGoal && <HelpCircle size={13} style={{ flexShrink: 0 }} />}
@@ -872,7 +891,7 @@ export function WebDesignStartPage() {
                   </div>
                   <div>
                     <label style={{ fontFamily:"'DM Mono',monospace", color:ACCENT }}
-                           className="block text-[12px] tracking-[0.3em] uppercase mb-5">
+                           className="block text-[14px] tracking-[0.3em] uppercase mb-5">
                       Branding
                     </label>
                     <div className="grid grid-cols-1 sm:grid-cols-3 md:grid-cols-5 gap-3 sm:gap-4">
@@ -892,7 +911,7 @@ export function WebDesignStartPage() {
                   {hasSetupFee(data.websiteType) && (
                     <div>
                       <label style={{ fontFamily:"'DM Mono',monospace", color:ACCENT }}
-                             className="block text-[12px] tracking-[0.3em] uppercase mb-6">
+                             className="block text-[14px] tracking-[0.3em] uppercase mb-6">
                         Project Setup
                       </label>
                       <div className="border p-5" style={{ borderColor:`rgba(${ACCENT_RGB},0.25)`, backgroundColor:`rgba(${ACCENT_RGB},0.05)` }}>
@@ -951,14 +970,14 @@ export function WebDesignStartPage() {
                               ? "Additional Features"
                               : "Features"}
                         </h3>
-                        <p style={{ fontFamily: "'Inter',sans-serif", fontSize: "13px", color: "rgba(255,255,255,0.55)", lineHeight: "1.5" }}>
+                        <p style={{ fontFamily: "'Inter',sans-serif", fontSize: "15px", color: "rgba(255,255,255,0.8)", lineHeight: "1.5" }}>
                           Select all features that apply to this project.
                         </p>
                       </div>
 
                       {hasSetupFee(data.websiteType) && (
-                        <p className="mb-5" style={{ fontFamily:"'Inter',sans-serif", fontSize:"12px",
-                          color:`rgba(${ACCENT_RGB},0.5)`, lineHeight:1.6 }}>
+                        <p className="mb-5" style={{ fontFamily:"'Inter',sans-serif", fontSize:"14px",
+                          color:`rgba(${ACCENT_RGB},0.65)`, lineHeight:1.6 }}>
                           {data.websiteType === "ecommerce"   && "Core platform & checkout is covered in your setup fee. Add extras below."}
                           {data.websiteType === "hospitality" && "Core site structure & booking system is in your setup fee. Add extras below."}
                           {data.websiteType === "realestate"  && "Listing system & lead capture tools are in your setup fee. Add extras below."}
@@ -972,7 +991,7 @@ export function WebDesignStartPage() {
                           <button key={f} type="button" onClick={() => toggleFeature(f)}
                             onMouseEnter={() => setHovFeature(f)} onMouseLeave={() => setHovFeature(null)}
                             className="px-5 py-2.5 border tracking-[0.06em] transition-all duration-200"
-                            style={{ fontFamily:"'Inter',sans-serif", fontSize:"13px", ...chipStyle(data.features.includes(f), hovFeature===f) }}>
+                            style={{ fontFamily:"'Inter',sans-serif", fontSize:"16px", ...chipStyle(data.features.includes(f), hovFeature===f) }}>
                             {f}
                           </button>
                         ))}
@@ -1042,8 +1061,8 @@ export function WebDesignStartPage() {
                             marginBottom:"4px", transition:"color 0.2s" }}>
                             {label}
                           </p>
-                          <p style={{ fontFamily:"'Inter',sans-serif", fontSize:"12px",
-                            color:isActive?`rgba(${ACCENT_RGB},0.8)`:"rgba(255,255,255,0.6)", transition:"color 0.2s" }}>
+                          <p style={{ fontFamily:"'Inter',sans-serif", fontSize:"15px",
+                            color:isActive?`rgba(${ACCENT_RGB},0.8)`:"rgba(255,255,255,0.9)", transition:"color 0.2s" }}>
                             {sub}
                           </p>
                           {isActive && (
@@ -1085,8 +1104,8 @@ export function WebDesignStartPage() {
                             transition:"color 0.2s", marginBottom:"3px" }}>
                             Not Sure Yet
                           </p>
-                          <p style={{ fontFamily:"'Inter',sans-serif", fontSize:"12px",
-                            color: isActive ? `rgba(${ACCENT_RGB},0.8)` : "rgba(255,255,255,0.65)", transition:"color 0.2s" }}>
+                          <p style={{ fontFamily:"'Inter',sans-serif", fontSize:"15px",
+                            color: isActive ? `rgba(${ACCENT_RGB},0.8)` : "rgba(255,255,255,0.9)", transition:"color 0.2s" }}>
                             {unsureT.sub}
                           </p>
                         </div>
@@ -1155,14 +1174,14 @@ export function WebDesignStartPage() {
 
                       <div className="space-y-4">
                         <div className="flex flex-col sm:flex-row sm:justify-between sm:items-baseline gap-0.5 sm:gap-0">
-                          <span style={{ fontFamily:"'DM Mono',monospace", fontSize:"12px", letterSpacing:"0.15em",
+                          <span style={{ fontFamily:"'DM Mono',monospace", fontSize:"14px", letterSpacing:"0.15em",
                             color:"rgba(255,255,255,0.85)", textTransform:"uppercase" }}>Subtotal (ex-VAT)</span>
                           <span style={{ fontFamily:"'DM Mono',monospace", fontSize:"17px", color:"white" }}>
                             {fmt(estimate.subtotal)}
                           </span>
                         </div>
                         <div className="flex flex-col sm:flex-row sm:justify-between sm:items-baseline gap-0.5 sm:gap-0">
-                          <span style={{ fontFamily:"'DM Mono',monospace", fontSize:"12px", letterSpacing:"0.15em",
+                          <span style={{ fontFamily:"'DM Mono',monospace", fontSize:"14px", letterSpacing:"0.15em",
                             color:"rgba(255,255,255,0.85)", textTransform:"uppercase" }}>VAT (20%)</span>
                           <span style={{ fontFamily:"'DM Mono',monospace", fontSize:"17px", color:"rgba(255,255,255,0.85)" }}>
                             {fmt(estimate.vat)}
@@ -1171,10 +1190,10 @@ export function WebDesignStartPage() {
                         <div className="h-px" style={{ backgroundColor:"rgba(255,255,255,0.08)" }} />
                         <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3 sm:gap-0">
                           <div>
-                            <span style={{ fontFamily:"'DM Mono',monospace", fontSize:"12px", letterSpacing:"0.25em",
+                            <span style={{ fontFamily:"'DM Mono',monospace", fontSize:"14px", letterSpacing:"0.25em",
                               color:ACCENT, textTransform:"uppercase" }}>Total Investment</span>
-                            <p style={{ fontFamily:"'Inter',sans-serif", fontSize:"12px",
-                              color:"rgba(255,255,255,0.75)", marginTop:"4px" }}>Including VAT</p>
+                            <p style={{ fontFamily:"'Inter',sans-serif", fontSize:"14px",
+                              color:"rgba(255,255,255,0.85)", marginTop:"4px" }}>Including VAT</p>
                           </div>
                           <div className="sm:text-right">
                             <span style={{ fontFamily:"'Montserrat',sans-serif",
@@ -1193,7 +1212,7 @@ export function WebDesignStartPage() {
 
                     <div className="px-5 sm:px-8 md:px-10 py-5 border-t"
                       style={{ borderColor:`rgba(${ACCENT_RGB},0.1)`, backgroundColor:`rgba(0,0,0,0.2)` }}>
-                      <p style={{ fontFamily:"'Inter',sans-serif", fontSize:"12px", lineHeight:1.6, color:"rgba(255,255,255,0.45)" }}>
+                      <p style={{ fontFamily:"'Inter',sans-serif", fontSize:"14px", lineHeight:1.6, color:"rgba(255,255,255,0.65)" }}>
                         This is an indicative estimate based on your selections and our standard rate of £{HOURLY_RATE}/hr. Final pricing is confirmed after a discovery call and may vary based on specific requirements. All prices include VAT at the current UK rate of 20%.
                       </p>
                     </div>
@@ -1201,10 +1220,10 @@ export function WebDesignStartPage() {
 
                   <div>
                     <label style={{ fontFamily:"'DM Mono',monospace", color:ACCENT }}
-                           className="block text-[12px] tracking-[0.3em] uppercase mb-3">
+                           className="block text-[14px] tracking-[0.3em] uppercase mb-3">
                       Payment Preference
                     </label>
-                    <p style={{ fontFamily:"'Inter',sans-serif", fontSize:"13px", color:"rgba(255,255,255,0.75)" }}
+                    <p style={{ fontFamily:"'Inter',sans-serif", fontSize:"15px", color:"rgba(255,255,255,0.85)" }}
                        className="mb-7">
                       Choose how you'd like to structure the investment — this doesn't commit you to anything.
                     </p>
@@ -1258,9 +1277,9 @@ export function WebDesignStartPage() {
                 {step === 4 && (
                   <button type="button" onClick={goNext}
                     className="tracking-[0.2em] uppercase transition-colors duration-200 text-center py-2"
-                    style={{ fontFamily:"'DM Mono',monospace", fontSize:"12px", color:"rgba(255,255,255,0.25)" }}
-                    onMouseEnter={(e) => { e.currentTarget.style.color="rgba(255,255,255,0.55)"; }}
-                    onMouseLeave={(e) => { e.currentTarget.style.color="rgba(255,255,255,0.25)"; }}>
+                    style={{ fontFamily:"'DM Mono',monospace", fontSize:"14px", color:"rgba(255,255,255,0.35)" }}
+                    onMouseEnter={(e) => { e.currentTarget.style.color="rgba(255,255,255,0.65)"; }}
+                    onMouseLeave={(e) => { e.currentTarget.style.color="rgba(255,255,255,0.35)"; }}>
                     Skip for now
                   </button>
                 )}
@@ -1316,8 +1335,8 @@ function PaymentPlanCard({ plan, total, isActive, onClick }:
               transition:"color 0.2s", marginBottom:"5px" }}>
               {plan.label}
             </p>
-            <p style={{ fontFamily:"'Inter',sans-serif", fontSize:"12px", lineHeight:1.5,
-              color:isActive?`rgba(${ACCENT_RGB},0.8)`:"rgba(255,255,255,0.6)", transition:"color 0.2s" }}>
+            <p style={{ fontFamily:"'Inter',sans-serif", fontSize:"15px", lineHeight:1.5,
+              color:isActive?`rgba(${ACCENT_RGB},0.8)`:"rgba(255,255,255,0.85)", transition:"color 0.2s" }}>
               {plan.desc}
             </p>
           </div>
@@ -1380,7 +1399,7 @@ function BackBtn({ onClick, disabled, className = "" }: { onClick: () => void; d
       className={`flex items-center justify-center gap-2.5 px-5 py-3 border tracking-[0.2em] uppercase transition-all duration-200 ${className}`}
       style={{
         fontFamily: "'DM Mono',monospace",
-        fontSize: "12px",
+        fontSize: "14px",
         borderColor:     disabled ? "rgba(255,255,255,0.07)" : hov ? "rgba(255,255,255,0.45)" : "rgba(255,255,255,0.18)",
         color:           disabled ? "rgba(255,255,255,0.15)" : hov ? "white" : "rgba(255,255,255,0.55)",
         backgroundColor: hov && !disabled ? "rgba(255,255,255,0.05)" : "transparent",
@@ -1404,7 +1423,7 @@ function ResetBtn({ onClick, className = "" }: { onClick: () => void; className?
       className={`flex items-center justify-center gap-2.5 px-5 py-3 border tracking-[0.2em] uppercase transition-all duration-200 ${className}`}
       style={{
         fontFamily: "'DM Mono',monospace",
-        fontSize: "12px",
+        fontSize: "14px",
         borderColor:     hov ? "rgba(220,70,70,0.7)" : "rgba(200,60,60,0.35)",
         color:           hov ? "rgba(240,100,100,0.95)" : "rgba(200,80,80,0.7)",
         backgroundColor: hov ? "rgba(220,60,60,0.07)" : "transparent",
@@ -1444,7 +1463,7 @@ function HoverField({ label, name, type="text", placeholder, required, value, on
     <div onMouseEnter={() => setIsHov(true)} onMouseLeave={() => setIsHov(false)}>
       <label htmlFor={name} style={{ fontFamily:"'DM Mono',monospace",
         color:isFoc?accent:"white", transition:"color 0.2s",
-        display:"block", fontSize:"12px", letterSpacing:"0.3em", textTransform:"uppercase" as const, marginBottom:"12px" }}>
+        display:"block", fontSize:"14px", letterSpacing:"0.3em", textTransform:"uppercase" as const, marginBottom:"12px" }}>
         {label}
       </label>
       <input id={name} name={name} type={type} placeholder={placeholder} required={required}
@@ -1468,7 +1487,7 @@ function HoverTextarea({ label, name, placeholder, value, onChange, accent, acce
     <div onMouseEnter={() => setIsHov(true)} onMouseLeave={() => setIsHov(false)}>
       <label style={{ fontFamily:"'DM Mono',monospace",
         color:isFoc?accent:"white", transition:"color 0.2s",
-        display:"block", fontSize:"12px", letterSpacing:"0.3em", textTransform:"uppercase" as const, marginBottom:"14px" }}>
+        display:"block", fontSize:"14px", letterSpacing:"0.3em", textTransform:"uppercase" as const, marginBottom:"14px" }}>
         {label}
       </label>
       <textarea name={name} rows={6} placeholder={placeholder}
@@ -1803,8 +1822,8 @@ function BuildHoursInfo() {
                             {phase.title}
                           </span>
                         </div>
-                        <p style={{ fontFamily: "'Inter',sans-serif", fontSize: "12px",
-                          color: "rgba(255,255,255,0.42)", lineHeight: "1.6", margin: 0 }}>
+                        <p style={{ fontFamily: "'Inter',sans-serif", fontSize: "14px",
+                          color: "rgba(255,255,255,0.65)", lineHeight: "1.6", margin: 0 }}>
                           {phase.desc}
                         </p>
                       </div>
@@ -2003,7 +2022,7 @@ function PageBuilder({ pages, onChange, typeId = "brochure", isSetupType = false
               className="flex items-center gap-1.5 px-3.5 py-2 border transition-all duration-150"
               style={{
                 fontFamily: "'Inter',sans-serif",
-                fontSize: "12px",
+                fontSize: "14px",
                 borderColor:     added ? ACCENT : `rgba(${ACCENT_RGB},0.2)`,
                 backgroundColor: added ? `rgba(${ACCENT_RGB},0.12)` : `rgba(${ACCENT_RGB},0.03)`,
                 color:           added ? ACCENT : "rgba(255,255,255,0.75)",
@@ -2024,7 +2043,7 @@ function PageBuilder({ pages, onChange, typeId = "brochure", isSetupType = false
           className="flex items-center gap-1.5 px-3.5 py-2 border transition-all duration-150"
           style={{
             fontFamily: "'Inter',sans-serif",
-            fontSize: "12px",
+            fontSize: "14px",
             borderColor: showCustom ? "rgba(239,68,68,0.5)" : "rgba(239,68,68,0.25)",
             backgroundColor: showCustom ? "rgba(239,68,68,0.08)" : "rgba(239,68,68,0.03)",
             color: showCustom ? "rgba(239,68,68,0.9)" : "rgba(239,68,68,0.65)",
@@ -2371,7 +2390,7 @@ function PageBuilder({ pages, onChange, typeId = "brochure", isSetupType = false
                                         <div className="px-2.5 py-1">
                                           <div className="flex flex-col gap-0.5">
                                             <span style={{ fontFamily:"'DM Mono',monospace", fontSize:"7px", letterSpacing:"0.2em", textTransform:"uppercase" as const, color:`rgba(${ACCENT_RGB},0.4)` }}>Total</span>
-                                            <span style={{ fontFamily:"'DM Mono',monospace", fontSize:"12px", color:ACCENT, fontWeight:600 }}>{fmt(rowTotal)}</span>
+                                            <span style={{ fontFamily:"'DM Mono',monospace", fontSize:"14px", color:ACCENT, fontWeight:600 }}>{fmt(rowTotal)}</span>
                                           </div>
                                         </div>
                                       </div>
@@ -2418,7 +2437,7 @@ function PageBuilder({ pages, onChange, typeId = "brochure", isSetupType = false
                                           style={{ borderBottom:`1px solid rgba(${ACCENT_RGB},0.06)` }}>
                                           <div className="flex items-center gap-2">
                                             <Search size={12} style={{ color:`rgba(${ACCENT_RGB},0.5)`, flexShrink:0 }} />
-                                            <span style={{ fontFamily:"'Inter',sans-serif", fontSize:"12px", color:"rgba(255,255,255,0.7)" }}>SEO</span>
+                                            <span style={{ fontFamily:"'Inter',sans-serif", fontSize:"14px", color:"rgba(255,255,255,0.85)" }}>SEO</span>
                                             <span style={{ fontFamily:"'DM Mono',monospace", fontSize:"10px", color:`rgba(${ACCENT_RGB},0.4)` }}>{SEO_PRICE}</span>
                                           </div>
                                           <AddonToggle active={page.seo} label="SEO" sublabel={SEO_PRICE} Icon={Search} onClick={() => toggleAddon(page.id,"seo")} />
@@ -2429,7 +2448,7 @@ function PageBuilder({ pages, onChange, typeId = "brochure", isSetupType = false
                                           style={{ borderBottom:`1px solid rgba(${ACCENT_RGB},0.06)` }}>
                                           <div className="flex items-center gap-2">
                                             <FileText size={12} style={{ color:`rgba(${ACCENT_RGB},0.5)`, flexShrink:0 }} />
-                                            <span style={{ fontFamily:"'Inter',sans-serif", fontSize:"12px", color:"rgba(255,255,255,0.7)" }}>Content</span>
+                                            <span style={{ fontFamily:"'Inter',sans-serif", fontSize:"14px", color:"rgba(255,255,255,0.85)" }}>Content</span>
                                             <span style={{ fontFamily:"'DM Mono',monospace", fontSize:"10px", color:`rgba(${ACCENT_RGB},0.4)` }}>{CONTENT_PRICE}</span>
                                           </div>
                                           <AddonToggle active={page.content} label="Content" sublabel={CONTENT_PRICE} Icon={FileText} onClick={() => toggleAddon(page.id,"content")} />
@@ -2440,7 +2459,7 @@ function PageBuilder({ pages, onChange, typeId = "brochure", isSetupType = false
                                           style={{ borderBottom:`1px solid rgba(${ACCENT_RGB},0.06)` }}>
                                           <div className="flex items-center gap-2">
                                             <ImageIcon size={12} style={{ color:`rgba(${ACCENT_RGB},0.5)`, flexShrink:0 }} />
-                                            <span style={{ fontFamily:"'Inter',sans-serif", fontSize:"12px", color:"rgba(255,255,255,0.7)" }}>Images</span>
+                                            <span style={{ fontFamily:"'Inter',sans-serif", fontSize:"14px", color:"rgba(255,255,255,0.85)" }}>Images</span>
                                             <span style={{ fontFamily:"'DM Mono',monospace", fontSize:"10px", color:`rgba(${ACCENT_RGB},0.4)` }}>{IMAGES_PRICE}</span>
                                           </div>
                                           <ImageStepper qty={page.images} price={IMAGES_PRICE} onChange={(q) => setImages(page.id,q)} />
@@ -2451,7 +2470,7 @@ function PageBuilder({ pages, onChange, typeId = "brochure", isSetupType = false
                                           style={{ borderBottom:`1px solid rgba(${ACCENT_RGB},0.06)` }}>
                                           <div className="flex items-center gap-2">
                                             <Sparkles size={12} style={{ color:`rgba(${ACCENT_RGB},0.5)`, flexShrink:0 }} />
-                                            <span style={{ fontFamily:"'Inter',sans-serif", fontSize:"12px", color:"rgba(255,255,255,0.7)" }}>Animation</span>
+                                            <span style={{ fontFamily:"'Inter',sans-serif", fontSize:"14px", color:"rgba(255,255,255,0.85)" }}>Animation</span>
                                             <span style={{ fontFamily:"'DM Mono',monospace", fontSize:"10px", color:`rgba(${ACCENT_RGB},0.4)` }}>{ANIMATION_PRICE}</span>
                                           </div>
                                           <AddonToggle active={page.animation} label="Anim." sublabel={ANIMATION_PRICE} Icon={Sparkles} onClick={() => toggleAddon(page.id,"animation")} />
@@ -2462,7 +2481,7 @@ function PageBuilder({ pages, onChange, typeId = "brochure", isSetupType = false
                                           style={{ borderBottom:`1px solid rgba(${ACCENT_RGB},0.06)` }}>
                                           <div className="flex items-center gap-2">
                                             <Video size={12} style={{ color:`rgba(${ACCENT_RGB},0.5)`, flexShrink:0 }} />
-                                            <span style={{ fontFamily:"'Inter',sans-serif", fontSize:"12px", color:"rgba(255,255,255,0.7)" }}>Video</span>
+                                            <span style={{ fontFamily:"'Inter',sans-serif", fontSize:"14px", color:"rgba(255,255,255,0.85)" }}>Video</span>
                                             <span style={{ fontFamily:"'DM Mono',monospace", fontSize:"10px", color:`rgba(${ACCENT_RGB},0.4)` }}>{VIDEO_PRICE}</span>
                                           </div>
                                           <VideoStepper qty={page.videos} price={VIDEO_PRICE} onChange={(q) => setVideos(page.id,q)} />
@@ -2477,19 +2496,19 @@ function PageBuilder({ pages, onChange, typeId = "brochure", isSetupType = false
                                         <div className="px-3 py-1">
                                           <div className="flex flex-col gap-0.5">
                                             <span style={{ fontFamily:"'DM Mono',monospace", fontSize:"8px", letterSpacing:"0.2em", textTransform:"uppercase" as const, color:"rgba(255,255,255,0.25)" }}>Add-ons</span>
-                                            <span style={{ fontFamily:"'DM Mono',monospace", fontSize:"12px", color:addonCost > 0 ? `rgba(${ACCENT_RGB},0.9)` : "rgba(255,255,255,0.2)" }}>{addonCost > 0 ? fmt(addonCost) : "—"}</span>
+                                            <span style={{ fontFamily:"'DM Mono',monospace", fontSize:"14px", color:addonCost > 0 ? `rgba(${ACCENT_RGB},0.9)` : "rgba(255,255,255,0.2)" }}>{addonCost > 0 ? fmt(addonCost) : "—"}</span>
                                           </div>
                                         </div>
                                         <div className="px-3 py-1" style={{ borderLeft:`1px solid rgba(${ACCENT_RGB},0.15)` }}>
                                           <div className="flex flex-col gap-0.5">
                                             <span style={{ fontFamily:"'DM Mono',monospace", fontSize:"8px", letterSpacing:"0.2em", textTransform:"uppercase" as const, color:"rgba(255,255,255,0.25)" }}>Build</span>
-                                            <span style={{ fontFamily:"'DM Mono',monospace", fontSize:"12px", color:"rgba(255,255,255,0.6)" }}>{fmt(pageBuildCost)}</span>
+                                            <span style={{ fontFamily:"'DM Mono',monospace", fontSize:"14px", color:"rgba(255,255,255,0.6)" }}>{fmt(pageBuildCost)}</span>
                                           </div>
                                         </div>
                                         <div className="px-3 py-1" style={{ borderLeft:`1px solid rgba(${ACCENT_RGB},0.2)`, backgroundColor:`rgba(${ACCENT_RGB},0.07)` }}>
                                           <div className="flex flex-col gap-0.5">
                                             <span style={{ fontFamily:"'DM Mono',monospace", fontSize:"8px", letterSpacing:"0.2em", textTransform:"uppercase" as const, color:`rgba(${ACCENT_RGB},0.45)` }}>Total</span>
-                                            <span style={{ fontFamily:"'DM Mono',monospace", fontSize:"12px", color:ACCENT, fontWeight:600 }}>{fmt(rowTotal)}</span>
+                                            <span style={{ fontFamily:"'DM Mono',monospace", fontSize:"14px", color:ACCENT, fontWeight:600 }}>{fmt(rowTotal)}</span>
                                           </div>
                                         </div>
                                       </div>
@@ -2514,7 +2533,7 @@ function PageBuilder({ pages, onChange, typeId = "brochure", isSetupType = false
                   style={{ gridTemplateColumns:gridTemplate, columnGap:"16px",
                     borderColor:`rgba(${ACCENT_RGB},0.12)`, backgroundColor:`rgba(${ACCENT_RGB},0.04)` }}>
                   <div className="flex flex-col gap-1">
-                    <span style={{ fontFamily:"'DM Mono',monospace", fontSize:"12px", letterSpacing:"0.22em", color:`rgba(${ACCENT_RGB},0.55)`, textTransform:"uppercase" }}>Page</span>
+                    <span style={{ fontFamily:"'DM Mono',monospace", fontSize:"14px", letterSpacing:"0.22em", color:`rgba(${ACCENT_RGB},0.55)`, textTransform:"uppercase" }}>Page</span>
                     <div className="flex items-center gap-1.5">
                       <span style={{ fontFamily:"'DM Mono',monospace", fontSize:"10px", color:`rgba(${ACCENT_RGB},0.4)` }}>build hrs</span>
                       <BuildHoursInfo />
@@ -2607,8 +2626,8 @@ function PageBuilder({ pages, onChange, typeId = "brochure", isSetupType = false
                             : <span style={{ fontFamily:"'DM Mono',monospace", fontSize:"13px", color:"rgba(255,255,255,0.15)" }}>—</span>}
                         </div>
                         <div className="flex items-center justify-center">
-                          {pageBuildCost > 0 ? <span style={{ fontFamily:"'DM Mono',monospace", fontSize:"12px", color:"rgba(255,255,255,0.6)" }}>{fmt(pageBuildCost)}</span>
-                            : <span style={{ fontFamily:"'DM Mono',monospace", fontSize:"12px", color:"rgba(255,255,255,0.15)" }}>—</span>}
+                          {pageBuildCost > 0 ? <span style={{ fontFamily:"'DM Mono',monospace", fontSize:"14px", color:"rgba(255,255,255,0.6)" }}>{fmt(pageBuildCost)}</span>
+                            : <span style={{ fontFamily:"'DM Mono',monospace", fontSize:"14px", color:"rgba(255,255,255,0.15)" }}>—</span>}
                         </div>
                         <div className="flex items-center justify-center">
                           {rowTotal > 0 ? <span style={{ fontFamily:"'DM Mono',monospace", fontSize:"13px", color:ACCENT, fontWeight:600 }}>{fmt(rowTotal)}</span>

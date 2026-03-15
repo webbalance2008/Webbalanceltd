@@ -1,6 +1,7 @@
-import { motion } from "motion/react";
-import { Smartphone, Palette, TrendingUp, Server, Megaphone, HeadphonesIcon } from "lucide-react";
+import { motion, AnimatePresence } from "motion/react";
+import { Smartphone, Palette, TrendingUp, Server, Megaphone, HeadphonesIcon, ChevronRight } from "lucide-react";
 import { Link } from "react-router";
+import { useState } from "react";
 
 const services = [
   {
@@ -60,8 +61,14 @@ const services = [
 ];
 
 export function CoreServices() {
+  const [expandedMobile, setExpandedMobile] = useState<string | null>(null);
+
+  const toggleMobile = (title: string) => {
+    setExpandedMobile(expandedMobile === title ? null : title);
+  };
+
   return (
-    <section className="relative bg-gradient-to-b from-[#1a2840] via-[#16212e] to-[#1a2840] py-32 overflow-hidden">
+    <section className="relative bg-gradient-to-b from-[#1a2840] via-[#16212e] to-[#1a2840] py-16 md:py-32 overflow-hidden">
       {/* Background decoration */}
       <div className="absolute inset-0 opacity-30">
         <svg className="w-full h-full" xmlns="http://www.w3.org/2000/svg">
@@ -81,14 +88,14 @@ export function CoreServices() {
 
       <div className="relative max-w-[1440px] mx-auto px-8 md:px-16">
         {/* Section header */}
-        <div className="text-center mb-20">
+        <div className="text-left mb-10 md:mb-20">
           <motion.p
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.6 }}
             style={{ fontFamily: "'DM Mono', monospace" }}
-            className="text-[#00d4e8] text-xs tracking-[0.3em] uppercase mb-4"
+            className="text-[#00d4e8] text-sm tracking-[0.3em] uppercase mb-4"
           >
             What We Do
           </motion.p>
@@ -98,7 +105,7 @@ export function CoreServices() {
             viewport={{ once: true }}
             transition={{ duration: 0.6, delay: 0.1 }}
             style={{ fontFamily: "'Montserrat', sans-serif" }}
-            className="text-white text-5xl md:text-6xl mb-6"
+            className="text-white text-4xl md:text-5xl mb-6"
           >
             Core Services
           </motion.h2>
@@ -108,14 +115,14 @@ export function CoreServices() {
             viewport={{ once: true }}
             transition={{ duration: 0.6, delay: 0.2 }}
             style={{ fontFamily: "'Inter', sans-serif" }}
-            className="text-white/50 text-lg max-w-2xl mx-auto"
+            className="text-white/50 text-lg max-w-2xl"
           >
             End-to-end digital solutions designed to elevate your brand and drive measurable results
           </motion.p>
         </div>
 
-        {/* Services grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {/* Services grid — desktop */}
+        <div className="hidden md:grid md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
           {services.map((service, index) => {
             const Icon = service.icon;
             return (
@@ -128,7 +135,7 @@ export function CoreServices() {
               >
                 <Link
                   to={service.link}
-                  className="group block relative bg-[#1d2d3e]/60 backdrop-blur-sm border border-white/5 p-8 transition-all duration-500 overflow-hidden h-full"
+                  className="group block relative bg-[#1d2d3e]/60 backdrop-blur-sm border border-white/5 p-6 md:p-8 transition-all duration-500 overflow-hidden h-full"
                   style={{ ["--svc-accent" as string]: service.accent }}
                   onMouseEnter={(e) => {
                     e.currentTarget.style.borderColor = `rgba(${service.accentRgb}, 0.35)`;
@@ -178,7 +185,7 @@ export function CoreServices() {
                     <div className="mt-6 flex items-center gap-2">
                       <span
                         style={{ fontFamily: "'DM Mono', monospace", color: service.accent }}
-                        className="text-xs tracking-wider uppercase opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+                        className="text-sm tracking-wider uppercase opacity-0 group-hover:opacity-100 transition-opacity duration-300"
                       >
                         Learn More
                       </span>
@@ -200,6 +207,97 @@ export function CoreServices() {
           })}
         </div>
 
+        {/* Services accordion — mobile */}
+        <div className="md:hidden flex flex-col gap-2">
+          {services.map((service, index) => {
+            const Icon = service.icon;
+            const isOpen = expandedMobile === service.title;
+            return (
+              <motion.div
+                key={service.title}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.4, delay: index * 0.05 }}
+              >
+                <button
+                  type="button"
+                  onClick={() => toggleMobile(service.title)}
+                  className="w-full flex items-center gap-4 p-5 text-left transition-all duration-300"
+                  style={{
+                    borderWidth: 1,
+                    borderStyle: "solid",
+                    borderColor: isOpen ? `rgba(${service.accentRgb}, 0.35)` : "rgba(255,255,255,0.05)",
+                    background: isOpen ? "rgba(29,45,62,0.8)" : "rgba(29,45,62,0.4)",
+                  }}
+                >
+                  <div
+                    className="w-11 h-11 rounded-lg flex items-center justify-center flex-shrink-0"
+                    style={{
+                      background: service.iconBg,
+                      border: `1px solid rgba(${service.accentRgb}, 0.25)`,
+                    }}
+                  >
+                    <Icon size={18} strokeWidth={1.5} style={{ color: service.accent }} />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <h3
+                      style={{ fontFamily: "'Montserrat', sans-serif" }}
+                      className="text-white text-lg font-light"
+                    >
+                      {service.title}
+                    </h3>
+                  </div>
+                  <div
+                    className="flex-shrink-0 transition-transform duration-300"
+                    style={{
+                      color: service.accent,
+                      transform: isOpen ? "rotate(90deg)" : "rotate(0deg)",
+                    }}
+                  >
+                    <ChevronRight size={16} />
+                  </div>
+                </button>
+
+                <AnimatePresence>
+                  {isOpen && (
+                    <motion.div
+                      initial={{ opacity: 0, height: 0 }}
+                      animate={{ opacity: 1, height: "auto" }}
+                      exit={{ opacity: 0, height: 0 }}
+                      transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
+                      className="overflow-hidden"
+                      style={{
+                        borderWidth: "0 1px 1px 1px",
+                        borderStyle: "solid",
+                        borderColor: `rgba(${service.accentRgb}, 0.2)`,
+                        background: "rgba(22,33,46,0.6)",
+                      }}
+                    >
+                      <div className="px-5 py-4">
+                        <p
+                          style={{ fontFamily: "'Inter', sans-serif" }}
+                          className="text-white/50 text-sm leading-relaxed mb-4"
+                        >
+                          {service.description}
+                        </p>
+                        <Link
+                          to={service.link}
+                          className="inline-flex items-center gap-2"
+                          style={{ fontFamily: "'DM Mono', monospace", color: service.accent, fontSize: "0.7rem", letterSpacing: "0.18em", textTransform: "uppercase" }}
+                        >
+                          Learn More
+                          <ChevronRight size={12} />
+                        </Link>
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </motion.div>
+            );
+          })}
+        </div>
+
         {/* CTA */}
         <motion.div
           initial={{ opacity: 0, y: 30 }}
@@ -209,10 +307,10 @@ export function CoreServices() {
           className="text-center mt-16"
         >
           <Link
-            to="/contact"
+            to="/build-your-quote"
             className="inline-flex items-center gap-3 border border-[#00d4e8] text-[#00d4e8] px-8 py-4 hover:bg-[#00d4e8] hover:text-[#16212e] transition-all duration-300 group"
           >
-            <span style={{ fontFamily: "'Inter', sans-serif" }} className="text-xs tracking-[0.2em] uppercase">
+            <span style={{ fontFamily: "'Inter', sans-serif" }} className="text-sm tracking-[0.2em] uppercase">
               Start Your Project
             </span>
             <svg

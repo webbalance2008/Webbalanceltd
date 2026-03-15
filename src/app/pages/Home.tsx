@@ -1,4 +1,5 @@
 import { Hero } from "../components/Hero";
+import { HowCanWeHelp } from "../components/HowCanWeHelp";
 import { CoreServices } from "../components/CoreServices";
 import { Projects } from "../components/Projects";
 import { Services } from "../components/Services";
@@ -7,11 +8,13 @@ import { InsightsSection } from "../components/InsightsSection";
 import { Contact } from "../components/Contact";
 import { useEffect, useRef, useState } from "react";
 import { motion, AnimatePresence } from "motion/react";
+import { SEOHead } from "../components/SEOHead";
 
 const STICKY_TOP = 96; // height of the fixed nav in px
 
 const SECTION_META = [
   { label: "Home",      Component: Hero },
+  { label: "Get Help",  Component: HowCanWeHelp },
   { label: "Services",  Component: CoreServices },
   { label: "Projects",  Component: Projects },
   { label: "Expertise", Component: Services },
@@ -98,25 +101,33 @@ export function Home() {
   };
 
   return (
-    <div className="relative">
-      {SECTION_META.map(({ Component }, i) => (
-        <StickySection
-          key={i}
-          index={i}
-          SectionComponent={Component}
-          translateY={translateYs[i]}
-          fadeOpacity={fadeOpacities[i]}
-          onWrapperRef={(el) => { wrapperRefs.current[i] = el; }}
-          onContentRef={(el) => { contentRefs.current[i] = el; }}
-        />
-      ))}
-
-      <SectionNav
-        sections={SECTION_META.map((s) => s.label)}
-        activeIndex={activeIndex}
-        onJump={jumpTo}
+    <>
+      <SEOHead
+        title="Web Balance | Award-Winning Web Design &amp; Development Agency"
+        description="Web Balance builds high-performance websites, custom web apps, and digital experiences for ambitious UK businesses. Bespoke design, SEO, hosting &amp; branding — all under one roof."
+        path="/"
+        keywords="web design UK, bespoke website design, web development agency, SEO services, custom web apps, hosting, branding"
       />
-    </div>
+      <div className="relative">
+        {SECTION_META.map(({ Component }, i) => (
+          <StickySection
+            key={i}
+            index={i}
+            SectionComponent={Component}
+            translateY={translateYs[i]}
+            fadeOpacity={fadeOpacities[i]}
+            onWrapperRef={(el) => { wrapperRefs.current[i] = el; }}
+            onContentRef={(el) => { contentRefs.current[i] = el; }}
+          />
+        ))}
+
+        <SectionNav
+          sections={SECTION_META.map((s) => s.label)}
+          activeIndex={activeIndex}
+          onJump={jumpTo}
+        />
+      </div>
+    </>
   );
 }
 
@@ -214,9 +225,20 @@ function StickySection({
   const [spacerHeight, setSpacerHeight] = useState(0);
   const contentEl = useRef<HTMLDivElement | null>(null);
   const wrapperEl = useRef<HTMLDivElement | null>(null);
+  const [isMobile, setIsMobile] = useState(
+    () => typeof window !== "undefined" && window.innerWidth < 768
+  );
 
   // Hero (index 0) is always entered. Others enter via IntersectionObserver.
   const [hasEntered, setHasEntered] = useState(index === 0);
+
+  useEffect(() => {
+    const mq = window.matchMedia("(max-width: 767px)");
+    setIsMobile(mq.matches);
+    const handler = (e: MediaQueryListEvent) => setIsMobile(e.matches);
+    mq.addEventListener("change", handler);
+    return () => mq.removeEventListener("change", handler);
+  }, []);
 
   useEffect(() => {
     if (index === 0) return;
@@ -254,6 +276,17 @@ function StickySection({
       window.removeEventListener("resize", measure);
     };
   }, []);
+
+  // ── Mobile: no sticky magic, sections just flow naturally ──────────────
+  if (isMobile) {
+    return (
+      <div ref={(el) => { wrapperEl.current = el; onWrapperRef(el); }}>
+        <div ref={(el) => { contentEl.current = el; onContentRef(el); }}>
+          <SectionComponent />
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div

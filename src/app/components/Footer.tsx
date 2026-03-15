@@ -23,7 +23,6 @@ export function Footer() {
     { label: "LinkedIn", href: "https://www.linkedin.com/company/web-balance-ltd" },
     { label: "Facebook", href: "https://www.facebook.com/webbalanceltd" },
     { label: "X (Twitter)", href: "https://x.com/webbalanceltd" },
-    { label: "hello@web-balance.co.uk", href: "mailto:hello@web-balance.co.uk" },
   ];
 
   return (
@@ -47,6 +46,25 @@ export function Footer() {
               A boutique digital studio crafting bespoke websites and web
               applications for brands that mean business.
             </p>
+            <div className="mt-5 space-y-4">
+              <p style={{ fontFamily: "'Inter', sans-serif" }} className="text-white/25 text-sm leading-relaxed">
+                Web Balance Ltd<br />
+                Neospace, Riverside Drive<br />
+                Aberdeen, AB11 7LH
+              </p>
+              <div>
+                <a
+                  href="tel:01224452095"
+                  style={{ fontFamily: "'Inter', sans-serif" }}
+                  className="text-[#00d4e8]/70 hover:text-[#00d4e8] text-sm transition-colors"
+                >
+                  01224 452095
+                </a>
+                <p style={{ fontFamily: "'Inter', sans-serif" }} className="text-white/25 text-sm mt-1">
+                  Mon–Fri, 8:30am–5:30pm
+                </p>
+              </div>
+            </div>
           </div>
 
           {/* Navigation columns */}

@@ -1,5 +1,14 @@
 @custom-variant dark (&:is(.dark *));
 
+/* Hide scrollbar utility */
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
 :root {
   --font-size: 16px;
   --background: #ffffff;
@@ -126,6 +135,16 @@
 
   body {
     @apply bg-background text-foreground;
+  }
+
+  /* ── Disable all CSS transitions & keyframe animations on desktop ── */
+  @media (min-width: 768px) {
+    *, *::before, *::after {
+      transition-duration: 0.001ms !important;
+      transition-delay: 0ms !important;
+      animation-duration: 0.001ms !important;
+      animation-delay: 0ms !important;
+    }
   }
 
   /**

@@ -3,7 +3,7 @@ import {
   CloudCog, Users, CreditCard, BarChart3, Layers, ShieldCheck,
 } from "lucide-react";
 
-const heroImage = "https://images.unsplash.com/photo-1642132652860-471b4228023e?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxTYWFTJTIwY2xvdWQlMjBzb2Z0d2FyZSUyMHBsYXRmb3JtJTIwbGFwdG9wJTIwZGFya3xlbnwxfHx8fDE3NzMyNjIwMjR8MA&ixlib=rb-4.1.0&q=80&w=1080";
+const heroImage = "https://images.unsplash.com/photo-1642132652860-471b4228023e?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxTYWFTJTIwY2xvdWQlMjBzb2Z0d2FyZSUyMHBsYXRmb3JtJTIwZGFya3xlbnwxfHx8fDE3NzMyNjIwMjR8MA&ixlib=rb-4.1.0&q=80&w=1080";
 
 export function SaaSPage() {
   return (
@@ -13,6 +13,8 @@ export function SaaSPage() {
       subtitle="From idea to scalable software product"
       heroImage={heroImage}
       heroColor="#1f0f3a"
+      seoPath="/web-apps/saas-platforms"
+      seoKeywords="SaaS development, multi-tenant platform, software as a service, cloud app development, UK SaaS builder"
       overview="A SaaS platform is a software product that you sell as a subscription — serving many customers simultaneously from a single, scalable application."
       overviewDetail="SaaS (Software as a Service) is one of the most powerful business models available — recurring revenue, low marginal cost of adding new customers, and a product that improves with every iteration. We build SaaS platforms from scratch: multi-tenant architectures where each customer organisation has its own isolated data and configuration, subscription billing that handles upgrades, downgrades, and cancellations automatically, and the infrastructure to scale from your first paying customer to your ten-thousandth without a rewrite. We've built SaaS products across industries — from workforce management tools to property platforms and professional service applications."
       features={[
@@ -130,6 +132,11 @@ export function SaaSPage() {
         },
       ]}
       ctaTitle="Turn your software idea into a scalable, revenue-generating product."
+      concepts={[
+        { title: "Multi-Tenant Dashboard", description: "Each customer gets their own workspace with data isolation, team management, and usage metrics — from a single codebase.", layout: "dashboard" },
+        { title: "Onboarding & Auth", description: "Guided signup flow with organisation creation, team invites, role assignment, and plan selection.", layout: "login" },
+        { title: "Platform Analytics", description: "MRR tracking, customer health scores, feature adoption rates, and churn signals — the metrics that drive SaaS growth.", layout: "analytics" },
+      ]}
     />
   );
 }

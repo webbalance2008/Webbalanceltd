@@ -1,0 +1,343 @@
+// ─── Web Balance — Mix & Match Package Data ──────────────────────────────────
+import {
+  Layout,
+  Code2,
+  TrendingUp,
+  Server,
+  Palette,
+} from "lucide-react";
+
+export type PricingType = "one-time" | "monthly";
+
+export interface PackageTier {
+  id: string;
+  name: string;
+  price: number;            // in GBP
+  priceLabel: string;       // e.g. "£2,500" or "£500 /mo"
+  pricingType: PricingType;
+  description: string;
+  features: string[];
+  highlight?: boolean;      // recommended tier
+}
+
+export interface DepartmentPackages {
+  key: string;
+  label: string;
+  tagline: string;
+  icon: React.ComponentType<{ size?: number; strokeWidth?: number }>;
+  color: string;
+  rgb: string;
+  tiers: PackageTier[];
+}
+
+export const departmentPackages: DepartmentPackages[] = [
+  {
+    key: "web-apps",
+    label: "Web Apps",
+    tagline: "Custom software that automates, scales, and empowers your business",
+    icon: Code2,
+    color: "#b89fd4",
+    rgb: "184, 159, 212",
+    tiers: [
+      {
+        id: "wa-mvp",
+        name: "MVP",
+        price: 5000,
+        priceLabel: "£5,000",
+        pricingType: "one-time",
+        description: "Launch fast with a focused minimum viable product.",
+        features: [
+          "Core feature set (up to 3 modules)",
+          "User authentication & roles",
+          "1 third-party integration",
+          "Responsive dashboard UI",
+          "Basic analytics",
+          "Deployment & hosting setup",
+          "30 days bug-fix support",
+        ],
+      },
+      {
+        id: "wa-professional",
+        name: "Professional",
+        price: 12000,
+        priceLabel: "£12,000",
+        pricingType: "one-time",
+        description: "A complete platform with admin tools, APIs, and testing.",
+        features: [
+          "Full feature set (up to 8 modules)",
+          "Admin dashboard & user management",
+          "Up to 3 API integrations",
+          "Automated testing suite",
+          "Email notification system",
+          "Performance optimisation",
+          "90 days post-launch support",
+        ],
+        highlight: true,
+      },
+      {
+        id: "wa-enterprise",
+        name: "Enterprise",
+        price: 25000,
+        priceLabel: "£25,000",
+        pricingType: "one-time",
+        description: "Complex, scalable software for large-scale operations.",
+        features: [
+          "Unlimited modules & features",
+          "Multi-tenant architecture",
+          "CI/CD pipeline setup",
+          "Advanced security & compliance",
+          "Custom reporting engine",
+          "Dedicated technical lead",
+          "12 months priority support & SLA",
+        ],
+      },
+    ],
+  },
+  {
+    key: "web-design",
+    label: "Web Design",
+    tagline: "Professional websites that convert visitors into customers",
+    icon: Layout,
+    color: "#5ec4d4",
+    rgb: "94, 196, 212",
+    tiers: [
+      {
+        id: "wd-essentials",
+        name: "Essentials",
+        price: 2500,
+        priceLabel: "£2,500",
+        pricingType: "one-time",
+        description: "A polished, professional site for startups and sole traders.",
+        features: [
+          "Up to 5 custom pages",
+          "Mobile-first responsive design",
+          "Contact form integration",
+          "Basic on-page SEO",
+          "Google Analytics setup",
+          "2 rounds of revisions",
+          "30 days post-launch support",
+        ],
+      },
+      {
+        id: "wd-growth",
+        name: "Growth",
+        price: 5500,
+        priceLabel: "£5,500",
+        pricingType: "one-time",
+        description: "For growing businesses that need CMS control and conversion strategy.",
+        features: [
+          "Up to 15 custom pages",
+          "CMS integration (Sanity / WordPress)",
+          "Blog or news section",
+          "Advanced SEO setup & sitemap",
+          "Speed optimisation & Core Web Vitals",
+          "Social media integration",
+          "3 rounds of revisions",
+          "60 days post-launch support",
+        ],
+        highlight: true,
+      },
+      {
+        id: "wd-premium",
+        name: "Premium",
+        price: 12000,
+        priceLabel: "£12,000",
+        pricingType: "one-time",
+        description: "A bespoke, world-class digital experience with full strategic support.",
+        features: [
+          "Unlimited pages",
+          "Full brand strategy included",
+          "Custom animations & micro-interactions",
+          "E-commerce or booking integration",
+          "Multi-language support",
+          "Performance & A/B testing",
+          "Dedicated project manager",
+          "Unlimited revisions",
+          "12 months priority support",
+        ],
+      },
+    ],
+  },
+  {
+    key: "seo",
+    label: "SEO",
+    tagline: "Dominate search results and drive qualified organic traffic",
+    icon: TrendingUp,
+    color: "#3dd68c",
+    rgb: "61, 214, 140",
+    tiers: [
+      {
+        id: "seo-foundation",
+        name: "Foundation",
+        price: 500,
+        priceLabel: "£500 /mo",
+        pricingType: "monthly",
+        description: "Essential SEO groundwork to build visibility from the start.",
+        features: [
+          "Keyword research & strategy",
+          "On-page audit & optimisation",
+          "Google Business Profile setup",
+          "Local SEO targeting",
+          "Monthly performance report",
+          "Dedicated account manager",
+        ],
+      },
+      {
+        id: "seo-growth",
+        name: "Growth",
+        price: 1200,
+        priceLabel: "£1,200 /mo",
+        pricingType: "monthly",
+        description: "Content-led SEO with link building for accelerated rankings.",
+        features: [
+          "Everything in Foundation",
+          "Content strategy & calendar",
+          "Monthly blog content (2 articles)",
+          "Link building campaign",
+          "Competitor analysis",
+          "Bi-weekly performance reporting",
+          "Technical SEO audits",
+        ],
+        highlight: true,
+      },
+      {
+        id: "seo-domination",
+        name: "Domination",
+        price: 2500,
+        priceLabel: "£2,500 /mo",
+        pricingType: "monthly",
+        description: "Full-service SEO for brands serious about owning their market.",
+        features: [
+          "Everything in Growth",
+          "Weekly content creation (4+ articles)",
+          "Advanced link acquisition",
+          "Conversion rate optimisation",
+          "Schema markup & rich snippets",
+          "Weekly reporting & strategy calls",
+          "Priority support",
+        ],
+      },
+    ],
+  },
+  {
+    key: "hosting",
+    label: "Hosting & Support",
+    tagline: "Fast, secure infrastructure with hands-on UK support",
+    icon: Server,
+    color: "#f59e6a",
+    rgb: "245, 158, 106",
+    tiers: [
+      {
+        id: "host-starter",
+        name: "Starter",
+        price: 30,
+        priceLabel: "£30 /mo",
+        pricingType: "monthly",
+        description: "Reliable hosting for small websites and landing pages.",
+        features: [
+          "Managed cloud hosting",
+          "Free SSL certificate",
+          "Daily automated backups",
+          "99.9% uptime guarantee",
+          "Email support (next business day)",
+          "Monthly security patches",
+        ],
+      },
+      {
+        id: "host-business",
+        name: "Business",
+        price: 75,
+        priceLabel: "£75 /mo",
+        pricingType: "monthly",
+        description: "Enhanced performance with staging and priority support.",
+        features: [
+          "Everything in Starter",
+          "Dedicated resources",
+          "CDN & edge caching",
+          "Staging environment",
+          "Priority support (4-hour response)",
+          "Weekly backups & restore",
+          "Uptime monitoring & alerts",
+        ],
+        highlight: true,
+      },
+      {
+        id: "host-enterprise",
+        name: "Enterprise",
+        price: 150,
+        priceLabel: "£150 /mo",
+        pricingType: "monthly",
+        description: "Mission-critical infrastructure with SLA guarantees.",
+        features: [
+          "Everything in Business",
+          "Auto-scaling infrastructure",
+          "Load balancing",
+          "24/7 monitoring & incident response",
+          "Custom SLA agreement",
+          "Dedicated server environment",
+          "Quarterly performance reviews",
+        ],
+      },
+    ],
+  },
+  {
+    key: "branding",
+    label: "Branding",
+    tagline: "Identity design that makes your business unforgettable",
+    icon: Palette,
+    color: "#f472b6",
+    rgb: "244, 114, 182",
+    tiers: [
+      {
+        id: "br-identity",
+        name: "Identity",
+        price: 1500,
+        priceLabel: "£1,500",
+        pricingType: "one-time",
+        description: "A professional logo and core visual identity.",
+        features: [
+          "Logo design (3 concepts)",
+          "Colour palette & typography",
+          "Brand guidelines PDF",
+          "Social media avatar set",
+          "2 rounds of revisions",
+          "Source files delivered",
+        ],
+      },
+      {
+        id: "br-complete",
+        name: "Complete",
+        price: 4000,
+        priceLabel: "£4,000",
+        pricingType: "one-time",
+        description: "Full visual identity with print and digital assets.",
+        features: [
+          "Everything in Identity",
+          "Stationery suite (cards, letterhead)",
+          "Social media template kit",
+          "Brand photography direction",
+          "Comprehensive brand book",
+          "3 rounds of revisions",
+        ],
+        highlight: true,
+      },
+      {
+        id: "br-premium",
+        name: "Premium",
+        price: 8000,
+        priceLabel: "£8,000",
+        pricingType: "one-time",
+        description: "Brand strategy, messaging, and a complete launch package.",
+        features: [
+          "Everything in Complete",
+          "Brand strategy workshop",
+          "Messaging framework & tone of voice",
+          "Competitor positioning analysis",
+          "Launch campaign assets",
+          "Unlimited revisions",
+          "Brand guardian support (6 months)",
+        ],
+      },
+    ],
+  },
+];

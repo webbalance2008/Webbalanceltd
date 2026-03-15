@@ -13,6 +13,8 @@ export function CustomerPortalsPage() {
       subtitle="Give every customer a private, branded home"
       heroImage={heroImage}
       heroColor="#2a1545"
+      seoPath="/web-apps/customer-portals"
+      seoKeywords="customer portal, client dashboard, account management app, branded portal, UK custom development"
       overview="A customer portal transforms one-off transactions into ongoing relationships — giving your clients a branded space to manage everything, on their schedule."
       overviewDetail="A customer portal is a secure, personalised online space where your clients can access their account, view order history, manage subscriptions, track project progress, access documents, and communicate with your team — all without picking up the phone or sending an email. Portals reduce your administrative overhead dramatically while simultaneously improving the customer experience. Every interaction feels considered, branded, and professional. We build portals that integrate seamlessly with your existing systems and are designed with your specific customer workflows in mind."
       features={[
@@ -130,6 +132,11 @@ export function CustomerPortalsPage() {
         },
       ]}
       ctaTitle="Your customers deserve better than a reply-all email chain."
+      concepts={[
+        { title: "Account Portal", description: "Branded dashboard where customers view orders, manage their profile, and access documents — all behind a secure login.", layout: "portal" },
+        { title: "Messaging & Support", description: "Built-in messaging thread between your team and each customer, with file sharing and notification alerts.", layout: "chat" },
+        { title: "Activity & History", description: "Chronological timeline of orders, invoices, support tickets, and account changes — everything in one place.", layout: "list" },
+      ]}
     />
   );
 }

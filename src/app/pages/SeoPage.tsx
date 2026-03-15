@@ -1,9 +1,30 @@
 import { ServicePageLayout } from "../components/ServicePageLayout";
 import { Settings, Target, FileText, Link2, LineChart, MonitorCheck, BarChart2 } from "lucide-react";
 import type { Feature } from "../components/ServicePageLayout";
+import { SEOHead } from "../components/SEOHead";
+import { ServiceSchema, BreadcrumbSchema } from "../components/StructuredData";
+import { DepartmentHero } from "../components/DepartmentHero";
 
-const heroImage =
-  "https://images.unsplash.com/photo-1686061593213-98dad7c599b9?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxTRU8lMjBhbmFseXRpY3MlMjBkYXRhJTIwY2hhcnRzJTIwZ3Jvd3RofGVufDF8fHx8MTc3MzI1OTU2MHww&ixlib=rb-4.1.0&q=80&w=1080";
+const ACCENT = "#3dd68c";
+
+function SeoHero() {
+  return (
+    <DepartmentHero
+      label="Search Engine Optimisation"
+      heading={
+        <>
+          We listen. We think.{" "}
+          We <span style={{ color: ACCENT }}>deliver</span>.
+        </>
+      }
+      subtitle="Ranking on Google has never been more competitive — or more important. Strategy-led SEO that drives measurable, lasting growth."
+      accent={ACCENT}
+      primaryCta={{ label: "View Packages", to: "/seo/packages" }}
+      secondaryCta={{ label: "Start a Project", to: "/seo/start" }}
+      patternId="seo"
+    />
+  );
+}
 
 const features: Feature[] = [
   {
@@ -173,92 +194,106 @@ const stats = [
 
 export function SeoPage() {
   return (
-    <ServicePageLayout
-      serviceType="seo"
-      label="Search Engine Optimisation"
-      title="We listen. We think. We deliver."
-      subtitle="Ranking on Google has never been more competitive — or more important"
-      heroImage={heroImage}
-      intro="Search Engine Optimisation isn't just about keywords. It's about building sustained visibility, attracting qualified traffic, and converting that traffic into real business growth. Since 2008, Web Balance has helped businesses across Scotland and beyond develop SEO strategies that deliver measurable, lasting results."
-      stats={stats}
-      features={features}
-      process={[
-        {
-          step: "01",
-          title: "Discovery & Audit",
-          description:
-            "We begin by getting under the skin of your business — understanding your goals, your audience, and your current position in search. A full technical audit gives us the complete picture.",
-          modal: {
-            heading: "Understanding Where You Are Before We Move Forward",
-            body: "Every effective SEO campaign begins not with keywords or link-building, but with clarity. We need to understand your business objectives, your target customers, the competitive landscape you operate in, and the current state of your website from a technical, content, and authority perspective. Our discovery and audit phase gives us the complete, honest picture — and means that every recommendation we make from that point is grounded in evidence rather than guesswork.",
-            bullets: [
-              "Business goals workshop: understanding what success looks like for your specific objectives",
-              "Full technical site audit: crawl errors, indexation issues, page speed, Core Web Vitals, and mobile performance",
-              "Content quality review: identifying thin, duplicate, or under-performing content across your site",
-              "Backlink profile analysis: assessing the quality and diversity of your existing link profile",
-              "Competitor SEO audit: understanding what your rivals are doing well and where the gaps are",
-              "Audit findings report delivered with a prioritised action plan — no jargon, just clear direction",
-            ],
+    <>
+      <SEOHead
+        title="SEO Services"
+        description="Strategy-led SEO that gets your business found on Google. Technical SEO, content strategy, link building, and local SEO — all built around measurable growth."
+        path="/seo"
+        keywords="SEO services UK, search engine optimisation, technical SEO, local SEO, content strategy, link building"
+      />
+      <ServiceSchema
+        name="SEO Services"
+        description="Strategy-led SEO that gets your business found on Google. Technical SEO, content strategy, link building, and local SEO — all built around measurable growth."
+        path="/seo"
+      />
+      <BreadcrumbSchema items={[{ name: "Home", path: "/" }, { name: "SEO", path: "/seo" }]} />
+      <ServicePageLayout
+        serviceType="seo"
+        label="Search Engine Optimisation"
+        title="We listen. We think. We deliver."
+        subtitle="Ranking on Google has never been more competitive — or more important"
+        customHero={<SeoHero />}
+        intro="Search Engine Optimisation isn't just about keywords. It's about building sustained visibility, attracting qualified traffic, and converting that traffic into real business growth. Since 2008, Web Balance has helped businesses across Scotland and beyond develop SEO strategies that deliver measurable, lasting results."
+        stats={stats}
+        features={features}
+        process={[
+          {
+            step: "01",
+            title: "Discovery & Audit",
+            description:
+              "We begin by getting under the skin of your business — understanding your goals, your audience, and your current position in search. A full technical audit gives us the complete picture.",
+            modal: {
+              heading: "Understanding Where You Are Before We Move Forward",
+              body: "Every effective SEO campaign begins not with keywords or link-building, but with clarity. We need to understand your business objectives, your target customers, the competitive landscape you operate in, and the current state of your website from a technical, content, and authority perspective. Our discovery and audit phase gives us the complete, honest picture — and means that every recommendation we make from that point is grounded in evidence rather than guesswork.",
+              bullets: [
+                "Business goals workshop: understanding what success looks like for your specific objectives",
+                "Full technical site audit: crawl errors, indexation issues, page speed, Core Web Vitals, and mobile performance",
+                "Content quality review: identifying thin, duplicate, or under-performing content across your site",
+                "Backlink profile analysis: assessing the quality and diversity of your existing link profile",
+                "Competitor SEO audit: understanding what your rivals are doing well and where the gaps are",
+                "Audit findings report delivered with a prioritised action plan — no jargon, just clear direction",
+              ],
+            },
           },
-        },
-        {
-          step: "02",
-          title: "Strategy & Roadmap",
-          description:
-            "Using the audit findings, we build a bespoke SEO strategy and rolling roadmap — prioritised by impact and aligned to your business timeline.",
-          modal: {
-            heading: "A Clear Plan Built Around Your Business, Not a Template",
-            body: "With the audit complete, we translate findings into a concrete, prioritised SEO strategy. This isn't a generic list of best practices — it's a tailored roadmap built around your specific goals, your competitive environment, and the realistic timeline for results. We define the technical fixes, content initiatives, and authority-building activities that will have the greatest impact, sequence them intelligently, and agree milestones so you always know what's happening and why.",
-            bullets: [
-              "Keyword strategy: identifying the search terms that will drive qualified, high-intent traffic",
-              "Search intent mapping: matching keyword targets to the right content types and pages",
-              "Technical remediation plan: prioritised fixes organised by impact and implementation complexity",
-              "Content strategy: identifying content gaps, new page opportunities, and existing content to optimise",
-              "Link acquisition strategy: a realistic, sustainable approach to building domain authority",
-              "12-month rolling roadmap with quarterly milestones — reviewed and refined as results evolve",
-            ],
+          {
+            step: "02",
+            title: "Strategy & Roadmap",
+            description:
+              "Using the audit findings, we build a bespoke SEO strategy and rolling roadmap — prioritised by impact and aligned to your business timeline.",
+            modal: {
+              heading: "A Clear Plan Built Around Your Business, Not a Template",
+              body: "With the audit complete, we translate findings into a concrete, prioritised SEO strategy. This isn't a generic list of best practices — it's a tailored roadmap built around your specific goals, your competitive environment, and the realistic timeline for results. We define the technical fixes, content initiatives, and authority-building activities that will have the greatest impact, sequence them intelligently, and agree milestones so you always know what's happening and why.",
+              bullets: [
+                "Keyword strategy: identifying the search terms that will drive qualified, high-intent traffic",
+                "Search intent mapping: matching keyword targets to the right content types and pages",
+                "Technical remediation plan: prioritised fixes organised by impact and implementation complexity",
+                "Content strategy: identifying content gaps, new page opportunities, and existing content to optimise",
+                "Link acquisition strategy: a realistic, sustainable approach to building domain authority",
+                "12-month rolling roadmap with quarterly milestones — reviewed and refined as results evolve",
+              ],
+            },
           },
-        },
-        {
-          step: "03",
-          title: "Implementation & Optimisation",
-          description:
-            "Strategy becomes action. We implement technical fixes, optimise on-page content, build authority, and continuously refine based on live performance data.",
-          modal: {
-            heading: "Doing the Work That Actually Moves Rankings",
-            body: "SEO strategies are only as good as their implementation. This is where the real work happens — and where many agencies fall short. We don't just advise; we execute. Our team handles technical optimisation, content creation and improvement, structured data implementation, and link acquisition in a continuous, disciplined cycle. Every change is tracked so we know exactly what's having an impact and can double down on what's working.",
-            bullets: [
-              "Technical SEO implementation: fixing crawl issues, improving site speed, and resolving Core Web Vitals failures",
-              "On-page optimisation: meta data, heading structure, internal linking, and schema markup",
-              "Content creation and improvement: new pages, blog content, and optimisation of under-performing existing content",
-              "Link building: high-quality, relevant link acquisition through outreach, digital PR, and partnerships",
-              "Google Business Profile optimisation for local search visibility",
-              "Continuous A/B testing of title tags and meta descriptions to improve click-through rates",
-            ],
+          {
+            step: "03",
+            title: "Implementation & Optimisation",
+            description:
+              "Strategy becomes action. We implement technical fixes, optimise on-page content, build authority, and continuously refine based on live performance data.",
+            modal: {
+              heading: "Doing the Work That Actually Moves Rankings",
+              body: "SEO strategies are only as good as their implementation. This is where the real work happens — and where many agencies fall short. We don't just advise; we execute. Our team handles technical optimisation, content creation and improvement, structured data implementation, and link acquisition in a continuous, disciplined cycle. Every change is tracked so we know exactly what's having an impact and can double down on what's working.",
+              bullets: [
+                "Technical SEO implementation: fixing crawl issues, improving site speed, and resolving Core Web Vitals failures",
+                "On-page optimisation: meta data, heading structure, internal linking, and schema markup",
+                "Content creation and improvement: new pages, blog content, and optimisation of under-performing existing content",
+                "Link building: high-quality, relevant link acquisition through outreach, digital PR, and partnerships",
+                "Google Business Profile optimisation for local search visibility",
+                "Continuous A/B testing of title tags and meta descriptions to improve click-through rates",
+              ],
+            },
           },
-        },
-        {
-          step: "04",
-          title: "Reporting & Growth",
-          description:
-            "Clear, regular reporting keeps you informed at every stage. We track rankings, traffic, and conversions — then use that data to keep pushing your results forward.",
-          modal: {
-            heading: "Transparency, Accountability, and Continuous Improvement",
-            body: "SEO is a long-term investment, and we believe you deserve to understand exactly how that investment is performing at every stage. Our reporting is designed to be genuinely useful — not a data dump of vanity metrics, but a clear picture of what's moving, why, and what we're doing next. Monthly reports are supplemented by quarterly strategy reviews where we assess performance against targets and evolve the roadmap based on what the data is telling us.",
-            bullets: [
-              "Monthly performance reports: organic traffic, keyword rankings, impressions, and conversion data",
-              "Google Search Console and GA4 integration for accurate, real-time data",
-              "ROI tracking: connecting SEO activity to leads, enquiries, and revenue where possible",
-              "Ranking movement reports with context — understanding why positions change and what we're doing about it",
-              "Quarterly strategy review calls: assessing progress against milestones and refining the roadmap",
-              "Transparent communication throughout — you always know what we're working on and why",
-            ],
+          {
+            step: "04",
+            title: "Reporting & Growth",
+            description:
+              "Clear, regular reporting keeps you informed at every stage. We track rankings, traffic, and conversions — then use that data to keep pushing your results forward.",
+            modal: {
+              heading: "Transparency, Accountability, and Continuous Improvement",
+              body: "SEO is a long-term investment, and we believe you deserve to understand exactly how that investment is performing at every stage. Our reporting is designed to be genuinely useful — not a data dump of vanity metrics, but a clear picture of what's moving, why, and what we're doing next. Monthly reports are supplemented by quarterly strategy reviews where we assess performance against targets and evolve the roadmap based on what the data is telling us.",
+              bullets: [
+                "Monthly performance reports: organic traffic, keyword rankings, impressions, and conversion data",
+                "Google Search Console and GA4 integration for accurate, real-time data",
+                "ROI tracking: connecting SEO activity to leads, enquiries, and revenue where possible",
+                "Ranking movement reports with context — understanding why positions change and what we're doing about it",
+                "Quarterly strategy review calls: assessing progress against milestones and refining the roadmap",
+                "Transparent communication throughout — you always know what we're working on and why",
+              ],
+            },
           },
-        },
-      ]}
-      ctaTitle="Ready to grow your online presence?"
-      ctaPath="/seo/start"
-      ctaLabel="Start Your SEO Campaign"
-    />
+        ]}
+        ctaTitle="Ready to grow your online presence?"
+        ctaPath="/seo/start"
+        ctaLabel="Start Your SEO Campaign"
+      />
+    </>
   );
 }

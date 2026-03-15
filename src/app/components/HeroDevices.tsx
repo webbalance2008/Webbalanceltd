@@ -1,4 +1,4 @@
-import { useState, useMemo, useEffect } from "react";
+import { useState, useMemo, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import laptopImg1 from "figma:asset/ce59ee156d0d8072651a8da0a13ff6f04edbe8c8.png";
 import laptopImg2 from "figma:asset/a1cda730e072ed6bb06551d27d69e0aee21194e8.png";
@@ -41,30 +41,31 @@ const DEPT_COLORS = [
 
 interface HeroDevicesProps {
   accentColor: string;
+  cycleSignal: number; // increments each time Hero wants a device transition
 }
 
-export function HeroDevices({ accentColor }: HeroDevicesProps) {
+export function HeroDevices({ accentColor, cycleSignal }: HeroDevicesProps) {
   const initialIndex = useMemo(
     () => Math.floor(Math.random() * IMAGE_PAIRS.length),
     []
   );
   const [activeIndex, setActiveIndex] = useState(initialIndex);
   const [isPaused, setIsPaused] = useState(false);
+  const prevSignal = useRef(cycleSignal);
 
-  // Auto-cycle every 3 seconds, pause if user manually selects a dot
+  // Advance device image whenever Hero fires a cycle (headline transition)
   useEffect(() => {
-    if (isPaused) return;
-    const id = setInterval(() => {
+    if (cycleSignal === prevSignal.current) return;
+    prevSignal.current = cycleSignal;
+    if (!isPaused) {
       setActiveIndex((prev) => (prev + 1) % IMAGE_PAIRS.length);
-    }, 6000);
-    return () => clearInterval(id);
-  }, [isPaused]);
+    }
+  }, [cycleSignal, isPaused]);
 
   const handleDotClick = (i: number) => {
     setActiveIndex(i);
     setIsPaused(true);
-    // Resume auto-cycle after 8 seconds of inactivity
-    setTimeout(() => setIsPaused(false), 8000);
+    setTimeout(() => setIsPaused(false), 18000);
   };
 
   const pair = IMAGE_PAIRS[activeIndex];
@@ -155,7 +156,7 @@ export function HeroDevices({ accentColor }: HeroDevicesProps) {
           transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
           className="relative select-none w-full"
           style={{
-            maxWidth: 560,
+            maxWidth: 680,
             filter: `drop-shadow(0 40px 50px rgba(0,0,0,0.7)) drop-shadow(0 0 30px ${accentColor}1a)`,
             transition: "filter 1.2s ease",
           }}
@@ -174,33 +175,36 @@ export function HeroDevices({ accentColor }: HeroDevicesProps) {
             />
           </AnimatePresence>
         </motion.div>
+      </div>
 
-        {/* ── Navigation dots ────────────────────────────────────── */}
-        <div className="flex items-center gap-2.5 mt-5" style={{ zIndex: 20 }}>
-          {IMAGE_PAIRS.map((_, i) => {
-            const dotColor = DEPT_COLORS[i % DEPT_COLORS.length];
-            const isActive = i === activeIndex;
-            return (
-              <button
-                key={i}
-                onClick={() => handleDotClick(i)}
-                aria-label={`View project set ${i + 1}`}
-                style={{
-                  width: isActive ? 24 : 8,
-                  height: 8,
-                  borderRadius: 4,
-                  background: isActive ? dotColor : `${dotColor}44`,
-                  boxShadow: isActive ? `0 0 8px ${dotColor}bb` : "none",
-                  border: `1px solid ${isActive ? dotColor : `${dotColor}66`}`,
-                  transition: "all 0.35s cubic-bezier(0.4,0,0.2,1)",
-                  cursor: "pointer",
-                  padding: 0,
-                  flexShrink: 0,
-                }}
-              />
-            );
-          })}
-        </div>
+      {/* ── Navigation dots — pinned to bottom centre of container ── */}
+      <div
+        className="absolute flex items-center gap-2.5"
+        style={{ bottom: "4%", left: "50%", transform: "translateX(-50%)", zIndex: 20 }}
+      >
+        {IMAGE_PAIRS.map((_, i) => {
+          const dotColor = DEPT_COLORS[i % DEPT_COLORS.length];
+          const isActive = i === activeIndex;
+          return (
+            <button
+              key={i}
+              onClick={() => handleDotClick(i)}
+              aria-label={`View project set ${i + 1}`}
+              style={{
+                width: isActive ? 24 : 8,
+                height: 8,
+                borderRadius: 4,
+                background: isActive ? dotColor : `${dotColor}44`,
+                boxShadow: isActive ? `0 0 8px ${dotColor}bb` : "none",
+                border: `1px solid ${isActive ? dotColor : `${dotColor}66`}`,
+                transition: "all 0.35s cubic-bezier(0.4,0,0.2,1)",
+                cursor: "pointer",
+                padding: 0,
+                flexShrink: 0,
+              }}
+            />
+          );
+        })}
       </div>
 
       {/* ── Phones ─────────────────────────────────────────────── */}
@@ -209,9 +213,9 @@ export function HeroDevices({ accentColor }: HeroDevicesProps) {
         transition={{ duration: 5, repeat: Infinity, ease: "easeInOut", delay: 1 }}
         className="absolute select-none"
         style={{
-          width: 220,
+          width: 270,
           bottom: "14%",
-          right: "-4%",
+          right: "-6%",
           zIndex: 10,
           filter: `drop-shadow(0 20px 30px rgba(0,0,0,0.75)) drop-shadow(0 0 16px ${accentColor}33)`,
           transition: "filter 1.2s ease",

@@ -3,6 +3,9 @@ import { motion, useInView } from "motion/react";
 import { ArrowRight, Check } from "lucide-react";
 import { useLocation } from "react-router";
 import { getServiceFromPath, getServiceColors } from "../utils/serviceColors";
+import { sendEmail } from "../utils/sendEmail";
+import { DepartmentHero } from "../components/DepartmentHero";
+import { SEOHead } from "../components/SEOHead";
 
 const services = [
   "Web App Development",
@@ -64,9 +67,21 @@ export function StartProjectPage() {
     );
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    const form = e.currentTarget as HTMLFormElement;
+    const formData = new FormData(form);
     setSubmitted(true);
+    await sendEmail("start-project", {
+      name: formData.get("name") as string,
+      email: formData.get("email") as string,
+      company: formData.get("company") as string,
+      website: formData.get("website") as string,
+      services: selectedServices.join(", "),
+      budget,
+      timeline,
+      brief: formData.get("brief") as string,
+    });
   };
 
   return (
@@ -76,43 +91,25 @@ export function StartProjectPage() {
         background: "#16212e",
       }}
     >
+      <SEOHead
+        title="Start Your Project"
+        description="Tell us about your project and get a tailored proposal within 24 hours. Web design, web apps, SEO, branding, and hosting — all under one roof."
+        path={location.pathname}
+        keywords="start a project, web design brief, project enquiry, get a quote, UK web agency"
+      />
       {/* Hero */}
-      <section className="pt-40 pb-20 border-b border-white/5">
-        <div className="max-w-[1440px] mx-auto px-8 md:px-16">
-          <motion.p
-            ref={heroRef}
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.2 }}
-            style={{ fontFamily: "'DM Mono', monospace", color: accent }}
-            className="text-xs tracking-[0.35em] uppercase mb-6 flex items-center gap-3"
-          >
-            <span className="w-6 h-px" style={{ backgroundColor: accent }} />
-            {isWebApp ? "Web App Project" : "Web Design Project"}
-          </motion.p>
-          <div className="overflow-hidden pb-[0.2em]">
-            <motion.h1
-              initial={{ y: "100%" }}
-              animate={{ y: 0 }}
-              transition={{ duration: 0.9, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
-              style={{ fontFamily: "'Montserrat', sans-serif" }}
-              className="text-white text-[clamp(2.5rem,6vw,5rem)] leading-[0.95] tracking-[-0.02em] max-w-3xl font-light"
-            >
-              Let's build something extraordinary together.
-            </motion.h1>
-          </div>
-          <motion.p
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.6 }}
-            style={{ fontFamily: "'Inter', sans-serif" }}
-            className="text-white/40 text-sm leading-relaxed mt-8 max-w-lg"
-          >
-            Fill in the brief below and we'll be in touch within 24 hours with a tailored proposal.
-            All enquiries are treated with complete confidentiality.
-          </motion.p>
-        </div>
-      </section>
+      <DepartmentHero
+        label={isWebApp ? "Web App Project" : serviceKey === "seo" ? "SEO Project" : serviceKey === "hosting" ? "Hosting Project" : serviceKey === "branding" ? "Branding Project" : "Web Design Project"}
+        heading={
+          <>
+            Let's build something{" "}
+            <span style={{ color: accent }}>extraordinary</span> together.
+          </>
+        }
+        subtitle="Fill in the brief below and we'll be in touch within 24 hours with a tailored proposal. All enquiries are treated with complete confidentiality."
+        accent={accent}
+        patternId={`sp-${serviceKey}`}
+      />
 
       {/* Form */}
       <section className="py-20">
@@ -184,7 +181,7 @@ export function StartProjectPage() {
                         key={s}
                         type="button"
                         onClick={() => toggleService(s)}
-                        className="px-4 py-2.5 border text-xs tracking-[0.1em] uppercase transition-all duration-200"
+                        className="px-4 py-2.5 border text-sm tracking-[0.1em] uppercase transition-all duration-200"
                         style={{
                           fontFamily: "'Inter', sans-serif",
                           borderColor: isSelected
@@ -232,7 +229,7 @@ export function StartProjectPage() {
                         key={b}
                         type="button"
                         onClick={() => setBudget(b)}
-                        className="px-4 py-2.5 border text-xs tracking-[0.1em] transition-all duration-200"
+                        className="px-4 py-2.5 border text-sm tracking-[0.1em] transition-all duration-200"
                         style={{
                           fontFamily: "'Inter', sans-serif",
                           borderColor: isSelected
@@ -280,7 +277,7 @@ export function StartProjectPage() {
                         key={t}
                         type="button"
                         onClick={() => setTimeline(t)}
-                        className="px-4 py-2.5 border text-xs tracking-[0.1em] transition-all duration-200"
+                        className="px-4 py-2.5 border text-sm tracking-[0.1em] transition-all duration-200"
                         style={{
                           fontFamily: "'Inter', sans-serif",
                           borderColor: isSelected
@@ -347,7 +344,7 @@ export function StartProjectPage() {
 
               <button
                 type="submit"
-                className="flex items-center gap-3 px-8 py-4 border text-xs tracking-[0.25em] uppercase transition-all duration-300"
+                className="flex items-center gap-3 px-8 py-4 border text-sm tracking-[0.25em] uppercase transition-all duration-300"
                 style={{
                   fontFamily: "'Inter', sans-serif",
                   borderColor: accent,

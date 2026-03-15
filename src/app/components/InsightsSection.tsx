@@ -6,7 +6,7 @@ import { articles } from "../data/articles";
 
 export function InsightsSection() {
   const [currentPage, setCurrentPage] = useState(0);
-  const articlesPerPage = 4;
+  const articlesPerPage = 3;
   const totalPages = Math.ceil(articles.length / articlesPerPage);
 
   const currentArticles = articles.slice(
@@ -33,7 +33,7 @@ export function InsightsSection() {
   };
 
   return (
-    <section className="relative bg-gradient-to-b from-[#1a2840] via-[#16212e] to-[#1a2840] py-32 overflow-hidden">
+    <section className="relative bg-gradient-to-b from-[#1a2840] via-[#16212e] to-[#1a2840] py-12 md:py-20 overflow-hidden">
       {/* Background decoration */}
       <div className="absolute inset-0 opacity-20">
         <svg className="w-full h-full" xmlns="http://www.w3.org/2000/svg">
@@ -53,7 +53,7 @@ export function InsightsSection() {
 
       <div className="relative max-w-[1440px] mx-auto px-8 md:px-16">
         {/* Section header */}
-        <div className="flex justify-between items-end mb-16">
+        <div className="flex justify-between items-end mb-10 md:mb-16">
           <div>
             <motion.p
               initial={{ opacity: 0, y: 20 }}
@@ -61,7 +61,7 @@ export function InsightsSection() {
               viewport={{ once: true }}
               transition={{ duration: 0.6 }}
               style={{ fontFamily: "'DM Mono', monospace" }}
-              className="text-[#00d4e8] text-xs tracking-[0.3em] uppercase mb-4"
+              className="text-[#00d4e8] text-sm tracking-[0.3em] uppercase mb-4"
             >
               Latest Thinking
             </motion.p>
@@ -123,7 +123,7 @@ export function InsightsSection() {
         </div>
 
         {/* Articles grid */}
-        <div className="relative min-h-[600px]">
+        <div className="relative">
           <AnimatePresence mode="wait">
             <motion.div
               key={currentPage}
@@ -131,7 +131,7 @@ export function InsightsSection() {
               animate={{ opacity: 1, x: 0 }}
               exit={{ opacity: 0, x: -20 }}
               transition={{ duration: 0.5 }}
-              className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6"
+              className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
             >
               {currentArticles.map((article, index) => (
                 <motion.div
@@ -139,6 +139,7 @@ export function InsightsSection() {
                   initial={{ opacity: 0, y: 30 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.5, delay: index * 0.1 }}
+                  className={index >= 2 ? "hidden lg:block" : index >= 1 ? "hidden md:block" : ""}
                 >
                   <Link
                     to={`/insights/${article.slug}`}
@@ -149,6 +150,8 @@ export function InsightsSection() {
                       <img
                         src={article.image}
                         alt={article.title}
+                        loading="lazy"
+                        decoding="async"
                         className="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-700"
                       />
                       <div className="absolute inset-0 bg-gradient-to-t from-[#1d2d3e] via-transparent to-transparent opacity-60" />
@@ -157,7 +160,7 @@ export function InsightsSection() {
                       <div className="absolute top-4 left-4">
                         <span
                           style={{ fontFamily: "'DM Mono', monospace" }}
-                          className="text-xs tracking-wider uppercase px-3 py-1 bg-[#00d4e8] text-[#16212e]"
+                          className="text-sm tracking-wider uppercase px-3 py-1 bg-[#00d4e8] text-[#16212e]"
                         >
                           {article.category}
                         </span>
@@ -170,14 +173,14 @@ export function InsightsSection() {
                       <div className="flex items-center gap-3 mb-4">
                         <span
                           style={{ fontFamily: "'DM Mono', monospace" }}
-                          className="text-white/40 text-xs"
+                          className="text-white/40 text-sm"
                         >
                           {article.date}
                         </span>
                         <span className="text-white/20">•</span>
                         <span
                           style={{ fontFamily: "'DM Mono', monospace" }}
-                          className="text-white/40 text-xs"
+                          className="text-white/40 text-sm"
                         >
                           {article.readTime}
                         </span>
@@ -203,7 +206,7 @@ export function InsightsSection() {
                       <div className="flex items-center gap-2 mt-auto">
                         <span
                           style={{ fontFamily: "'DM Mono', monospace" }}
-                          className="text-[#00d4e8] text-xs tracking-wider uppercase"
+                          className="text-[#00d4e8] text-sm tracking-wider uppercase"
                         >
                           Read Article
                         </span>
@@ -226,7 +229,7 @@ export function InsightsSection() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.6, delay: 0.4 }}
-          className="flex items-center justify-center gap-2 mt-12"
+          className="flex items-center justify-center gap-2 mt-8"
         >
           {Array.from({ length: totalPages }).map((_, index) => (
             <button
@@ -243,7 +246,7 @@ export function InsightsSection() {
         </motion.div>
 
         {/* Mobile navigation arrows */}
-        <div className="flex md:hidden items-center justify-center gap-3 mt-8">
+        <div className="flex md:hidden items-center justify-center gap-3 mt-6">
           <button
             onClick={prevPage}
             disabled={currentPage === 0}
@@ -276,7 +279,7 @@ export function InsightsSection() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.6, delay: 0.5 }}
-          className="text-center mt-16"
+          className="text-center mt-10"
         >
           <Link
             to="/insights"

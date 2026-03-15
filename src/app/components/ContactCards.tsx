@@ -101,7 +101,7 @@ export function ContactCards() {
               {card.sub && (
                 <p
                   style={{ fontFamily: "'Inter', sans-serif" }}
-                  className="text-white text-xs leading-relaxed"
+                  className="text-white text-sm leading-relaxed"
                 >
                   {card.sub}
                 </p>
@@ -113,7 +113,7 @@ export function ContactCards() {
               href={card.href}
               target={card.href.startsWith("http") ? "_blank" : undefined}
               rel="noopener noreferrer"
-              className="flex items-center justify-center gap-2 px-4 py-2.5 text-xs tracking-[0.12em] uppercase transition-all duration-200 mt-auto"
+              className="flex items-center justify-center gap-2 px-4 py-2.5 text-sm tracking-[0.12em] uppercase transition-all duration-200 mt-auto"
               style={{
                 fontFamily: "'Inter', sans-serif",
                 borderWidth: 1,

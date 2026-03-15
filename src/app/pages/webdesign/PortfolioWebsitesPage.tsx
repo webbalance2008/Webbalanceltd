@@ -1,0 +1,66 @@
+import { WebsiteTypePage } from "../../components/WebsiteTypePage";
+import {
+  Image, Layers, Eye, Sparkles, Monitor, Pen,
+} from "lucide-react";
+
+export function PortfolioWebsitesPage() {
+  return (
+    <WebsiteTypePage
+      label="Website Type — Portfolio & Creative"
+      title="Portfolio & Creative Websites"
+      subtitle="Showcase your work with a site as distinctive as your portfolio"
+      heroImage=""
+      seoPath="/web-design/portfolio-websites"
+      seoKeywords="portfolio website design, creative website, photographer website, artist website, designer portfolio UK"
+      overview="Your portfolio website is your most important piece of work — the one that sells everything else."
+      overviewDetail="Architects, photographers, designers, artists, agencies — your website needs to get out of the way and let your work speak. But it also needs to feel considered, intentional, and reflective of your creative sensibility. We design portfolio websites that present your projects with the respect they deserve, using layout, typography, and interaction design to create an experience that's itself a demonstration of quality."
+      features={[
+        { icon: Image, title: "Visual-First Layouts", body: "Full-bleed imagery, cinematic galleries, and layouts that prioritise visual impact over clutter." },
+        { icon: Layers, title: "Project Case Studies", body: "Structured case study templates with before/after, process documentation, and rich media embeds." },
+        { icon: Eye, title: "Immersive Interaction", body: "Parallax scrolling, reveal animations, and hover effects that make browsing your work an experience in itself." },
+        { icon: Sparkles, title: "Art Direction Per Project", body: "Each project page can have its own colour palette, layout, and personality while maintaining site cohesion." },
+        { icon: Monitor, title: "Retina-Ready Everything", body: "High-resolution image delivery with lazy loading and format optimisation — sharp on every screen." },
+        { icon: Pen, title: "Easy Content Updates", body: "CMS-powered so you can add new projects, reorder work, and update copy without touching code." },
+      ]}
+      industries={[
+        { name: "Architecture & Interior Design", description: "Project galleries with floor plans, before/after sliders, and location-based project filtering." },
+        { name: "Photography", description: "Full-screen galleries, lightbox viewing, client proofing areas, and print ordering integration." },
+        { name: "Graphic Design & Branding", description: "Visual case studies showing brand systems, mockups, and the strategic thinking behind each identity." },
+        { name: "Film & Video Production", description: "Showreels, embedded video players, project breakdowns, and client testimonials." },
+        { name: "Art & Illustration", description: "Gallery-driven layouts with category filtering, exhibition schedules, and commission enquiry forms." },
+        { name: "Creative Agencies", description: "Multi-discipline portfolios with team profiles, client logos, awards, and thought leadership content." },
+      ]}
+      included={[
+        "Bespoke visual-first design",
+        "Project/case study template system",
+        "High-res image optimisation pipeline",
+        "Lightbox gallery with keyboard navigation",
+        "Category and tag-based filtering",
+        "Responsive image grids (masonry optional)",
+        "Video embedding with lazy loading",
+        "CMS for self-managed content updates",
+        "SEO-optimised project pages",
+        "Contact/enquiry form integration",
+        "Social media and Behance/Dribbble links",
+        "Google Analytics setup",
+      ]}
+      process={[
+        { step: "01", title: "Creative Direction", description: "We review your body of work, understand your aesthetic, and define a design direction that amplifies your creative voice without competing with it." },
+        { step: "02", title: "Layout & Interaction Design", description: "Page-by-page design exploring grid systems, typography, transitions, and how each project is presented — with interactive prototypes." },
+        { step: "03", title: "Build & Optimise", description: "Clean front-end development with image optimisation, lazy loading, smooth animations, and CMS integration for easy updates." },
+        { step: "04", title: "Curate, Test & Launch", description: "We help you select and sequence your strongest work, test across all devices, and launch with a performance-audited, pixel-perfect result." },
+      ]}
+      related={[
+        { label: "Website Type", title: "Corporate Websites", description: "When your creative practice needs a full business presence beyond the portfolio.", path: "/web-design/corporate-websites" },
+        { label: "Website Type", title: "Blog & Content Websites", description: "Add thought leadership and behind-the-scenes content alongside your project work.", path: "/web-design/blog-websites" },
+        { label: "Website Type", title: "Landing Pages", description: "Single-purpose pages for exhibitions, launches, or commission enquiries.", path: "/web-design/landing-pages" },
+      ]}
+      ctaTitle="Your work deserves a website that does it justice."
+      concepts={[
+        { title: "Project Gallery", description: "Full-bleed image grid with hover previews, category filtering, and smooth transitions — letting your work take centre stage.", layout: "calendar" },
+        { title: "Case Study Layout", description: "Long-form project page with hero imagery, process documentation, client brief, and outcome metrics.", layout: "kanban" },
+        { title: "Creative Landing", description: "Bold typographic hero, curated project highlights, and a clear path to enquire — your portfolio's front door.", layout: "chat" },
+      ]}
+    />
+  );
+}

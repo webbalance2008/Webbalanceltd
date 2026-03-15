@@ -13,6 +13,8 @@ export function InternalToolsPage() {
       subtitle="Replace spreadsheets with software built for how you actually work"
       heroImage={heroImage}
       heroColor="#1a0f38"
+      seoPath="/web-apps/internal-tools"
+      seoKeywords="internal business tools, custom dashboard, bespoke admin software, workflow automation, UK"
       overview="A bespoke internal tool replaces the spreadsheets, disconnected apps, and manual processes that quietly drain your team's time and your business's efficiency."
       overviewDetail="Every business has operational complexity that off-the-shelf software can't quite handle. The workarounds accumulate — a spreadsheet here, a shared inbox there, a process that only three people understand — until inefficiency becomes the norm. We build custom internal tools that are designed around exactly how your business operates: the data you need to see, the workflows your team runs, the reports your leadership requires, and the integrations your existing systems demand. Internal tools are often the highest-ROI digital investment a business can make, because they pay back every single day."
       features={[
@@ -130,6 +132,11 @@ export function InternalToolsPage() {
         },
       ]}
       ctaTitle="Stop working around your tools. Let's build the ones you actually need."
+      concepts={[
+        { title: "Operations Dashboard", description: "Centralised admin view with KPIs, team activity, pipeline status, and real-time business metrics.", layout: "dashboard" },
+        { title: "Task & Workflow Board", description: "Kanban-style task management with drag-and-drop, assignments, deadlines, and progress tracking.", layout: "kanban" },
+        { title: "Data Management", description: "Searchable, filterable data tables replacing spreadsheets — with inline editing, exports, and role-based access.", layout: "list" },
+      ]}
     />
   );
 }

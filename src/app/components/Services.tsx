@@ -229,7 +229,7 @@ function ServiceModal({
             <Link
               to={service.modal.ctaPath ?? "/contact"}
               onClick={onClose}
-              className="inline-flex items-center gap-3 px-6 py-3 border text-xs tracking-[0.2em] uppercase transition-all duration-300"
+              className="inline-flex items-center gap-3 px-6 py-3 border text-sm tracking-[0.2em] uppercase transition-all duration-300"
               style={{
                 fontFamily: "'Inter', sans-serif",
                 borderColor: CYAN,
@@ -300,7 +300,7 @@ function ServiceItem({
         <span
           data-num
           style={{ fontFamily: "'DM Mono', monospace", color: CYAN, transition: "color 0.3s" }}
-          className="text-xs tracking-widest"
+          className="text-sm tracking-widest"
         >
           {service.number}
         </span>
@@ -372,17 +372,17 @@ export function Services() {
     <>
       <section
         id="services"
-        className="relative bg-gradient-to-b from-[#16212e] via-[#1a2840] to-[#16212e] py-32 border-t border-white/5"
+        className="relative bg-gradient-to-b from-[#16212e] via-[#1a2840] to-[#16212e] py-16 md:py-32 border-t border-white/5"
       >
         <div className="max-w-[1440px] mx-auto px-8 md:px-16">
           {/* Header */}
-          <div ref={ref} className="mb-20">
+          <div ref={ref} className="mb-10 md:mb-20">
             <motion.p
               initial={{ opacity: 0, y: 10 }}
               animate={inView ? { opacity: 1, y: 0 } : {}}
               transition={{ duration: 0.6 }}
               style={{ fontFamily: "'DM Mono', monospace" }}
-              className="text-[#00d4e8] text-xs tracking-[0.3em] uppercase mb-4 flex items-center gap-3"
+              className="text-[#00d4e8] text-sm tracking-[0.3em] uppercase mb-4 flex items-center gap-3"
             >
               <span className="w-6 h-px bg-[#00d4e8]" />
               What We Do

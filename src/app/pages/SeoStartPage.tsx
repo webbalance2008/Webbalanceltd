@@ -7,11 +7,13 @@ import {
   BarChart3, TrendingUp, Target, Zap, ShieldCheck, Link2, FileSearch, LineChart,
   PoundSterling, LucideIcon,
 } from "lucide-react";
+import { sendEmail } from "../utils/sendEmail";
+import { SEOHead } from "../components/SEOHead";
 
 const ACCENT      = "#3dd68c";
 const ACCENT_RGB  = "61, 214, 140";
-const DEPT_BG     = "#102830";
-const TOTAL_STEPS = 7;
+const DEPT_BG     = "#16212e";
+const TOTAL_STEPS = 8;
 const VAT_RATE    = 0.20;
 
 // ─── Step 1 — Business Type ──────────────────────────────────────────────────
@@ -92,11 +94,12 @@ const addOns: AddOn[] = [
 const stepMeta = [
   { step: 1, label: "Business",  title: "Tell us about your business.",          subtitle: "This helps us understand your market and competition." },
   { step: 2, label: "Status",    title: "Where are you with SEO right now?",     subtitle: "Honest answers help us build the right strategy from day one." },
-  { step: 3, label: "Goals",     title: "What do you want to achieve?",          subtitle: "Select all that apply and tell us your geographic focus." },
-  { step: 4, label: "Budget",    title: "What's your monthly SEO investment?",   subtitle: "SEO is a long-term strategy — choosing the right level matters." },
-  { step: 5, label: "Add-Ons",   title: "Any additional services?",              subtitle: "Stack extra services on top of your core retainer." },
-  { step: 6, label: "Estimate",  title: "Your indicative SEO investment.",        subtitle: "Based on your answers — transparent pricing before we talk." },
-  { step: 7, label: "About You", title: "Almost there.",                          subtitle: "A few details so we can prepare a personalised proposal." },
+  { step: 3, label: "Goals",     title: "What do you want to achieve?",          subtitle: "Select all that apply — we'll build your strategy around these." },
+  { step: 4, label: "Scope",     title: "What's your geographic focus?",         subtitle: "This determines the scale and targeting of your campaign." },
+  { step: 5, label: "Budget",    title: "What's your monthly SEO investment?",   subtitle: "SEO is a long-term strategy — choosing the right level matters." },
+  { step: 6, label: "Add-Ons",   title: "Any additional services?",              subtitle: "Stack extra services on top of your core retainer." },
+  { step: 7, label: "Estimate",  title: "Your indicative SEO investment.",        subtitle: "Based on your answers — transparent pricing before we talk." },
+  { step: 8, label: "About You", title: "Almost there.",                          subtitle: "A few details so we can prepare a personalised proposal." },
 ];
 
 // ─── Form State ───────────────────────────────────────────────────────────────
@@ -188,8 +191,8 @@ function TypeCard({ id, label, sub, Icon, isActive, onClick }: {
         transition: "all 0.2s",
       }} />
       <Icon size={20} strokeWidth={1.25} style={{ color: isActive ? ACCENT : hov ? `rgba(${ACCENT_RGB},0.7)` : `rgba(${ACCENT_RGB},0.4)`, marginBottom: "12px", transition: "color 0.2s" }} />
-      <p style={{ fontFamily: "'Montserrat',sans-serif", fontSize: "14px", fontWeight: 600, color: isActive ? "white" : "rgba(255,255,255,0.9)", marginBottom: "4px", transition: "color 0.2s" }}>{label}</p>
-      <p style={{ fontFamily: "'Inter',sans-serif", fontSize: "12px", color: isActive ? `rgba(${ACCENT_RGB},0.8)` : "rgba(255,255,255,0.45)", transition: "color 0.2s" }}>{sub}</p>
+      <p style={{ fontFamily: "'Montserrat',sans-serif", fontSize: "18px", fontWeight: 600, color: isActive ? "white" : "rgba(255,255,255,0.9)", marginBottom: "4px", transition: "color 0.2s" }}>{label}</p>
+      <p style={{ fontFamily: "'Inter',sans-serif", fontSize: "15px", color: isActive ? `rgba(${ACCENT_RGB},0.8)` : "rgba(255,255,255,0.9)", lineHeight: 1.5, transition: "color 0.2s" }}>{sub}</p>
       {isActive && (
         <div className="absolute top-3 right-3 w-5 h-5 rounded-full flex items-center justify-center" style={{ backgroundColor: ACCENT, boxShadow: `0 0 8px rgba(${ACCENT_RGB},0.55)` }}>
           <Check size={11} color="#0a0a0a" strokeWidth={3} />
@@ -218,8 +221,8 @@ function StatusCard({ opt, isActive, onClick }: { opt: typeof seoStatuses[0]; is
         background: isActive ? `linear-gradient(90deg,transparent,${ACCENT},transparent)` : hov ? `linear-gradient(90deg,transparent,rgba(${ACCENT_RGB},0.4),transparent)` : `linear-gradient(90deg,transparent,rgba(${ACCENT_RGB},0.1),transparent)`,
         transition: "all 0.2s",
       }} />
-      <p style={{ fontFamily: "'Montserrat',sans-serif", fontSize: "14px", fontWeight: 600, color: isActive ? "white" : isUnsure ? `rgba(${ACCENT_RGB},0.75)` : "rgba(255,255,255,0.9)", marginBottom: "4px", transition: "color 0.2s" }}>{opt.label}</p>
-      <p style={{ fontFamily: "'Inter',sans-serif", fontSize: "12px", color: isActive ? `rgba(${ACCENT_RGB},0.7)` : "rgba(255,255,255,0.4)", transition: "color 0.2s" }}>{opt.sub}</p>
+      <p style={{ fontFamily: "'Montserrat',sans-serif", fontSize: "18px", fontWeight: 600, color: isActive ? "white" : isUnsure ? `rgba(${ACCENT_RGB},0.75)` : "rgba(255,255,255,0.9)", marginBottom: "4px", transition: "color 0.2s" }}>{opt.label}</p>
+      <p style={{ fontFamily: "'Inter',sans-serif", fontSize: "15px", color: isActive ? `rgba(${ACCENT_RGB},0.7)` : "rgba(255,255,255,0.9)", lineHeight: 1.5, transition: "color 0.2s" }}>{opt.sub}</p>
       {isActive && (
         <div className="absolute top-3 right-3 w-5 h-5 rounded-full flex items-center justify-center" style={{ backgroundColor: ACCENT, boxShadow: `0 0 8px rgba(${ACCENT_RGB},0.55)` }}>
           <Check size={11} color="#0a0a0a" strokeWidth={3} />
@@ -249,8 +252,8 @@ function BudgetCard({ opt, isActive, onClick }: { opt: typeof budgets[0]; isActi
         transition: "all 0.2s",
       }} />
       {isUnsure && <HelpCircle size={14} style={{ color: isActive ? ACCENT : `rgba(${ACCENT_RGB},0.5)`, marginBottom: "8px" }} />}
-      <p style={{ fontFamily: "'Montserrat',sans-serif", fontSize: "15px", fontWeight: 700, color: isActive ? "white" : isUnsure ? `rgba(${ACCENT_RGB},0.75)` : "rgba(255,255,255,0.9)", marginBottom: "4px" }}>{opt.label}</p>
-      <p style={{ fontFamily: "'Inter',sans-serif", fontSize: "12px", color: isActive ? `rgba(${ACCENT_RGB},0.7)` : "rgba(255,255,255,0.4)" }}>{opt.sub}</p>
+      <p style={{ fontFamily: "'Montserrat',sans-serif", fontSize: "18px", fontWeight: 700, color: isActive ? "white" : isUnsure ? `rgba(${ACCENT_RGB},0.75)` : "rgba(255,255,255,0.9)", marginBottom: "4px" }}>{opt.label}</p>
+      <p style={{ fontFamily: "'Inter',sans-serif", fontSize: "15px", color: isActive ? `rgba(${ACCENT_RGB},0.7)` : "rgba(255,255,255,0.9)" }}>{opt.sub}</p>
       {!isUnsure && opt.monthly > 0 && (
         <p style={{ fontFamily: "'DM Mono',monospace", fontSize: "11px", letterSpacing: "0.08em", color: isActive ? ACCENT : `rgba(${ACCENT_RGB},0.35)`, marginTop: "10px", transition: "color 0.2s" }}>
           from {fmt(opt.monthly)}/mo + VAT
@@ -287,10 +290,10 @@ function AddOnCard({ addon, isActive, onClick, noneActive }: { addon: AddOn; isA
         transition: "all 0.2s",
       }} />
       <addon.Icon size={16} style={{ color: isActive ? ACCENT : hov ? `rgba(${ACCENT_RGB},0.7)` : `rgba(${ACCENT_RGB},0.4)`, marginBottom: "10px", transition: "color 0.2s" }} />
-      <p style={{ fontFamily: "'Montserrat',sans-serif", fontSize: "13px", fontWeight: 600, color: isActive ? "white" : "rgba(255,255,255,0.9)", marginBottom: "4px" }}>{addon.label}</p>
-      <p style={{ fontFamily: "'Inter',sans-serif", fontSize: "12px", color: "rgba(255,255,255,0.4)", marginBottom: "8px", lineHeight: 1.4 }}>{addon.sub}</p>
+      <p style={{ fontFamily: "'Montserrat',sans-serif", fontSize: "18px", fontWeight: 600, color: isActive ? "white" : "rgba(255,255,255,0.9)", marginBottom: "4px" }}>{addon.label}</p>
+      <p style={{ fontFamily: "'Inter',sans-serif", fontSize: "15px", color: "rgba(255,255,255,0.9)", marginBottom: "8px", lineHeight: 1.5 }}>{addon.sub}</p>
       {(addon.monthlyAdd > 0 || addon.oneOff > 0) && (
-        <p style={{ fontFamily: "'DM Mono',monospace", fontSize: "10px", letterSpacing: "0.08em", color: isActive ? ACCENT : `rgba(${ACCENT_RGB},0.35)`, transition: "color 0.2s" }}>
+        <p style={{ fontFamily: "'DM Mono',monospace", fontSize: "11px", letterSpacing: "0.08em", color: isActive ? ACCENT : `rgba(${ACCENT_RGB},0.35)`, transition: "color 0.2s" }}>
           {addon.monthlyAdd > 0 ? `+${fmt(addon.monthlyAdd)}/mo` : `${fmt(addon.oneOff)} one-off`}
         </p>
       )}
@@ -326,9 +329,10 @@ export function SeoStartPage() {
   const canNext = () => {
     if (step === 1) return !!data.businessType;
     if (step === 2) return !!data.seoStatus;
-    if (step === 3) return data.goals.length > 0 && !!data.scope;
-    if (step === 4) return !!data.budget;
-    if (step === 5) return data.addOns.length > 0;
+    if (step === 3) return data.goals.length > 0;
+    if (step === 4) return !!data.scope;
+    if (step === 5) return !!data.budget;
+    if (step === 6) return data.addOns.length > 0;
     return true;
   };
 
@@ -366,37 +370,72 @@ export function SeoStartPage() {
 
   return (
     <div className="min-h-screen" style={{ backgroundColor: DEPT_BG }}>
-      {/* Progress bar */}
-      <div className="fixed top-24 left-0 right-0 z-40 h-px" style={{ backgroundColor: `rgba(${ACCENT_RGB},0.1)` }}>
-        <motion.div className="h-full" style={{ backgroundColor: ACCENT, width: `${progress}%` }} transition={{ duration: 0.4, ease: "easeOut" }} />
+      <SEOHead
+        title="SEO Quote Builder"
+        description="Walk through our SEO wizard to scope your search engine optimisation campaign. Get a tailored strategy estimate in minutes."
+        path="/seo/start"
+        keywords="SEO quote, search engine optimisation pricing, SEO cost estimator, UK SEO services"
+      />
+
+      {/* ── Progress / Step indicator bar ──────────────────────────────────── */}
+      <div className="fixed top-24 left-0 right-0 z-40 px-4 sm:px-8 md:px-16 pointer-events-none"
+        style={{ backgroundColor:"rgba(22,33,46,0.92)", backdropFilter:"blur(16px)", borderBottom:`1px solid rgba(${ACCENT_RGB},0.1)` }}>
+        <div className="max-w-[1320px] mx-auto py-3 sm:py-4">
+          {/* Mobile compact */}
+          <div className="flex sm:hidden items-center gap-3">
+            <span style={{ fontFamily:"'DM Mono',monospace", fontSize:"10px", letterSpacing:"0.2em", color:ACCENT, whiteSpace:"nowrap" }}>{step} / {TOTAL_STEPS}</span>
+            <div className="flex-1 relative" style={{ height:"2px", backgroundColor:`rgba(${ACCENT_RGB},0.1)` }}>
+              <div className="absolute inset-y-0 left-0 transition-all duration-500" style={{ width:`${progress}%`, backgroundColor:ACCENT, boxShadow:`0 0 6px rgba(${ACCENT_RGB},0.6)` }} />
+            </div>
+            <span style={{ fontFamily:"'DM Mono',monospace", fontSize:"10px", letterSpacing:"0.15em", color:"white", textTransform:"uppercase" as const, whiteSpace:"nowrap" }}>{sm.label}</span>
+          </div>
+          {/* Desktop step indicators */}
+          <div className="hidden sm:flex items-center">
+            {stepMeta.map((s, i) => {
+              const isActive = step === s.step;
+              const isDone   = step > s.step;
+              return (
+                <div key={s.step} className="flex items-center flex-1 last:flex-none">
+                  <div className="flex flex-col items-center gap-1.5">
+                    <div className="w-7 h-7 md:w-8 md:h-8 rounded-full border flex items-center justify-center transition-all duration-300"
+                      style={{ borderColor: isDone ? ACCENT : isActive ? ACCENT : "rgba(255,255,255,0.15)", backgroundColor: isDone ? ACCENT : isActive ? `rgba(${ACCENT_RGB},0.15)` : "transparent", boxShadow: isActive ? `0 0 12px rgba(${ACCENT_RGB},0.35)` : "none" }}>
+                      {isDone ? <Check size={12} color="#0a0a0a" strokeWidth={3} /> : <span style={{ fontFamily:"'DM Mono',monospace", fontSize:"10px", color:isActive?ACCENT:"rgba(255,255,255,0.5)" }}>{s.step}</span>}
+                    </div>
+                    <span className="uppercase hidden md:block" style={{ fontFamily:"'DM Mono',monospace", fontSize:"8px", color:isActive?ACCENT:isDone?"rgba(255,255,255,0.7)":"rgba(255,255,255,0.4)", letterSpacing:"0.15em", transition:"color 0.3s", whiteSpace:"nowrap" }}>{s.label}</span>
+                  </div>
+                  {i < stepMeta.length - 1 && <div className="flex-1 h-px mx-2 md:mx-3 transition-all duration-500" style={{ backgroundColor: step > s.step ? ACCENT : `rgba(${ACCENT_RGB},0.08)` }} />}
+                </div>
+              );
+            })}
+          </div>
+        </div>
       </div>
 
-      <div className="max-w-3xl mx-auto px-6 pt-40 pb-32">
-        {/* Step label */}
-        <motion.p key={`label-${step}`} initial={{ opacity: 0 }} animate={{ opacity: 1 }} style={{ fontFamily: "'DM Mono',monospace", color: ACCENT }} className="text-[10px] tracking-[0.35em] uppercase flex items-center gap-3 mb-8">
-          <span className="w-6 h-px" style={{ backgroundColor: ACCENT }} />
-          Step {sm.step} of {TOTAL_STEPS} — {sm.label}
-        </motion.p>
-
-        {/* Title */}
-        <div className="overflow-hidden pb-[0.2em] mb-2">
-          <motion.h1 key={`title-${step}`} initial={{ y: "100%", opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ duration: 0.55, ease: [0.16, 1, 0.3, 1] }}
-            style={{ fontFamily: "'Montserrat',sans-serif", color: "white" }} className="text-4xl md:text-5xl">
-            {sm.title}
-          </motion.h1>
+      {/* ── Hero heading ─────────────────────────────────────────────────── */}
+      <section className="pt-48 sm:pt-56 md:pt-64 pb-6 sm:pb-10">
+        <div className="max-w-[1320px] mx-auto px-4 sm:px-8 md:px-16">
+          <AnimatePresence mode="wait" custom={dir}>
+            <motion.div key={`hero-${step}`} custom={dir} variants={variants} initial="enter" animate="center" exit="exit" transition={{ duration:0.36, ease:[0.16,1,0.3,1] }}>
+              <p style={{ fontFamily:"'DM Mono',monospace", color:ACCENT }} className="text-[11px] tracking-[0.35em] uppercase mb-5 flex items-center gap-3">
+                <span className="w-5 h-px" style={{ backgroundColor:ACCENT }} />
+                Step {sm.step} of {TOTAL_STEPS}
+              </p>
+              <h1 style={{ fontFamily:"'Montserrat',sans-serif" }} className="text-white text-[clamp(2rem,4.5vw,3.4rem)] font-light leading-tight mb-3">{sm.title}</h1>
+              <p style={{ fontFamily:"'Inter',sans-serif" }} className="text-white/40 text-[15px] leading-relaxed">{sm.subtitle}</p>
+            </motion.div>
+          </AnimatePresence>
         </div>
-        <motion.p key={`sub-${step}`} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}
-          style={{ fontFamily: "'Inter',sans-serif", color: "rgba(255,255,255,0.45)" }} className="text-sm leading-relaxed mb-12">
-          {sm.subtitle}
-        </motion.p>
+      </section>
 
-        {/* Step content */}
+      {/* ── Step content ─────────────────────────────────────────────────── */}
+      <section className="pb-24 sm:pb-36">
+        <div className="max-w-[1320px] mx-auto px-4 sm:px-8 md:px-16">
         <AnimatePresence mode="wait" custom={dir}>
           <motion.div key={step} custom={dir} variants={variants} initial="enter" animate="center" exit="exit" transition={{ duration: 0.35, ease: "easeInOut" }}>
 
             {/* Step 1 — Business Type */}
             {step === 1 && (
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+              <div className="mt-6 sm:mt-8 grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4">
                 {businessTypes.map(bt => (
                   <TypeCard key={bt.id} {...bt} isActive={data.businessType === bt.id} onClick={() => setData(d => ({ ...d, businessType: bt.id }))} />
                 ))}
@@ -405,7 +444,7 @@ export function SeoStartPage() {
 
             {/* Step 2 — SEO Status */}
             {step === 2 && (
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+              <div className="mt-6 sm:mt-8 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 sm:gap-4">
                 {seoStatuses.map(s => (
                   <StatusCard key={s.id} opt={s} isActive={data.seoStatus === s.id} onClick={() => setData(d => ({ ...d, seoStatus: s.id }))} />
                 ))}
@@ -414,54 +453,55 @@ export function SeoStartPage() {
 
             {/* Step 3 — Goals + Scope */}
             {step === 3 && (
-              <div className="space-y-10">
+              <div className="mt-6 sm:mt-8 space-y-10">
                 <div>
-                  <p style={{ fontFamily: "'DM Mono',monospace", color: ACCENT }} className="text-[10px] tracking-[0.3em] uppercase mb-5">Primary Goals — select all that apply</p>
+                  <p style={{ fontFamily: "'DM Mono',monospace", color: ACCENT }} className="text-[11px] tracking-[0.3em] uppercase mb-5">Primary Goals — select all that apply</p>
                   <div className="flex flex-wrap gap-2">
                     {seoGoals.map(g => (
                       <button key={g} type="button"
                         onMouseEnter={() => setHovChips(h => ({ ...h, [g]: true }))}
                         onMouseLeave={() => setHovChips(h => ({ ...h, [g]: false }))}
                         onClick={() => toggleGoal(g)}
-                        className="px-4 py-2 border text-sm transition-all duration-200"
+                        className="px-4 py-3 border text-base transition-all duration-200"
                         style={chipStyle(data.goals.includes(g), hovChips[g])}>
                         {g}
                       </button>
                     ))}
                   </div>
                 </div>
-                <div>
-                  <p style={{ fontFamily: "'DM Mono',monospace", color: ACCENT }} className="text-[10px] tracking-[0.3em] uppercase mb-5">Geographic Scope</p>
-                  <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-                    {scopes.map(sc => (
-                      <TypeCard key={sc.id} id={sc.id} label={sc.label} sub={sc.sub} Icon={sc.Icon} isActive={data.scope === sc.id} onClick={() => setData(d => ({ ...d, scope: sc.id }))} />
-                    ))}
-                  </div>
-                </div>
               </div>
             )}
 
-            {/* Step 4 — Budget */}
+            {/* Step 4 — Scope */}
             {step === 4 && (
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+              <div className="mt-6 sm:mt-8 grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4">
+                {scopes.map(sc => (
+                  <TypeCard key={sc.id} id={sc.id} label={sc.label} sub={sc.sub} Icon={sc.Icon} isActive={data.scope === sc.id} onClick={() => setData(d => ({ ...d, scope: sc.id }))} />
+                ))}
+              </div>
+            )}
+
+            {/* Step 5 — Budget */}
+            {step === 5 && (
+              <div className="mt-6 sm:mt-8 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 sm:gap-4">
                 {budgets.map(b => (
                   <BudgetCard key={b.id} opt={b} isActive={data.budget === b.id} onClick={() => setData(d => ({ ...d, budget: b.id }))} />
                 ))}
               </div>
             )}
 
-            {/* Step 5 — Add-Ons */}
-            {step === 5 && (
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+            {/* Step 6 — Add-Ons */}
+            {step === 6 && (
+              <div className="mt-6 sm:mt-8 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 sm:gap-4">
                 {addOns.map(a => (
                   <AddOnCard key={a.id} addon={a} isActive={data.addOns.includes(a.id)} onClick={() => toggleAddOn(a.id)} noneActive={noneActive} />
                 ))}
               </div>
             )}
 
-            {/* Step 6 — Estimate */}
-            {step === 6 && (
-              <div className="space-y-8">
+            {/* Step 7 — Estimate */}
+            {step === 7 && (
+              <div className="mt-6 sm:mt-8 space-y-8 max-w-3xl">
                 {isEnterprise ? (
                   <div className="p-8 border text-center" style={{ borderColor: `rgba(${ACCENT_RGB},0.2)`, backgroundColor: `rgba(${ACCENT_RGB},0.04)` }}>
                     <p style={{ fontFamily: "'Montserrat',sans-serif", color: ACCENT }} className="text-2xl mb-3">Enterprise / Custom</p>
@@ -475,17 +515,17 @@ export function SeoStartPage() {
                     <div className="p-6 border" style={{ borderColor: `rgba(${ACCENT_RGB},0.25)`, backgroundColor: `rgba(${ACCENT_RGB},0.06)` }}>
                       <div className="flex items-start justify-between mb-6">
                         <div>
-                          <p style={{ fontFamily: "'DM Mono',monospace", color: ACCENT, fontSize: "10px", letterSpacing: "0.3em" }} className="uppercase mb-1">Recommended Package</p>
+                          <p style={{ fontFamily: "'DM Mono',monospace", color: ACCENT, fontSize: "11px", letterSpacing: "0.3em" }} className="uppercase mb-1">Recommended Package</p>
                           <p style={{ fontFamily: "'Montserrat',sans-serif", color: "white", fontSize: "24px" }}>{estimate.packageLabel}</p>
                         </div>
                         <div className="text-right">
                           <p style={{ fontFamily: "'Montserrat',sans-serif", color: ACCENT, fontSize: "28px" }}>{fmt(estimate.monthlyTotal)}</p>
-                          <p style={{ fontFamily: "'DM Mono',monospace", color: "rgba(255,255,255,0.4)", fontSize: "10px", letterSpacing: "0.15em" }}>per month inc. VAT</p>
+                          <p style={{ fontFamily: "'DM Mono',monospace", color: "rgba(255,255,255,0.4)", fontSize: "11px", letterSpacing: "0.15em" }}>per month inc. VAT</p>
                         </div>
                       </div>
                       {/* Package includes */}
                       <div className="border-t pt-5" style={{ borderColor: `rgba(${ACCENT_RGB},0.15)` }}>
-                        <p style={{ fontFamily: "'DM Mono',monospace", color: `rgba(${ACCENT_RGB},0.6)`, fontSize: "10px", letterSpacing: "0.25em" }} className="uppercase mb-3">What's included</p>
+                        <p style={{ fontFamily: "'DM Mono',monospace", color: `rgba(${ACCENT_RGB},0.6)`, fontSize: "11px", letterSpacing: "0.25em" }} className="uppercase mb-3">What's included</p>
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
                           {(packageIncludes[data.budget] ?? []).map(item => (
                             <div key={item} className="flex items-start gap-2">
@@ -530,7 +570,7 @@ export function SeoStartPage() {
                       </div>
                     )}
 
-                    <p style={{ fontFamily: "'Inter',sans-serif", color: "rgba(255,255,255,0.3)", fontSize: "12px" }}>
+                    <p style={{ fontFamily: "'Inter',sans-serif", color: "rgba(255,255,255,0.5)", fontSize: "14px" }}>
                       * Indicative pricing based on your answers. Your final proposal may vary after our discovery call. Minimum 3-month contract recommended for SEO results.
                     </p>
                   </>
@@ -538,9 +578,9 @@ export function SeoStartPage() {
               </div>
             )}
 
-            {/* Step 7 — About You */}
-            {step === 7 && (
-              <div className="space-y-5">
+            {/* Step 8 — About You */}
+            {step === 8 && (
+              <div className="mt-6 sm:mt-8 space-y-5 max-w-2xl">
                 {[
                   { field: "name" as const,      label: "Your name",       ph: "Jane Smith",                 type: "text"  },
                   { field: "emailAddr" as const,  label: "Email address",   ph: "jane@company.com",          type: "email" },
@@ -548,7 +588,7 @@ export function SeoStartPage() {
                   { field: "website" as const,    label: "Website URL",     ph: "https://yoursite.co.uk",    type: "url"   },
                 ].map(({ field, label, ph, type }) => (
                   <div key={field}>
-                    <label style={{ fontFamily: "'DM Mono',monospace", color: `rgba(${ACCENT_RGB},0.7)`, fontSize: "10px", letterSpacing: "0.25em" }} className="uppercase block mb-2">{label}</label>
+                    <label style={{ fontFamily: "'DM Mono',monospace", color: `rgba(${ACCENT_RGB},0.7)`, fontSize: "11px", letterSpacing: "0.25em" }} className="uppercase block mb-2">{label}</label>
                     <input type={type} value={data[field]} onChange={e => setData(d => ({ ...d, [field]: e.target.value }))} placeholder={ph}
                       className="w-full bg-transparent border px-4 py-3 text-sm outline-none transition-all duration-200"
                       style={{ borderColor: `rgba(${ACCENT_RGB},0.2)`, color: "white", fontFamily: "'Inter',sans-serif" }}
@@ -557,7 +597,7 @@ export function SeoStartPage() {
                   </div>
                 ))}
                 <div>
-                  <label style={{ fontFamily: "'DM Mono',monospace", color: `rgba(${ACCENT_RGB},0.7)`, fontSize: "10px", letterSpacing: "0.25em" }} className="uppercase block mb-2">Anything else we should know?</label>
+                  <label style={{ fontFamily: "'DM Mono',monospace", color: `rgba(${ACCENT_RGB},0.7)`, fontSize: "11px", letterSpacing: "0.25em" }} className="uppercase block mb-2">Anything else we should know?</label>
                   <textarea value={data.brief} onChange={e => setData(d => ({ ...d, brief: e.target.value }))} placeholder="Tell us about your competitors, target keywords, past SEO experiences, or any specific goals we haven't covered..."
                     rows={4} className="w-full bg-transparent border px-4 py-3 text-sm outline-none resize-none transition-all duration-200"
                     style={{ borderColor: `rgba(${ACCENT_RGB},0.2)`, color: "white", fontFamily: "'Inter',sans-serif" }}
@@ -570,50 +610,51 @@ export function SeoStartPage() {
           </motion.div>
         </AnimatePresence>
 
-        {/* Nav buttons */}
-        <div className="flex items-center justify-between mt-14">
-          <button type="button" onClick={back} disabled={step === 1}
-            className="flex items-center gap-2 transition-opacity duration-200"
-            style={{ fontFamily: "'DM Mono',monospace", color: `rgba(${ACCENT_RGB},0.5)`, fontSize: "11px", letterSpacing: "0.2em", opacity: step === 1 ? 0 : 1 }}>
-            <ArrowLeft size={13} /> Back
-          </button>
-
-          {step < TOTAL_STEPS ? (
-            <button type="button" onClick={next} disabled={!canNext()}
-              className="flex items-center gap-3 px-8 py-4 transition-all duration-200"
-              style={{
-                fontFamily: "'DM Mono',monospace", fontSize: "11px", letterSpacing: "0.2em",
-                backgroundColor: canNext() ? ACCENT : "transparent",
-                color: canNext() ? "#0a0a0a" : `rgba(${ACCENT_RGB},0.3)`,
-                border: `1px solid ${canNext() ? ACCENT : `rgba(${ACCENT_RGB},0.2)`}`,
-                cursor: canNext() ? "pointer" : "not-allowed",
-              }}>
-              CONTINUE <ArrowRight size={13} />
+          {/* ── Navigation ────────────────────────────────────────────────────── */}
+          <div className="flex flex-col-reverse sm:flex-row sm:items-center sm:justify-between gap-4 mt-8 sm:mt-14 pt-6 sm:pt-8 border-t border-white/5">
+            <button type="button" onClick={back} disabled={step === 1}
+              className="flex items-center gap-2 transition-opacity duration-200"
+              style={{ fontFamily: "'DM Mono',monospace", color: `rgba(${ACCENT_RGB},0.5)`, fontSize: "11px", letterSpacing: "0.2em", opacity: step === 1 ? 0 : 1 }}>
+              <ArrowLeft size={13} /> BACK
             </button>
-          ) : (
-            <button type="button" onClick={() => setSubmitted(true)}
-              disabled={!data.name || !data.emailAddr}
-              className="flex items-center gap-3 px-8 py-4 transition-all duration-200"
-              style={{
-                fontFamily: "'DM Mono',monospace", fontSize: "11px", letterSpacing: "0.2em",
-                backgroundColor: (data.name && data.emailAddr) ? ACCENT : "transparent",
-                color: (data.name && data.emailAddr) ? "#0a0a0a" : `rgba(${ACCENT_RGB},0.3)`,
-                border: `1px solid ${(data.name && data.emailAddr) ? ACCENT : `rgba(${ACCENT_RGB},0.2)`}`,
-                cursor: (data.name && data.emailAddr) ? "pointer" : "not-allowed",
-              }}>
-              SEND BRIEF <Check size={13} />
-            </button>
-          )}
-        </div>
 
-        {/* Step dots */}
-        <div className="flex justify-center gap-2 mt-10">
-          {Array.from({ length: TOTAL_STEPS }, (_, i) => (
-            <div key={i} className="rounded-full transition-all duration-300"
-              style={{ width: i + 1 === step ? "20px" : "6px", height: "6px", backgroundColor: i + 1 <= step ? ACCENT : `rgba(${ACCENT_RGB},0.2)` }} />
-          ))}
+            {step < TOTAL_STEPS ? (
+              <button type="button" onClick={next} disabled={!canNext()}
+                className="flex items-center gap-3 px-8 py-4 transition-all duration-200"
+                style={{
+                  fontFamily: "'DM Mono',monospace", fontSize: "11px", letterSpacing: "0.2em",
+                  backgroundColor: canNext() ? ACCENT : "transparent",
+                  color: canNext() ? "#0a0a0a" : `rgba(${ACCENT_RGB},0.3)`,
+                  border: `1px solid ${canNext() ? ACCENT : `rgba(${ACCENT_RGB},0.2)`}`,
+                  cursor: canNext() ? "pointer" : "not-allowed",
+                }}>
+                CONTINUE <ArrowRight size={13} />
+              </button>
+            ) : (
+              <button type="button" onClick={() => {
+                  setSubmitted(true);
+                  sendEmail("start-project", {
+                    name: data.name, email: data.emailAddr, company: data.company, website: data.website,
+                    services: "SEO", brief: data.brief,
+                    budget: data.budget, goals: data.goals.join(", "),
+                  });
+                }}
+                disabled={!data.name || !data.emailAddr}
+                className="flex items-center gap-3 px-8 py-4 transition-all duration-200"
+                style={{
+                  fontFamily: "'DM Mono',monospace", fontSize: "11px", letterSpacing: "0.2em",
+                  backgroundColor: (data.name && data.emailAddr) ? ACCENT : "transparent",
+                  color: (data.name && data.emailAddr) ? "#0a0a0a" : `rgba(${ACCENT_RGB},0.3)`,
+                  border: `1px solid ${(data.name && data.emailAddr) ? ACCENT : `rgba(${ACCENT_RGB},0.2)`}`,
+                  cursor: (data.name && data.emailAddr) ? "pointer" : "not-allowed",
+                }}>
+                SEND BRIEF <Check size={13} />
+              </button>
+            )}
+          </div>
+
         </div>
-      </div>
+      </section>
     </div>
   );
 }

@@ -13,6 +13,8 @@ export function EcommerceStorePage() {
       subtitle="Sell online beautifully — on your terms"
       heroImage={heroImage}
       heroColor="#1e0f3a"
+      seoPath="/web-apps/ecommerce"
+      seoKeywords="custom ecommerce app, online store development, bespoke shopping platform, UK ecommerce developer"
       overview="A bespoke e-commerce store that matches the quality of your product, converts browsers into buyers, and scales with your ambition."
       overviewDetail="Your products deserve better than a generic template. Whether you're launching a direct-to-consumer brand, building a multi-brand marketplace, or creating a complex configure-to-order experience, we build e-commerce platforms that reflect the true quality of what you're selling. We work with both custom-built architectures and best-in-class platforms like Shopify — recommending the right approach based on your product complexity, order volume, and long-term commercial ambitions. The result is an online store that feels like an extension of your brand, not a bolt-on afterthought."
       features={[
@@ -130,6 +132,11 @@ export function EcommerceStorePage() {
         },
       ]}
       ctaTitle="Your products deserve a store that sells them at their best."
+      concepts={[
+        { title: "Product Catalogue", description: "Filterable product grid with imagery, pricing, variants, and quick-add — designed to convert browsers into buyers.", layout: "store" },
+        { title: "Order Management", description: "Admin dashboard tracking orders, fulfillment status, returns, and revenue — all in real time.", layout: "dashboard" },
+        { title: "Performance Analytics", description: "Sales trends, conversion rates, top products, and customer lifetime value — data that drives decisions.", layout: "analytics" },
+      ]}
     />
   );
 }

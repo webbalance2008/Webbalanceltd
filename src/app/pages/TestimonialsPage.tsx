@@ -1,6 +1,8 @@
 import { motion, useInView } from "motion/react";
 import { testimonials } from "../data/testimonials";
 import { useRef } from "react";
+import { SEOHead } from "../components/SEOHead";
+import { DepartmentHero } from "../components/DepartmentHero";
 
 const CYAN = "#00d4e8";
 
@@ -14,129 +16,103 @@ const CARD_ACCENTS = [
   { color: "#5ec4d4", rgb: "94, 196, 212",  iconBg: "linear-gradient(135deg, rgba(94,196,212,0.18), rgba(94,196,212,0.06))"  },
 ];
 
-const heroImage =
-  "https://images.unsplash.com/photo-1560264280-88b68371db39?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxidXNpbmVzcyUyMGhhbmRzaGFrZSUyMG1lZXRpbmclMjBwYXJ0bmVyc2hpcHxlbnwxfHx8fDE3NDczOTI4MDB8MA&ixlib=rb-4.1.0&q=80&w=1080";
-
 export default function TestimonialsPage() {
   return (
-    <div className="min-h-screen" style={{ background: "#16212e" }}>
-      {/* Hero */}
-      <section className="relative h-[50vh] min-h-[400px] overflow-hidden">
-        <motion.img
-          src={heroImage}
-          alt="Client Testimonials"
-          className="absolute inset-0 w-full h-full object-cover"
-          initial={{ scale: 1.08 }}
-          animate={{ scale: 1 }}
-          transition={{ duration: 1.8, ease: [0.16, 1, 0.3, 1] }}
+    <>
+      <SEOHead
+        title="Client Testimonials"
+        description="Hear from the businesses Web Balance has helped grow online. Real results, real relationships — from Aberdeen to Edinburgh and beyond."
+        path="/testimonials"
+        keywords="web design testimonials, client reviews, web agency reviews UK"
+      />
+      <div className="min-h-screen" style={{ background: "#16212e" }}>
+        {/* Hero */}
+        <DepartmentHero
+          label="Client Success"
+          heading={
+            <>
+              Client{" "}
+              <span style={{ color: CYAN }}>testimonials</span>.
+            </>
+          }
+          subtitle="Real feedback from businesses we've partnered with across design, development, and digital strategy."
+          accent={CYAN}
+          patternId="test"
         />
-        <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/70 to-[#16212e]" />
-        <div className="relative h-full flex flex-col justify-end max-w-[1440px] mx-auto px-8 md:px-16 pb-14">
-          <motion.p
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.3 }}
-            style={{ fontFamily: "'DM Mono', monospace", color: CYAN }}
-            className="text-xs tracking-[0.35em] uppercase mb-4 flex items-center gap-3"
-          >
-            <span className="w-6 h-px" style={{ backgroundColor: CYAN }} />
-            Client Success
-          </motion.p>
-          <div className="overflow-hidden pb-[0.2em]">
-            <motion.h1
-              initial={{ y: "100%" }}
-              animate={{ y: 0 }}
-              transition={{ duration: 0.9, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
-              style={{ fontFamily: "'Montserrat', sans-serif" }}
-              className="text-white text-[clamp(3rem,7vw,6rem)] leading-[0.95] tracking-[-0.02em] font-light"
+
+        {/* Testimonials Grid */}
+        <section className="py-20">
+          <div className="max-w-[1440px] mx-auto px-8 md:px-16">
+            <motion.p
+              initial={{ opacity: 0 }}
+              whileInView={{ opacity: 1 }}
+              viewport={{ once: true }}
+              style={{ fontFamily: "'DM Mono', monospace", color: CYAN }}
+              className="text-[10px] tracking-[0.3em] uppercase flex items-center gap-3 mb-12"
             >
-              Client Testimonials
-            </motion.h1>
+              <span className="w-6 h-px" style={{ backgroundColor: CYAN }} />
+              All Testimonials ({testimonials.length})
+            </motion.p>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {testimonials.map((testimonial, i) => (
+                <TestimonialCard
+                  key={testimonial.id}
+                  testimonial={testimonial}
+                  index={i}
+                  accent={CARD_ACCENTS[i % CARD_ACCENTS.length]}
+                  cardNumber={i + 1}
+                />
+              ))}
+            </div>
           </div>
-          <motion.p
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.6 }}
-            style={{ fontFamily: "'Inter', sans-serif" }}
-            className="text-white/40 text-sm leading-relaxed mt-6 max-w-2xl"
-          >
-            Real feedback from businesses we've partnered with across design, development, and digital strategy.
-          </motion.p>
-        </div>
-      </section>
+        </section>
 
-      {/* Testimonials Grid */}
-      <section className="py-20">
-        <div className="max-w-[1440px] mx-auto px-8 md:px-16">
-          <motion.p
-            initial={{ opacity: 0 }}
-            whileInView={{ opacity: 1 }}
-            viewport={{ once: true }}
-            style={{ fontFamily: "'DM Mono', monospace", color: CYAN }}
-            className="text-[10px] tracking-[0.3em] uppercase flex items-center gap-3 mb-12"
-          >
-            <span className="w-6 h-px" style={{ backgroundColor: CYAN }} />
-            All Testimonials ({testimonials.length})
-          </motion.p>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {testimonials.map((testimonial, i) => (
-              <TestimonialCard
-                key={testimonial.id}
-                testimonial={testimonial}
-                index={i}
-                accent={CARD_ACCENTS[i % CARD_ACCENTS.length]}
-                cardNumber={i + 1}
-              />
-            ))}
+        {/* CTA */}
+        <section className="py-24 border-t border-white/5">
+          <div className="max-w-[1440px] mx-auto px-8 md:px-16 text-center">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.7 }}
+            >
+              <h2
+                style={{ fontFamily: "'Montserrat', sans-serif" }}
+                className="text-white text-4xl md:text-5xl leading-tight font-light mb-6"
+              >
+                Ready to work together?
+              </h2>
+              <p
+                style={{ fontFamily: "'Inter', sans-serif" }}
+                className="text-white/40 text-lg mb-10 max-w-2xl mx-auto"
+              >
+                Let's discuss your project and how we can help you achieve your goals.
+              </p>
+              <a
+                href="/contact"
+                className="inline-block px-10 py-4 text-sm tracking-[0.15em] uppercase transition-all duration-200"
+                style={{
+                  fontFamily: "'DM Mono', monospace",
+                  color: CYAN,
+                  border: `1px solid ${CYAN}`,
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.backgroundColor = `rgba(0,212,232,0.08)`;
+                  e.currentTarget.style.boxShadow = `0 0 12px rgba(0,212,232,0.15)`;
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.backgroundColor = "transparent";
+                  e.currentTarget.style.boxShadow = "none";
+                }}
+              >
+                Get in Touch
+              </a>
+            </motion.div>
           </div>
-        </div>
-      </section>
-
-      {/* CTA */}
-      <section className="py-24 border-t border-white/5">
-        <div className="max-w-[1440px] mx-auto px-8 md:px-16 text-center">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.7 }}
-          >
-            <h2
-              style={{ fontFamily: "'Montserrat', sans-serif" }}
-              className="text-white text-4xl md:text-5xl leading-tight font-light mb-6"
-            >
-              Ready to work together?
-            </h2>
-            <p
-              style={{ fontFamily: "'Inter', sans-serif" }}
-              className="text-white/40 text-lg mb-10 max-w-2xl mx-auto"
-            >
-              Let's discuss your project and how we can help you achieve your goals.
-            </p>
-            <a
-              href="/contact"
-              className="inline-block px-10 py-4 text-sm tracking-[0.15em] uppercase transition-all duration-200"
-              style={{
-                fontFamily: "'DM Mono', monospace",
-                color: CYAN,
-                border: `1px solid ${CYAN}`,
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.backgroundColor = `rgba(0,212,232,0.08)`;
-                e.currentTarget.style.boxShadow = `0 0 12px rgba(0,212,232,0.15)`;
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.backgroundColor = "transparent";
-                e.currentTarget.style.boxShadow = "none";
-              }}
-            >
-              Get in Touch
-            </a>
-          </motion.div>
-        </div>
-      </section>
-    </div>
+        </section>
+      </div>
+    </>
   );
 }
 

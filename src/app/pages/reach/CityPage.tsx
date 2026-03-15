@@ -1,9 +1,11 @@
 import { useState, useRef } from "react";
+import { getServiceColors } from "../../utils/serviceColors";
+import { SEOHead } from "../../components/SEOHead";
+import { FAQSchema, BreadcrumbSchema } from "../../components/StructuredData";
 import { useParams, Link } from "react-router";
 import { motion, useInView } from "motion/react";
 import { ArrowRight, Check, ChevronDown, MapPin } from "lucide-react";
 import { cities, reachServices } from "../../data/ourReach";
-import { getServiceColors } from "../../utils/serviceColors";
 
 const CYAN     = "#00d4e8";
 const CYAN_RGB = "0, 212, 232";
@@ -25,7 +27,7 @@ export function CityPage() {
         <div className="text-center">
           <p style={{ fontFamily: "'DM Mono', monospace", color: CYAN }} className="text-[10px] tracking-[0.3em] uppercase mb-4">404 — Not Found</p>
           <h1 style={{ fontFamily: "'Montserrat', sans-serif", color: "white" }} className="text-4xl mb-6">City not found</h1>
-          <Link to="/our-reach" style={{ fontFamily: "'DM Mono', monospace", color: CYAN }} className="text-xs tracking-[0.2em] uppercase flex items-center gap-2 justify-center">
+          <Link to="/our-reach" style={{ fontFamily: "'DM Mono', monospace", color: CYAN }} className="text-sm tracking-[0.2em] uppercase flex items-center gap-2 justify-center">
             <ArrowRight size={12} className="rotate-180" /> Back to Our Reach
           </Link>
         </div>
@@ -35,6 +37,20 @@ export function CityPage() {
 
   return (
     <div className="min-h-screen" style={{ backgroundColor: "#16212e" }}>
+      <SEOHead
+        title={`Web Design & Digital Services in ${city.name}`}
+        description={`Professional web design, SEO, branding, and hosting services in ${city.name}. Web Balance delivers high-performance digital solutions for ${city.name} businesses.`}
+        path={`/our-reach/${city.slug}`}
+        keywords={`web design ${city.name}, SEO ${city.name}, digital agency ${city.name}, website development ${city.name}`}
+      />
+      <FAQSchema faqs={city.faqs} />
+      <BreadcrumbSchema
+        items={[
+          { name: "Home", path: "/" },
+          { name: "Our Reach", path: "/our-reach" },
+          { name: city.name, path: `/our-reach/${city.slug}` },
+        ]}
+      />
 
       {/* ── Hero ── */}
       <section className="pt-40 pb-20 border-b border-white/5 relative overflow-hidden">
@@ -77,7 +93,7 @@ export function CityPage() {
                   animate={{ y: 0 }}
                   transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
                   style={{ fontFamily: "'Montserrat', sans-serif" }}
-                  className="text-white text-[clamp(2.5rem,5vw,4.5rem)] leading-[0.95] font-light"
+                  className="text-white text-[clamp(2.5rem,5vw,4.5rem)] leading-[1.15] font-light"
                 >
                   {city.heading}
                 </motion.h1>
@@ -298,7 +314,7 @@ export function CityPage() {
             </p>
             <Link
               to="/contact"
-              className="inline-flex items-center gap-3 px-8 py-4 text-xs tracking-[0.25em] uppercase transition-all duration-300 hover:bg-[#00d4e8] hover:text-[#16212e]"
+              className="inline-flex items-center gap-3 px-8 py-4 text-sm tracking-[0.25em] uppercase transition-all duration-300 hover:bg-[#00d4e8] hover:text-[#16212e]"
               style={{ fontFamily: "'DM Mono', monospace", border: `1px solid ${CYAN}`, color: CYAN }}
             >
               Get in Touch <ArrowRight size={13} />

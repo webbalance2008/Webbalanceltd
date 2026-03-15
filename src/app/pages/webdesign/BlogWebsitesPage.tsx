@@ -1,0 +1,66 @@
+import { WebsiteTypePage } from "../../components/WebsiteTypePage";
+import {
+  FileText, Rss, Search, Tag, Share2, BarChart3,
+} from "lucide-react";
+
+export function BlogWebsitesPage() {
+  return (
+    <WebsiteTypePage
+      label="Website Type — Blog & Content"
+      title="Blog & Content Websites"
+      subtitle="Turn your expertise into traffic, trust, and authority"
+      heroImage=""
+      seoPath="/web-design/blog-websites"
+      seoKeywords="blog website design, content website, content marketing, blog platform, UK content website development"
+      overview="A well-designed content website turns your knowledge into your most powerful marketing asset — attracting the right audience organically, month after month."
+      overviewDetail="Content marketing works. But only when the reading experience is genuinely enjoyable, the site is fast, and the architecture is built for search engines to understand. We design content-first websites and blog platforms that make your articles, guides, and resources look exceptional — and rank for the terms your audience is actually searching for. No bloated WordPress themes. No plugin overload. Just clean, fast, beautifully readable content."
+      features={[
+        { icon: FileText, title: "Reading-First Design", body: "Typography, spacing, and layout optimised for long-form reading — comfortable on any device, at any screen size." },
+        { icon: Rss, title: "Content Management", body: "Intuitive CMS that makes publishing, scheduling, and organising content effortless for your team." },
+        { icon: Search, title: "SEO Architecture", body: "Category structures, internal linking, schema markup, and URL patterns built for search engine visibility." },
+        { icon: Tag, title: "Taxonomy & Filtering", body: "Categories, tags, author pages, and custom taxonomies that help readers discover related content." },
+        { icon: Share2, title: "Social Distribution", body: "Open Graph metadata, social sharing buttons, and newsletter integration to amplify your content's reach." },
+        { icon: BarChart3, title: "Content Analytics", body: "Track which articles drive traffic, engagement, and conversions — so you can double down on what works." },
+      ]}
+      industries={[
+        { name: "Marketing Agencies", description: "Thought leadership blogs that demonstrate expertise and attract inbound leads from organic search." },
+        { name: "SaaS & Technology", description: "Product documentation, feature announcements, tutorials, and technical guides that reduce support load." },
+        { name: "Professional Services", description: "Expert insights, regulatory updates, and case studies that establish authority in specialist fields." },
+        { name: "Health & Wellness", description: "Advice articles, research summaries, and practitioner insights that attract health-conscious audiences." },
+        { name: "Education & Training", description: "Course previews, learning resources, and student success stories that drive enrolment." },
+        { name: "Media & Publishing", description: "Digital magazines, news sites, and editorial platforms with high-volume content workflows." },
+      ]}
+      included={[
+        "Bespoke editorial design",
+        "Reading-optimised typography system",
+        "Category and tag architecture",
+        "Author profile pages",
+        "Related articles engine",
+        "Full-text search functionality",
+        "Newsletter signup integration",
+        "Social sharing and Open Graph setup",
+        "RSS feed",
+        "Schema markup for rich snippets",
+        "CMS with scheduling and drafts",
+        "Analytics with content performance tracking",
+      ]}
+      process={[
+        { step: "01", title: "Content Strategy", description: "We audit your existing content, define your taxonomy, and plan the information architecture that supports both readers and search engines." },
+        { step: "02", title: "Editorial Design", description: "Article templates, listing pages, author profiles, and category views — all designed for readability and engagement." },
+        { step: "03", title: "Build & Integrate", description: "Development with CMS integration, search functionality, newsletter connection, and analytics setup." },
+        { step: "04", title: "Migrate, Test & Launch", description: "Content migration from existing platforms, redirect mapping, SEO verification, and a managed go-live." },
+      ]}
+      related={[
+        { label: "Website Type", title: "Corporate Websites", description: "Combine your content hub with a full corporate web presence.", path: "/web-design/corporate-websites" },
+        { label: "Website Type", title: "Landing Pages", description: "Campaign landing pages to capture leads from your highest-performing content.", path: "/web-design/landing-pages" },
+        { label: "Website Type", title: "Portfolio Websites", description: "Pair your content strategy with visual project showcases.", path: "/web-design/portfolio-websites" },
+      ]}
+      ctaTitle="Let's turn your expertise into your best marketing channel."
+      concepts={[
+        { title: "Article Listing", description: "Clean blog index with featured posts, category filters, thumbnail previews, and pagination — making your content library browsable and inviting.", layout: "list" },
+        { title: "Article Template", description: "Long-form reading layout with optimal line length, clear headings, pull quotes, inline images, and related article suggestions.", layout: "kanban" },
+        { title: "Content Hub", description: "Homepage-style content hub with featured articles, category sections, newsletter signup, and trending content — your knowledge base's front door.", layout: "dashboard" },
+      ]}
+    />
+  );
+}
