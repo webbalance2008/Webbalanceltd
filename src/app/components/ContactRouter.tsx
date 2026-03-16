@@ -98,10 +98,16 @@ export function ContactRouter() {
   const [mode, setMode] = useState<Mode>("choose");
   const [sent, setSent] = useState(false);
   const navigate = useNavigate();
+  const { trackEvent } = useAnalytics();
 
   const goBack = () => {
     setMode("choose");
     setSent(false);
+  };
+
+  const handleModeChange = (m: Mode) => {
+    setMode(m);
+    trackEvent("contact_open", { mode: m });
   };
 
   return (
@@ -148,7 +154,7 @@ export function ContactRouter() {
               Icon={Icon}
               label={label}
               description={description}
-              onClick={() => setMode(m)}
+              onClick={() => handleModeChange(m)}
               accent={m === "whatsapp" ? "#25D366" : undefined}
             />
           ))}
@@ -177,7 +183,7 @@ export function ContactRouter() {
               subtitle="We'll be in touch within 24 hours."
             />
           ) : (
-            <EnquiryForm onSubmit={() => setSent(true)} />
+            <EnquiryForm onSubmit={() => { setSent(true); trackEvent("form_submit", { formType: "enquiry" }); }} />
           )}
         </div>
       )}
@@ -201,7 +207,7 @@ export function ContactRouter() {
             />
           ) : (
             <SupportPanel
-              onSubmit={() => setSent(true)}
+              onSubmit={() => { setSent(true); trackEvent("form_submit", { formType: "support" }); }}
               onNavigate={() => navigate("/support")}
             />
           )}

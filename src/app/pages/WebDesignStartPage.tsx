@@ -8,6 +8,7 @@ import {
 import { sendEmail } from "../utils/sendEmail";
 import { SEOHead } from "../components/SEOHead";
 import { useIsMobile } from "../hooks/useIsMobile";
+import { usePricingRates, RatesMap } from "../hooks/usePricingRates";
 
 const ACCENT      = "#00d4e8";
 const ACCENT_RGB  = "0, 212, 232";
@@ -290,18 +291,20 @@ function fmt(n: number) {
   return "£" + Math.round(n).toLocaleString("en-GB");
 }
 
-function calculateEstimate(data: FormData): Estimate {
+function calculateEstimate(data: FormData, rates: RatesMap): Estimate {
   const items: LineItem[] = [];
+  const HR = rates["global.hourly_rate"] ?? HOURLY_RATE;
 
   const wLabel = websiteTypes.find((w) => w.id === data.websiteType)?.label ?? "Website";
 
   if (hasSetupFee(data.websiteType)) {
     // Setup-based types: flat 4-day setup fee (platform config, not page builds)
-    items.push({ label: `${wLabel} — Project Setup (4 days)`, amount: SETUP_FEE, hours: SETUP_HOURS });
+    const setupFee = SETUP_HOURS * HR;
+    items.push({ label: `${wLabel} — Project Setup (4 days)`, amount: setupFee, hours: SETUP_HOURS });
   } else {
     // Hours-based types: landing, brochure, portfolio, unsure
     const bH   = baseHours[data.websiteType] ?? 40;
-    const base = bH * HOURLY_RATE;
+    const base = bH * HR;
     // Label reflects what the overhead covers (landing is a complete build; others are overhead only)
     const baseLabel = data.websiteType === "landing"
       ? `${wLabel} — Design & Build`
@@ -323,7 +326,7 @@ function calculateEstimate(data: FormData): Estimate {
     if (totalPageH > 0) {
       items.push({
         label: `Page design & build (${n} page${n > 1 ? "s" : ""})`,
-        amount: totalPageH * HOURLY_RATE,
+        amount: totalPageH * HR,
         hours: totalPageH,
       });
     }
@@ -336,49 +339,53 @@ function calculateEstimate(data: FormData): Estimate {
     const totalImages    = data.pages.reduce((sum, p) => sum + (p.images || 0), 0);
     const animationCount = data.pages.filter((p) => p.animation).length;
     const totalVideos    = data.pages.reduce((sum, p) => sum + (p.videos || 0), 0);
+    const imgPrice  = rates["web-design.image_unit"]      ?? IMAGE_UNIT_PRICE;
+    const animPrice = rates["web-design.animation_page"]  ?? ANIMATION_PAGE_PRICE;
+    const vidPrice  = rates["web-design.video_unit"]      ?? VIDEO_UNIT_PRICE;
     if (seoCount > 0) {
       const h = seoCount * PAGE_SEO_HOURS;
-      items.push({ label: `SEO optimisation (${seoCount} page${seoCount > 1 ? "s" : ""})`, amount: h * HOURLY_RATE, hours: h });
+      items.push({ label: `SEO optimisation (${seoCount} page${seoCount > 1 ? "s" : ""})`, amount: h * HR, hours: h });
     }
     if (contentCount > 0) {
       const h = contentCount * PAGE_CONTENT_HOURS;
-      items.push({ label: `Content writing (${contentCount} page${contentCount > 1 ? "s" : ""})`, amount: h * HOURLY_RATE, hours: h });
+      items.push({ label: `Content writing (${contentCount} page${contentCount > 1 ? "s" : ""})`, amount: h * HR, hours: h });
     }
     if (totalImages > 0) {
-      items.push({ label: `Image sourcing & optimisation (${totalImages} image${totalImages > 1 ? "s" : ""})`, amount: totalImages * IMAGE_UNIT_PRICE, hours: 0 });
+      items.push({ label: `Image sourcing & optimisation (${totalImages} image${totalImages > 1 ? "s" : ""})`, amount: totalImages * imgPrice, hours: 0 });
     }
     if (animationCount > 0) {
       const h = animationCount * ANIMATION_PAGE_HOURS;
-      items.push({ label: `Page animations (${animationCount} page${animationCount > 1 ? "s" : ""})`, amount: animationCount * ANIMATION_PAGE_PRICE, hours: h });
+      items.push({ label: `Page animations (${animationCount} page${animationCount > 1 ? "s" : ""})`, amount: animationCount * animPrice, hours: h });
     }
     if (totalVideos > 0) {
-      items.push({ label: `Video integration (${totalVideos} video${totalVideos > 1 ? "s" : ""})`, amount: totalVideos * VIDEO_UNIT_PRICE, hours: 0 });
+      items.push({ label: `Video integration (${totalVideos} video${totalVideos > 1 ? "s" : ""})`, amount: totalVideos * vidPrice, hours: 0 });
     }
   }
 
   data.features.forEach((f) => {
     const h = featureHours[f] ?? 5;
-    items.push({ label: f, amount: h * HOURLY_RATE, hours: h });
+    items.push({ label: f, amount: h * HR, hours: h });
   });
 
   const bBrand = brandingAddHours[data.branding] ?? 0;
   if (bBrand > 0) {
     items.push({
       label: data.branding === "none" ? "Brand identity & design" : "Branding support",
-      amount: bBrand * HOURLY_RATE, hours: bBrand,
+      amount: bBrand * HR, hours: bBrand,
     });
   }
 
-  const hSetup = hostingSetupCost[data.hosting] ?? 0;
+  const hSetup = rates[`web-design.hosting_${data.hosting}`] ?? hostingSetupCost[data.hosting] ?? 0;
   if (hSetup > 0) items.push({ label: "Hosting setup & configuration", amount: hSetup });
 
   const eH = emailAddHours[data.email] ?? 0;
-  if (eH > 0) items.push({ label: "Email setup & configuration", amount: eH * HOURLY_RATE, hours: eH });
+  if (eH > 0) items.push({ label: "Email setup & configuration", amount: eH * HR, hours: eH });
 
-  if (data.domain === "new") items.push({ label: "Domain registration & DNS setup", amount: 50 });
+  if (data.domain === "new") items.push({ label: "Domain registration & DNS setup", amount: rates["global.domain_registration"] ?? 50 });
 
   const subtotal = items.reduce((s, i) => s + i.amount, 0);
-  const vat      = subtotal * VAT_RATE;
+  const vatRate  = (rates["global.vat_rate"] ?? 20) / 100;
+  const vat      = subtotal * vatRate;
   const total    = subtotal + vat;
 
   return { lineItems: items, subtotal, vat, total };
@@ -550,6 +557,8 @@ function InfraSection({ Icon, label, hint, children }: { Icon:LucideIcon; label:
 
 export function WebDesignStartPage() {
   const isMobile = useIsMobile();
+  const rates = usePricingRates();
+  const HR = rates["global.hourly_rate"] ?? HOURLY_RATE;
   const [step,      setStep]      = useState(1);
   const [direction, setDirection] = useState(1);
   const [data,      setData]      = useState<FormData>(initialData);
@@ -604,7 +613,7 @@ export function WebDesignStartPage() {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     setSubmitted(true);
-    const est = calculateEstimate(data);
+    const est = calculateEstimate(data, rates);
     sendEmail("web-design-wizard", {
       name: data.name, email: data.emailAddr, company: data.company, website: data.website,
       websiteType: data.websiteType, goals: data.goals.join(", "), branding: data.branding,
@@ -629,7 +638,7 @@ export function WebDesignStartPage() {
   });
 
   const meta     = resolvedStepMeta[step - 1];
-  const estimate = calculateEstimate(data);
+  const estimate = calculateEstimate(data, rates);
 
   const variants = {
     enter:  (dir: number) => ({ x: dir > 0 ? 60 : -60, opacity: 0 }),
@@ -929,10 +938,10 @@ export function WebDesignStartPage() {
                           </div>
                           <div className="flex flex-col items-end gap-0.5">
                             <span style={{ fontFamily:"'DM Mono',monospace", fontSize:"20px", color:ACCENT }}>
-                              £{SETUP_FEE.toLocaleString("en-GB")}
+                              £{(SETUP_HOURS * HR).toLocaleString("en-GB")}
                             </span>
                             <span style={{ fontFamily:"'Inter',sans-serif", fontSize:"11px", color:"rgba(255,255,255,0.4)" }}>
-                              + VAT · at £{HOURLY_RATE}/hr
+                              + VAT · at £{HR}/hr
                             </span>
                           </div>
                         </div>
@@ -1160,7 +1169,7 @@ export function WebDesignStartPage() {
                                     {item.hours != null && item.hours > 0 && (
                                       <span style={{ fontFamily:"'DM Mono',monospace", fontSize:"10px",
                                         color:`rgba(${ACCENT_RGB},0.6)`, letterSpacing:"0.08em", whiteSpace:"nowrap" }}>
-                                        {Number.isInteger(item.hours) ? item.hours : item.hours.toFixed(1)}h @ £{HOURLY_RATE}/hr
+                                        {Number.isInteger(item.hours) ? item.hours : item.hours.toFixed(1)}h @ £{HR}/hr
                                       </span>
                                     )}
                                   </div>
@@ -1216,7 +1225,7 @@ export function WebDesignStartPage() {
                     <div className="px-5 sm:px-8 md:px-10 py-5 border-t"
                       style={{ borderColor:`rgba(${ACCENT_RGB},0.1)`, backgroundColor:`rgba(0,0,0,0.2)` }}>
                       <p style={{ fontFamily:"'Inter',sans-serif", fontSize:"14px", lineHeight:1.6, color:"rgba(255,255,255,0.65)" }}>
-                        This is an indicative estimate based on your selections and our standard rate of £{HOURLY_RATE}/hr. Final pricing is confirmed after a discovery call and may vary based on specific requirements. All prices include VAT at the current UK rate of 20%.
+                        This is an indicative estimate based on your selections and our standard rate of £{HR}/hr. Final pricing is confirmed after a discovery call and may vary based on specific requirements. All prices include VAT at the current UK rate of 20%.
                       </p>
                     </div>
                   </div>
@@ -1871,7 +1880,7 @@ function BuildHoursInfo() {
                   <p style={{ fontFamily: "'Inter',sans-serif", fontSize: "11px",
                     color: "rgba(255,255,255,0.25)", lineHeight: "1.5", marginTop: "12px" }}>
                     Sub-pages share layouts with their parent page and are billed at ~60% of the equivalent top-level rate.
-                    All hours are multiplied by the £{HOURLY_RATE}/hr rate. Final figures are confirmed after your discovery call.
+                    All hours are multiplied by the £{HR}/hr rate. Final figures are confirmed after your discovery call.
                   </p>
                 </div>
               </div>
@@ -1977,11 +1986,11 @@ function PageBuilder({ pages, onChange, typeId = "brochure", isSetupType = false
     onChange(sorted);
   };
 
-  const SEO_PRICE       = `+£${Math.round(PAGE_SEO_HOURS * HOURLY_RATE)}/pg`;
-  const CONTENT_PRICE   = `+£${Math.round(PAGE_CONTENT_HOURS * HOURLY_RATE)}/pg`;
-  const IMAGES_PRICE    = `£${IMAGE_UNIT_PRICE}/img`;
-  const ANIMATION_PRICE = `+£${ANIMATION_PAGE_PRICE}/pg`;
-  const VIDEO_PRICE     = `£${VIDEO_UNIT_PRICE}/vid`;
+  const SEO_PRICE       = `+£${Math.round(PAGE_SEO_HOURS * HR)}/pg`;
+  const CONTENT_PRICE   = `+£${Math.round(PAGE_CONTENT_HOURS * HR)}/pg`;
+  const IMAGES_PRICE    = `£${rates["web-design.image_unit"] ?? IMAGE_UNIT_PRICE}/img`;
+  const ANIMATION_PRICE = `+£${rates["web-design.animation_page"] ?? ANIMATION_PAGE_PRICE}/pg`;
+  const VIDEO_PRICE     = `£${rates["web-design.video_unit"] ?? VIDEO_UNIT_PRICE}/vid`;
 
   // ── Addon definitions (single source of truth for selector + table) ──
   const ADDON_DEFS = [
@@ -2274,15 +2283,18 @@ function PageBuilder({ pages, onChange, typeId = "brochure", isSetupType = false
           pages.filter((p) => p.parent && !pages.find((t) => t.id === p.parent)).forEach((p) => sorted.push(p));
 
           // Shared footer totals
+          const _imgP  = rates["web-design.image_unit"]     ?? IMAGE_UNIT_PRICE;
+          const _animP = rates["web-design.animation_page"] ?? ANIMATION_PAGE_PRICE;
+          const _vidP  = rates["web-design.video_unit"]     ?? VIDEO_UNIT_PRICE;
           const totalAddonCost = pages.reduce((sum, p) =>
             sum
-            + (enabledAddons.has("seo")       && p.seo       ? PAGE_SEO_HOURS * HOURLY_RATE    : 0)
-            + (enabledAddons.has("content")   && p.content   ? PAGE_CONTENT_HOURS * HOURLY_RATE : 0)
-            + (enabledAddons.has("images")                    ? p.images * IMAGE_UNIT_PRICE      : 0)
-            + (enabledAddons.has("animation") && p.animation  ? ANIMATION_PAGE_PRICE             : 0)
-            + (enabledAddons.has("video")                     ? p.videos * VIDEO_UNIT_PRICE      : 0)
+            + (enabledAddons.has("seo")       && p.seo       ? PAGE_SEO_HOURS * HR    : 0)
+            + (enabledAddons.has("content")   && p.content   ? PAGE_CONTENT_HOURS * HR : 0)
+            + (enabledAddons.has("images")                    ? p.images * _imgP        : 0)
+            + (enabledAddons.has("animation") && p.animation  ? _animP                  : 0)
+            + (enabledAddons.has("video")                     ? p.videos * _vidP        : 0)
           , 0);
-          const totalBuildCost = pages.reduce((sum, p) => sum + getPageBuildHours(p.name, !!p.parent) * HOURLY_RATE, 0);
+          const totalBuildCost = pages.reduce((sum, p) => sum + getPageBuildHours(p.name, !!p.parent) * HR, 0);
           const combinedTotal = totalAddonCost + totalBuildCost;
 
           const footerCol = (label: string, value: string, isAccent = false) => (
@@ -2325,12 +2337,12 @@ function PageBuilder({ pages, onChange, typeId = "brochure", isSetupType = false
                     const isSub = !!page.parent;
                     const parentPage = isSub ? pages.find((p) => p.id === page.parent) : undefined;
                     const addonCost =
-                        (enabledAddons.has("seo")       && page.seo       ? PAGE_SEO_HOURS * HOURLY_RATE    : 0)
-                      + (enabledAddons.has("content")   && page.content   ? PAGE_CONTENT_HOURS * HOURLY_RATE : 0)
-                      + (enabledAddons.has("images")                       ? page.images * IMAGE_UNIT_PRICE   : 0)
-                      + (enabledAddons.has("animation") && page.animation  ? ANIMATION_PAGE_PRICE             : 0)
-                      + (enabledAddons.has("video")                        ? page.videos * VIDEO_UNIT_PRICE   : 0);
-                    const pageBuildCost = getPageBuildHours(page.name, isSub) * HOURLY_RATE;
+                        (enabledAddons.has("seo")       && page.seo       ? PAGE_SEO_HOURS * HR    : 0)
+                      + (enabledAddons.has("content")   && page.content   ? PAGE_CONTENT_HOURS * HR : 0)
+                      + (enabledAddons.has("images")                       ? page.images * _imgP     : 0)
+                      + (enabledAddons.has("animation") && page.animation  ? _animP                  : 0)
+                      + (enabledAddons.has("video")                        ? page.videos * _vidP     : 0);
+                    const pageBuildCost = getPageBuildHours(page.name, isSub) * HR;
                     const rowTotal = addonCost + pageBuildCost;
                     return (
                       <motion.div key={page.id}
@@ -2573,12 +2585,12 @@ function PageBuilder({ pages, onChange, typeId = "brochure", isSetupType = false
                     const isSub = !!page.parent;
                     const parentPage = isSub ? pages.find((p) => p.id === page.parent) : undefined;
                     const addonCost =
-                        (enabledAddons.has("seo")       && page.seo       ? PAGE_SEO_HOURS * HOURLY_RATE    : 0)
-                      + (enabledAddons.has("content")   && page.content   ? PAGE_CONTENT_HOURS * HOURLY_RATE : 0)
-                      + (enabledAddons.has("images")                       ? page.images * IMAGE_UNIT_PRICE   : 0)
-                      + (enabledAddons.has("animation") && page.animation  ? ANIMATION_PAGE_PRICE             : 0)
-                      + (enabledAddons.has("video")                        ? page.videos * VIDEO_UNIT_PRICE   : 0);
-                    const pageBuildCost = getPageBuildHours(page.name, isSub) * HOURLY_RATE;
+                        (enabledAddons.has("seo")       && page.seo       ? PAGE_SEO_HOURS * HR    : 0)
+                      + (enabledAddons.has("content")   && page.content   ? PAGE_CONTENT_HOURS * HR : 0)
+                      + (enabledAddons.has("images")                       ? page.images * _imgP     : 0)
+                      + (enabledAddons.has("animation") && page.animation  ? _animP                  : 0)
+                      + (enabledAddons.has("video")                        ? page.videos * _vidP     : 0);
+                    const pageBuildCost = getPageBuildHours(page.name, isSub) * HR;
                     const rowTotal = addonCost + pageBuildCost;
                     return (
                       <motion.div key={page.id}

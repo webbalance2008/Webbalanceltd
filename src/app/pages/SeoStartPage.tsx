@@ -10,6 +10,7 @@ import {
 import { sendEmail } from "../utils/sendEmail";
 import { SEOHead } from "../components/SEOHead";
 import { useIsMobile } from "../hooks/useIsMobile";
+import { usePricingRates, RatesMap } from "../hooks/usePricingRates";
 
 const ACCENT      = "#3dd68c";
 const ACCENT_RGB  = "61, 214, 140";
@@ -126,24 +127,40 @@ interface Estimate { monthly: number; monthlyVat: number; monthlyTotal: number; 
 
 function fmt(n: number) { return "£" + Math.round(n).toLocaleString("en-GB"); }
 
-function calculateEstimate(data: SEOFormData): Estimate {
+function calculateEstimate(data: SEOFormData, rates: RatesMap): Estimate {
   const budgetOpt = budgets.find(b => b.id === data.budget);
-  const monthly = budgetOpt?.monthly ?? 0;
-  const setup   = budgetOpt?.setup ?? 0;
+  const monthly = rates[`seo.${data.budget}_monthly`] ?? budgetOpt?.monthly ?? 0;
+  const setup   = rates[`seo.${data.budget}_setup`]   ?? budgetOpt?.setup ?? 0;
   const pkgLabel = budgetOpt?.package ?? "Custom";
 
+  const addonKeyMap: Record<string, string> = {
+    ppc: "addon_google_ads", content: "addon_content", links: "addon_links",
+    audit: "addon_audit", report: "addon_reporting",
+  };
+
   const selectedAddOns = addOns.filter(a => a.id !== "none" && data.addOns.includes(a.id));
-  const monthlyAddExtra  = selectedAddOns.reduce((s, a) => s + a.monthlyAdd, 0);
-  const oneOffExtras     = selectedAddOns.reduce((s, a) => s + a.oneOff, 0);
+  const monthlyAddExtra = selectedAddOns.reduce((s, a) => {
+    if (a.monthlyAdd > 0) {
+      return s + (rates[`seo.${addonKeyMap[a.id] ?? a.id}`] ?? a.monthlyAdd);
+    }
+    return s;
+  }, 0);
+  const oneOffExtras = selectedAddOns.reduce((s, a) => {
+    if (a.oneOff > 0) {
+      return s + (rates[`seo.${addonKeyMap[a.id] ?? a.id}`] ?? a.oneOff);
+    }
+    return s;
+  }, 0);
 
   const totalMonthly = monthly + monthlyAddExtra;
+  const vatRate = (rates["global.vat_rate"] ?? 20) / 100;
   return {
     monthly:      totalMonthly,
-    monthlyVat:   totalMonthly * VAT_RATE,
-    monthlyTotal: totalMonthly * (1 + VAT_RATE),
+    monthlyVat:   totalMonthly * vatRate,
+    monthlyTotal: totalMonthly * (1 + vatRate),
     setup,
-    setupVat:     setup * VAT_RATE,
-    setupTotal:   setup * (1 + VAT_RATE),
+    setupVat:     setup * vatRate,
+    setupTotal:   setup * (1 + vatRate),
     oneOffExtras,
     packageLabel: pkgLabel,
   };
@@ -311,6 +328,7 @@ function AddOnCard({ addon, isActive, onClick, noneActive }: { addon: AddOn; isA
 
 export function SeoStartPage() {
   const isMobile = useIsMobile();
+  const rates = usePricingRates();
   const [step, setStep]     = useState(1);
   const [dir, setDir]       = useState(1);
   const [data, setData]     = useState<SEOFormData>(initialData);
@@ -339,7 +357,7 @@ export function SeoStartPage() {
     return true;
   };
 
-  const estimate = calculateEstimate(data);
+  const estimate = calculateEstimate(data, rates);
   const budgetOpt = budgets.find(b => b.id === data.budget);
   const isEnterprise = data.budget === "enterprise" || data.budget === "unsure";
   const sm = stepMeta[step - 1];

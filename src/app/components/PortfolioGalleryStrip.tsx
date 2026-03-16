@@ -1,8 +1,9 @@
-import { useRef, useState, useEffect } from "react";
+import { useRef, useState, useEffect, useCallback } from "react";
 import { ChevronLeft, ChevronRight, ArrowRight } from "lucide-react";
 import { Link } from "react-router";
 import { projects } from "../data/projects";
 import { projectImages } from "../data/projectImages";
+import { useAnalytics } from "../hooks/useAnalytics";
 
 // ── Collect ONE gallery image per project, then shuffle ─────────────────
 interface GalleryItem {
@@ -48,6 +49,10 @@ export function PortfolioGalleryStrip() {
   const [canScrollLeft, setCanScrollLeft] = useState(false);
   const [canScrollRight, setCanScrollRight] = useState(true);
   const [hoveredIdx, setHoveredIdx] = useState<number | null>(null);
+  const { trackEvent } = useAnalytics();
+  const handleGalleryClick = useCallback((projectSlug: string, projectTitle: string) => {
+    trackEvent("gallery_click", { projectSlug, projectTitle });
+  }, [trackEvent]);
 
   const checkScroll = () => {
     const el = scrollRef.current;
@@ -219,6 +224,7 @@ export function PortfolioGalleryStrip() {
             }}
             onMouseEnter={() => setHoveredIdx(i)}
             onMouseLeave={() => setHoveredIdx(null)}
+            onClick={() => handleGalleryClick(item.projectSlug, item.projectTitle)}
           >
             {/* Image */}
             <img

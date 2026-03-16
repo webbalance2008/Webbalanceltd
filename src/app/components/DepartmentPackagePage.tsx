@@ -10,12 +10,12 @@ import {
 } from "lucide-react";
 import { SEOHead } from "./SEOHead";
 import {
-  departmentPackages,
   type PackageTier,
   type DepartmentPackages,
 } from "../data/packages";
 import { getServiceColors, type ServiceKey } from "../utils/serviceColors";
 import { DepartmentHero } from "./DepartmentHero";
+import { usePricing } from "../hooks/usePricing";
 
 interface DepartmentPackagePageProps {
   deptKey: string;
@@ -35,7 +35,7 @@ export function DepartmentPackagePage({
   startPath,
   startLabel = "Start Your Project",
 }: DepartmentPackagePageProps) {
-  const dept = departmentPackages.find((d) => d.key === deptKey);
+  const { dept } = usePricing(deptKey);
   if (!dept) return null;
 
   const serviceKey = deptKey as ServiceKey;

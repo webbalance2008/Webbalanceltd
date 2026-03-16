@@ -11,6 +11,7 @@ import {
 import { sendEmail } from "../utils/sendEmail";
 import { SEOHead } from "../components/SEOHead";
 import { useIsMobile } from "../hooks/useIsMobile";
+import { usePricingRates, RatesMap } from "../hooks/usePricingRates";
 
 const ACCENT      = "#b89fd4";
 const ACCENT_RGB  = "180, 150, 220";
@@ -222,24 +223,27 @@ interface Estimate  { lineItems: LineItem[]; subtotal: number; vat: number; tota
 
 function fmt(n: number) { return "£" + Math.round(n).toLocaleString("en-GB"); }
 
-function calculateEstimate(data: WAFormData): Estimate {
+function calculateEstimate(data: WAFormData, rates: RatesMap): Estimate {
   const items: LineItem[] = [];
 
   // 1. App type base
-  const base = appTypeBase[data.appType] ?? 3000;
+  const base = rates[`web-apps.base_${data.appType}`] ?? appTypeBase[data.appType] ?? 3000;
   const typeLabel = appTypes.find(t => t.id === data.appType)?.label ?? "Web Application";
   items.push({ label: `${typeLabel} — Base`, amount: base });
 
   // 2. Core features
   const selectedFeatures = coreFeatures.filter(f => !f.unsure && data.coreFeatures.includes(f.id));
   selectedFeatures.forEach(f => {
-    items.push({ label: f.label, amount: f.cost, hours: f.hours > 0 ? f.hours : undefined });
+    const cost = rates[`web-apps.feat_${f.id}`] ?? f.cost;
+    items.push({ label: f.label, amount: cost, hours: f.hours > 0 ? f.hours : undefined });
   });
 
   // 3. AI features (only real AI items, not "no-ai" or "unsure")
   const selectedAi = aiFeatures.filter(f => !f.noai && !f.unsure && data.aiFeatures.includes(f.id));
   selectedAi.forEach(f => {
-    items.push({ label: f.label, amount: f.cost });
+    const aiKey = f.id.replace("ai-", "");
+    const cost = rates[`web-apps.ai_${aiKey}`] ?? f.cost;
+    items.push({ label: f.label, amount: cost });
   });
 
   // 4. Complexity multiplier (applied to base + features + AI as adjustment)
@@ -265,12 +269,13 @@ function calculateEstimate(data: WAFormData): Estimate {
   // 6. Hosting setup (flat, not subject to multipliers)
   const hostOpt = hostingOptions.find(h => h.id === data.hosting);
   if (hostOpt?.cost && hostOpt.cost > 0) {
-    items.push({ label: "Hosting setup & configuration", amount: hostOpt.cost });
+    const hostCost = rates[`web-apps.hosting_${data.hosting}`] ?? hostOpt.cost;
+    items.push({ label: "Hosting setup & configuration", amount: hostCost });
   }
 
   // 7. Domain
   if (data.domain === "new") {
-    items.push({ label: "Domain registration & DNS setup", amount: 50 });
+    items.push({ label: "Domain registration & DNS setup", amount: rates["global.domain_registration"] ?? 50 });
   }
 
   // 8. Urgent timeline surcharge
@@ -281,7 +286,8 @@ function calculateEstimate(data: WAFormData): Estimate {
   }
 
   const subtotal = items.reduce((s, i) => s + i.amount, 0);
-  const vat = subtotal * VAT_RATE;
+  const vatRate = (rates["global.vat_rate"] ?? 20) / 100;
+  const vat = subtotal * vatRate;
   const total = subtotal + vat;
 
   return { lineItems: items, subtotal, vat, total };
@@ -731,6 +737,8 @@ function SubmitButton() {
 
 export function WebAppStartPage() {
   const isMobile = useIsMobile();
+  const rates = usePricingRates();
+  const HR = rates["global.hourly_rate"] ?? HOURLY_RATE;
   const [step,      setStep]      = useState(1);
   const [direction, setDirection] = useState(1);
   const [data,      setData]      = useState<WAFormData>(initialData);
@@ -797,7 +805,7 @@ export function WebAppStartPage() {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     setSubmitted(true);
-    const est = calculateEstimate(data);
+    const est = calculateEstimate(data, rates);
     sendEmail("web-app-wizard", {
       name: data.name, email: data.emailAddr, company: data.company, website: data.website,
       appType: data.appType, goals: data.goals.join(", "), userScale: data.userScale,
@@ -810,7 +818,7 @@ export function WebAppStartPage() {
   };
 
   const meta     = stepMeta[step-1];
-  const estimate = calculateEstimate(data);
+  const estimate = calculateEstimate(data, rates);
 
   const variants = {
     enter:  (dir:number) => ({ x: dir>0?60:-60, opacity:0 }),
@@ -1096,7 +1104,7 @@ export function WebAppStartPage() {
                     </label>
                     <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 sm:gap-4">
                       {coreFeatures.map(f => (
-                        <FeatureCard key={f.id} feature={f} isActive={data.coreFeatures.includes(f.id)} onClick={() => toggleCoreFeature(f.id)} />
+                        <FeatureCard key={f.id} feature={{ ...f, cost: rates[`web-apps.feat_${f.id}`] ?? f.cost }} isActive={data.coreFeatures.includes(f.id)} onClick={() => toggleCoreFeature(f.id)} />
                       ))}
                     </div>
                   </div>
@@ -1127,7 +1135,7 @@ export function WebAppStartPage() {
                     </label>
                     <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 sm:gap-4">
                       {aiFeatures.map(f => (
-                        <AiFeatureCard key={f.id} feature={f} isActive={data.aiFeatures.includes(f.id)} onClick={() => toggleAiFeature(f.id)} noAiActive={noAiActive} />
+                        <AiFeatureCard key={f.id} feature={{ ...f, cost: rates[`web-apps.ai_${f.id.replace("ai-", "")}`] ?? f.cost }} isActive={data.aiFeatures.includes(f.id)} onClick={() => toggleAiFeature(f.id)} noAiActive={noAiActive} />
                       ))}
                     </div>
                     <p className="mt-5" style={{ fontFamily:"'Inter',sans-serif", fontSize:"14px", lineHeight:1.7, color:"rgba(255,255,255,0.6)" }}>
@@ -1363,7 +1371,7 @@ export function WebAppStartPage() {
                                     {item.hours != null && item.hours > 0 && (
                                       <span style={{ fontFamily:"'DM Mono',monospace", fontSize:"10px",
                                         color:`rgba(${ACCENT_RGB},0.6)`, letterSpacing:"0.08em", whiteSpace:"nowrap" }}>
-                                        {Number.isInteger(item.hours) ? item.hours : item.hours.toFixed(1)}h @ £{HOURLY_RATE}/hr
+                                        {Number.isInteger(item.hours) ? item.hours : item.hours.toFixed(1)}h @ £{HR}/hr
                                       </span>
                                     )}
                                   </div>
@@ -1419,7 +1427,7 @@ export function WebAppStartPage() {
                     <div className="px-5 sm:px-8 md:px-10 py-5 border-t"
                       style={{ borderColor:`rgba(${ACCENT_RGB},0.1)`, backgroundColor:"rgba(20,10,40,0.4)" }}>
                       <p style={{ fontFamily:"'Inter',sans-serif", fontSize:"14px", lineHeight:1.6, color:"rgba(255,255,255,0.65)" }}>
-                        This is an indicative estimate based on your selections and our standard rate of £{HOURLY_RATE}/hr. AI-accelerated projects may be priced differently after discovery. Final pricing is confirmed after a discovery call.
+                        This is an indicative estimate based on your selections and our standard rate of £{HR}/hr. AI-accelerated projects may be priced differently after discovery. Final pricing is confirmed after a discovery call.
                       </p>
                     </div>
                   </div>

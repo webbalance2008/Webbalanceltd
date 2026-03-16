@@ -267,18 +267,6 @@ export function DepartmentHero({
             transition={{ delay: 0.9 }}
             className="flex flex-col gap-3 mt-10 w-full max-w-sm"
           >
-            {/* Section label */}
-            <p style={{
-              fontFamily: "'DM Mono', monospace",
-              fontSize: "0.75rem",
-              letterSpacing: "0.25em",
-              textTransform: "uppercase",
-              color: "rgba(255,255,255,0.7)",
-              marginBottom: "0.25rem",
-            }}>
-              How would you like to proceed?
-            </p>
-
             {primaryCta && (
               <Link
                 to={primaryCta.to}

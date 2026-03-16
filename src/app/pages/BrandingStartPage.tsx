@@ -7,6 +7,7 @@ import {
 } from "lucide-react";
 import { SEOHead } from "../components/SEOHead";
 import { useIsMobile } from "../hooks/useIsMobile";
+import { usePricingRates, RatesMap } from "../hooks/usePricingRates";
 
 const ACCENT      = "#f472b6";
 const ACCENT_RGB  = "244, 114, 182";
@@ -113,19 +114,39 @@ interface Estimate { subtotal: number; surcharge: number; vat: number; total: nu
 
 function fmt(n: number) { return "£" + Math.round(n).toLocaleString("en-GB"); }
 
-function calculateEstimate(data: BrandingFormData): Estimate {
+const BRANDING_SERVICE_KEY: Record<string, string> = {
+  "full-brand": "base_full_brand", "logo": "base_logo", "refresh": "base_refresh",
+  "social": "base_social", "print": "base_print", "marketing": "base_marketing",
+  "guidelines": "base_guidelines", "full-bundle": "base_bundle",
+};
+
+const BRANDING_DEL_KEY: Record<string, string> = {
+  "strategy": "del_strategy", "logo-suite": "del_logo_suite", "colour": "del_colour",
+  "typography": "del_typography", "guidelines": "del_guidelines", "iconography": "del_iconography",
+  "social-pack": "del_social_pack", "social-profiles": "del_social_profiles",
+  "biz-card": "del_biz_card", "letterhead": "del_letterhead", "brochure": "del_brochure",
+  "packaging": "del_packaging", "signage": "del_signage", "social-ads": "del_social_ads",
+  "google-ads": "del_google_ads", "email-campaign": "del_email_campaign", "photo-art": "del_photo_art",
+};
+
+function calculateEstimate(data: BrandingFormData, rates: RatesMap): Estimate {
   const svc = serviceOptions.find(s => s.id === data.service);
-  const base = svc?.base ?? 0;
+  const baseKey = BRANDING_SERVICE_KEY[data.service];
+  const base = (baseKey ? rates[`branding.${baseKey}`] : undefined) ?? svc?.base ?? 0;
 
   const selectedDeliverables = deliverables.filter(d => data.deliverables.includes(d.id));
-  const extraCost = selectedDeliverables.reduce((s, d) => s + d.cost, 0);
+  const extraCost = selectedDeliverables.reduce((s, d) => {
+    const delKey = BRANDING_DEL_KEY[d.id];
+    return s + ((delKey ? rates[`branding.${delKey}`] : undefined) ?? d.cost);
+  }, 0);
 
   const timelineOpt = timelines.find(t => t.id === data.timeline);
   const surchargeRate = timelineOpt?.surcharge ?? 0;
   const subtotalBeforeSurcharge = base + extraCost;
   const surcharge = subtotalBeforeSurcharge * surchargeRate;
   const subtotal = subtotalBeforeSurcharge + surcharge;
-  const vat = subtotal * VAT_RATE;
+  const vatRate = (rates["global.vat_rate"] ?? 20) / 100;
+  const vat = subtotal * vatRate;
   const total = subtotal + vat;
 
   return { subtotal: subtotalBeforeSurcharge, surcharge, vat, total };
@@ -246,6 +267,7 @@ function TimelineCard({ opt, isActive, onClick }: { opt: typeof timelines[0]; is
 
 export function BrandingStartPage() {
   const isMobile = useIsMobile();
+  const rates = usePricingRates();
   const [step, setStep]   = useState(1);
   const [dir, setDir]     = useState(1);
   const [data, setData]   = useState<BrandingFormData>(initialData);
@@ -267,7 +289,7 @@ export function BrandingStartPage() {
     return true;
   };
 
-  const estimate = calculateEstimate(data);
+  const estimate = calculateEstimate(data, rates);
   const sm = stepMeta[step - 1];
   const progress = (step / TOTAL_STEPS) * 100;
 
@@ -365,7 +387,7 @@ export function BrandingStartPage() {
             {step === 1 && (
               <div className="mt-6 sm:mt-8 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 sm:gap-4">
                 {serviceOptions.map(opt => (
-                  <ServiceCard key={opt.id} opt={opt} isActive={data.service === opt.id} onClick={() => setData(d => ({ ...d, service: opt.id }))} />
+                  <ServiceCard key={opt.id} opt={{ ...opt, base: (BRANDING_SERVICE_KEY[opt.id] ? rates[`branding.${BRANDING_SERVICE_KEY[opt.id]}`] : undefined) ?? opt.base }} isActive={data.service === opt.id} onClick={() => setData(d => ({ ...d, service: opt.id }))} />
                 ))}
               </div>
             )}
@@ -391,7 +413,7 @@ export function BrandingStartPage() {
                       className="px-4 py-3 border text-base transition-all duration-200 flex items-center gap-2"
                       style={chipStyle(data.deliverables.includes(d.id), hovChips[d.id])}>
                       {d.label}
-                      <span style={{ fontFamily: "'DM Mono',monospace", fontSize: "11px", opacity: 0.6 }}>+{fmt(d.cost)}</span>
+                      <span style={{ fontFamily: "'DM Mono',monospace", fontSize: "11px", opacity: 0.6 }}>+{fmt((BRANDING_DEL_KEY[d.id] ? rates[`branding.${BRANDING_DEL_KEY[d.id]}`] : undefined) ?? d.cost)}</span>
                     </button>
                   ))}
                 </div>
@@ -410,7 +432,7 @@ export function BrandingStartPage() {
                       className="px-4 py-3 border text-base transition-all duration-200 flex items-center gap-2"
                       style={chipStyle(data.deliverables.includes(d.id), hovChips[d.id])}>
                       {d.label}
-                      <span style={{ fontFamily: "'DM Mono',monospace", fontSize: "11px", opacity: 0.6 }}>+{fmt(d.cost)}</span>
+                      <span style={{ fontFamily: "'DM Mono',monospace", fontSize: "11px", opacity: 0.6 }}>+{fmt((BRANDING_DEL_KEY[d.id] ? rates[`branding.${BRANDING_DEL_KEY[d.id]}`] : undefined) ?? d.cost)}</span>
                     </button>
                   ))}
                 </div>
@@ -429,7 +451,7 @@ export function BrandingStartPage() {
                       className="px-4 py-3 border text-base transition-all duration-200 flex items-center gap-2"
                       style={chipStyle(data.deliverables.includes(d.id), hovChips[d.id])}>
                       {d.label}
-                      <span style={{ fontFamily: "'DM Mono',monospace", fontSize: "11px", opacity: 0.6 }}>+{fmt(d.cost)}</span>
+                      <span style={{ fontFamily: "'DM Mono',monospace", fontSize: "11px", opacity: 0.6 }}>+{fmt((BRANDING_DEL_KEY[d.id] ? rates[`branding.${BRANDING_DEL_KEY[d.id]}`] : undefined) ?? d.cost)}</span>
                     </button>
                   ))}
                 </div>
@@ -473,7 +495,7 @@ export function BrandingStartPage() {
                               <Check size={11} style={{ color: ACCENT, flexShrink: 0 }} />
                               <span style={{ fontFamily: "'Inter',sans-serif", color: "rgba(255,255,255,0.65)", fontSize: "13px" }}>{d.label}</span>
                             </div>
-                            <span style={{ fontFamily: "'DM Mono',monospace", color: "rgba(255,255,255,0.4)", fontSize: "14px" }}>{fmt(d.cost)}</span>
+                            <span style={{ fontFamily: "'DM Mono',monospace", color: "rgba(255,255,255,0.4)", fontSize: "14px" }}>{fmt((BRANDING_DEL_KEY[d.id] ? rates[`branding.${BRANDING_DEL_KEY[d.id]}`] : undefined) ?? d.cost)}</span>
                           </div>
                         ))}
                       </div>
@@ -484,8 +506,8 @@ export function BrandingStartPage() {
                 {/* Cost breakdown */}
                 <div className="border" style={{ borderColor: `rgba(${ACCENT_RGB},0.12)` }}>
                   {[
-                    { label: `${serviceOptions.find(s => s.id === data.service)?.label ?? "Service"} — base`, val: fmt(serviceOptions.find(s => s.id === data.service)?.base ?? 0) },
-                    ...(data.deliverables.length > 0 ? [{ label: `Additional deliverables (${data.deliverables.length})`, val: fmt(deliverables.filter(d => data.deliverables.includes(d.id)).reduce((s, d) => s + d.cost, 0)) }] : []),
+                    { label: `${serviceOptions.find(s => s.id === data.service)?.label ?? "Service"} — base`, val: fmt((BRANDING_SERVICE_KEY[data.service] ? rates[`branding.${BRANDING_SERVICE_KEY[data.service]}`] : undefined) ?? serviceOptions.find(s => s.id === data.service)?.base ?? 0) },
+                    ...(data.deliverables.length > 0 ? [{ label: `Additional deliverables (${data.deliverables.length})`, val: fmt(deliverables.filter(d => data.deliverables.includes(d.id)).reduce((s, d) => s + ((BRANDING_DEL_KEY[d.id] ? rates[`branding.${BRANDING_DEL_KEY[d.id]}`] : undefined) ?? d.cost), 0)) }] : []),
                     ...(estimate.surcharge > 0 ? [{ label: `Rush timeline surcharge (+${Math.round((timelines.find(t => t.id === data.timeline)?.surcharge ?? 0) * 100)}%)`, val: fmt(estimate.surcharge) }] : []),
                     { label: "VAT (20%)", val: fmt(estimate.vat) },
                     { label: "Project total (inc. VAT)", val: fmt(estimate.total), highlight: true },
