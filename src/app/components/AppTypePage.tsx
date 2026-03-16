@@ -271,19 +271,19 @@ function ScreenWireframe({ layout }: { layout: ScreenLayout }) {
       <>
         {chrome}
         <rect x="40" y="30" width="200" height="144" rx="4" fill="#111e2e" stroke={line} strokeWidth="0.5" />
-        <rect x="55" y="40" width="80" height="6" rx="2" fill="rgba(255,255,255,0.12)" />
-        <rect x="55" y="50" width="50" height="3" rx="1.5" fill="rgba(255,255,255,0.06)" />
+        <rect x="55" y="40" width="80" height="6" rx="2" fill="rgba(255,255,255,0.15)" />
+        <rect x="55" y="50" width="50" height="3" rx="1.5" fill="rgba(255,255,255,0.09)" />
         {/* Form fields */}
         {[0,1,2].map(i => (
           <g key={i}>
-            <rect x="55" y={64 + i*28} width="30" height="3" rx="1.5" fill={ACC_25} />
+            <rect x="55" y={64 + i*28} width="30" height="3" rx="1.5" fill={ACC_35} />
             <rect x="55" y={72 + i*28} width="170" height="14" rx="3" fill="#0d1926" stroke={line} strokeWidth="0.5" />
-            {i===0 && <rect x="60" y={76 + i*28} width="60" height="4" rx="2" fill="rgba(255,255,255,0.06)" />}
+            {i===0 && <rect x="60" y={76 + i*28} width="60" height="4" rx="2" fill="rgba(255,255,255,0.09)" />}
           </g>
         ))}
         {/* Submit button */}
-        <rect x="155" y="152" width="70" height="14" rx="3" fill={accent} opacity="0.2" />
-        <rect x="170" y="156" width="40" height="4" rx="2" fill={accent} opacity="0.5" />
+        <rect x="155" y="152" width="70" height="14" rx="3" fill={accent} opacity="0.25" />
+        <rect x="170" y="156" width="40" height="4" rx="2" fill={accent} opacity="0.6" />
       </>
     ),
     list: (
@@ -291,20 +291,20 @@ function ScreenWireframe({ layout }: { layout: ScreenLayout }) {
         {chrome}
         {/* Search bar */}
         <rect x="10" y="28" width="180" height="12" rx="4" fill="#111e2e" stroke={line} strokeWidth="0.5" />
-        <rect x="16" y="32" width="40" height="4" rx="2" fill="rgba(255,255,255,0.05)" />
+        <rect x="16" y="32" width="40" height="4" rx="2" fill="rgba(255,255,255,0.09)" />
         {/* Filter pills */}
         {[0,1,2].map(i => (
-          <rect key={i} x={200 + i*26} y="29" width="22" height="10" rx="5" fill={i===0? ACC_10 : "#111e2e"} stroke={line} strokeWidth="0.5" />
+          <rect key={i} x={200 + i*26} y="29" width="22" height="10" rx="5" fill={i===0? ACC_20 : "#111e2e"} stroke={line} strokeWidth="0.5" />
         ))}
         {/* Table header */}
         <rect x="10" y="48" width={w-20} height="12" fill="#111e2e" />
-        {[0,1,2,3].map(i => <rect key={i} x={16 + i*65} y="51" width="40" height="4" rx="2" fill="rgba(255,255,255,0.08)" />)}
+        {[0,1,2,3].map(i => <rect key={i} x={16 + i*65} y="51" width="40" height="4" rx="2" fill="rgba(255,255,255,0.12)" />)}
         {/* Table rows */}
         {[0,1,2,3,4,5,6].map(r => (
           <g key={r}>
             <rect x="10" y={62 + r*16} width={w-20} height="15" fill={r%2===0 ? "transparent" : "#0f1a28"} />
-            {[0,1,2].map(c => <rect key={c} x={16 + c*65} y={66 + r*16} width={c===0?50:35} height="3" rx="1.5" fill="rgba(255,255,255,0.06)" />)}
-            <rect x={16 + 3*65} y={65 + r*16} width="28" height="8" rx="4" fill={r===1||r===4? accent : ACC_10} opacity={r===1||r===4? 0.2 : 0.5} />
+            {[0,1,2].map(c => <rect key={c} x={16 + c*65} y={66 + r*16} width={c===0?50:35} height="3" rx="1.5" fill="rgba(255,255,255,0.09)" />)}
+            <rect x={16 + 3*65} y={65 + r*16} width="28" height="8" rx="4" fill={r===1||r===4? accent : ACC_20} opacity={r===1||r===4? 0.3 : 0.6} />
           </g>
         ))}
       </>
@@ -314,15 +314,15 @@ function ScreenWireframe({ layout }: { layout: ScreenLayout }) {
         {chrome}
         {/* Category nav */}
         <rect x="10" y="28" width={w-20} height="10" fill="#111e2e" />
-        {[0,1,2,3].map(i => <rect key={i} x={16 + i*60} y="31" width="35" height="4" rx="2" fill={i===0? ACC_25:"rgba(255,255,255,0.06)"} />)}
+        {[0,1,2,3].map(i => <rect key={i} x={16 + i*60} y="31" width="35" height="4" rx="2" fill={i===0? ACC_35:"rgba(255,255,255,0.08)"} />)}
         {/* Product grid */}
         {[0,1,2].map(r => [0,1,2].map(c => (
           <g key={`${r}-${c}`}>
             <rect x={10 + c*90} y={46 + r*44} width="82" height="38" rx="3" fill="#111e2e" stroke={line} strokeWidth="0.5" />
-            <rect x={13 + c*90} y={49 + r*44} width="76" height="18" rx="2" fill="#0d1926" />
-            <rect x={13 + c*90} y={70 + r*44} width="30" height="3" rx="1.5" fill="rgba(255,255,255,0.08)" />
-            <rect x={13 + c*90} y={76 + r*44} width="18" height="3" rx="1.5" fill={accent} opacity="0.4" />
-            <rect x={65 + c*90} y={74 + r*44} width="20" height="7" rx="2" fill={ACC_10} />
+            <rect x={13 + c*90} y={49 + r*44} width="76" height="18" rx="2" fill={`rgba(184,159,212,${0.06 + (r*3+c)*0.015})`} />
+            <rect x={13 + c*90} y={70 + r*44} width="30" height="3" rx="1.5" fill="rgba(255,255,255,0.12)" />
+            <rect x={13 + c*90} y={76 + r*44} width="18" height="3" rx="1.5" fill={accent} opacity="0.5" />
+            <rect x={65 + c*90} y={74 + r*44} width="20" height="7" rx="2" fill={ACC_20} />
           </g>
         )))}
       </>
@@ -332,25 +332,25 @@ function ScreenWireframe({ layout }: { layout: ScreenLayout }) {
         {chrome}
         {/* Sidebar */}
         <rect x="0" y="20" width="60" height={h-20} fill="#111e2e" />
-        <circle cx="30" cy="38" r="10" fill={ACC_08} stroke={ACC_20} strokeWidth="0.5" />
-        <rect x="14" y="54" width="32" height="3" rx="1.5" fill="rgba(255,255,255,0.08)" />
-        {[66,78,90,102,114].map(y => <rect key={y} x="10" y={y} width="40" height="3" rx="1.5" fill="rgba(255,255,255,0.05)" />)}
-        <rect x="10" y="78" width="40" height="3" rx="1.5" fill={ACC_25} />
+        <circle cx="30" cy="38" r="10" fill={ACC_20} stroke={ACC_35} strokeWidth="0.5" />
+        <rect x="14" y="54" width="32" height="3" rx="1.5" fill="rgba(255,255,255,0.12)" />
+        {[66,78,90,102,114].map(y => <rect key={y} x="10" y={y} width="40" height="3" rx="1.5" fill="rgba(255,255,255,0.08)" />)}
+        <rect x="10" y="78" width="40" height="3" rx="1.5" fill={ACC_35} />
         {/* Tabs */}
         {[0,1,2].map(i => (
-          <rect key={i} x={70 + i*50} y="28" width="40" height="8" rx="4" fill={i===0? ACC_10:"transparent"} />
+          <rect key={i} x={70 + i*50} y="28" width="40" height="8" rx="4" fill={i===0? ACC_20:"rgba(255,255,255,0.04)"} />
         ))}
         {[0,1,2].map(i => (
-          <rect key={`t${i}`} x={78 + i*50} y="31" width="24" height="3" rx="1.5" fill={i===0? ACC_25:"rgba(255,255,255,0.06)"} />
+          <rect key={`t${i}`} x={78 + i*50} y="31" width="24" height="3" rx="1.5" fill={i===0? ACC_35:"rgba(255,255,255,0.08)"} />
         ))}
         {/* Content cards */}
         {[0,1].map(r => [0,1].map(c => (
           <g key={`${r}-${c}`}>
             <rect x={70 + c*100} y={44 + r*60} width="92" height="52" rx="3" fill="#152030" stroke={line} strokeWidth="0.5" />
-            <rect x={78 + c*100} y={52 + r*60} width="40" height="4" rx="2" fill="rgba(255,255,255,0.1)" />
-            <rect x={78 + c*100} y={60 + r*60} width="70" height="3" rx="1.5" fill="rgba(255,255,255,0.05)" />
-            <rect x={78 + c*100} y={66 + r*60} width="55" height="3" rx="1.5" fill="rgba(255,255,255,0.04)" />
-            <rect x={78 + c*100} y={80 + r*60} width="30" height="6" rx="3" fill={ACC_08} />
+            <rect x={78 + c*100} y={52 + r*60} width="40" height="4" rx="2" fill="rgba(255,255,255,0.14)" />
+            <rect x={78 + c*100} y={60 + r*60} width="70" height="3" rx="1.5" fill="rgba(255,255,255,0.08)" />
+            <rect x={78 + c*100} y={66 + r*60} width="55" height="3" rx="1.5" fill="rgba(255,255,255,0.07)" />
+            <rect x={78 + c*100} y={80 + r*60} width="30" height="6" rx="3" fill={accLow} opacity="0.4" />
           </g>
         )))}
       </>
@@ -438,12 +438,12 @@ function ScreenWireframe({ layout }: { layout: ScreenLayout }) {
     kanban: (
       <>
         {chrome}
-        <rect x="10" y="28" width="60" height="5" rx="2" fill="rgba(255,255,255,0.12)" />
+        <rect x="10" y="28" width="60" height="5" rx="2" fill="rgba(255,255,255,0.15)" />
         {/* Column headers */}
         {[0,1,2,3].map(c => (
           <g key={c}>
-            <rect x={10 + c*67} y="40" width="62" height="10" rx="3" fill={[ACC_10, ACC_08, ACC_05, ACC_05][c]} />
-            <rect x={16 + c*67} y="43" width="30" height="4" rx="2" fill={c===0?ACC_25:"rgba(255,255,255,0.06)"} />
+            <rect x={10 + c*67} y="40" width="62" height="10" rx="3" fill={[ACC_20, ACC_10, ACC_08, ACC_08][c]} />
+            <rect x={16 + c*67} y="43" width="30" height="4" rx="2" fill={c===0?ACC_35:"rgba(255,255,255,0.09)"} />
             {/* Cards */}
             {[0,1,2].map(r => {
               if (c===3 && r>0) return null;
@@ -451,10 +451,10 @@ function ScreenWireframe({ layout }: { layout: ScreenLayout }) {
               return (
                 <g key={r}>
                   <rect x={12 + c*67} y={56 + r*36} width="58" height="30" rx="3" fill="#152030" stroke={line} strokeWidth="0.5" />
-                  <rect x={16 + c*67} y={61 + r*36} width="36" height="3" rx="1.5" fill="rgba(255,255,255,0.08)" />
-                  <rect x={16 + c*67} y={67 + r*36} width="24" height="2" rx="1" fill="rgba(255,255,255,0.04)" />
-                  <rect x={16 + c*67} y={74 + r*36} width="16" height="5" rx="2.5" fill={ACC_08} />
-                  <circle cx={58 + c*67} cy={77 + r*36} r="4" fill={ACC_05} stroke={ACC_10} strokeWidth="0.5" />
+                  <rect x={16 + c*67} y={61 + r*36} width="36" height="3" rx="1.5" fill="rgba(255,255,255,0.12)" />
+                  <rect x={16 + c*67} y={67 + r*36} width="24" height="2" rx="1" fill="rgba(255,255,255,0.07)" />
+                  <rect x={16 + c*67} y={74 + r*36} width="16" height="5" rx="2.5" fill={accLow} opacity="0.4" />
+                  <circle cx={58 + c*67} cy={77 + r*36} r="4" fill={ACC_10} stroke={ACC_20} strokeWidth="0.5" />
                 </g>
               );
             })}
