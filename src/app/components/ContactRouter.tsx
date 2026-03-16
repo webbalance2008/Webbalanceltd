@@ -21,6 +21,7 @@ import {
   PenLine,
 } from "lucide-react";
 import { sendEmail } from "../utils/sendEmail";
+import { useAnalytics } from "../hooks/useAnalytics";
 
 // ─── Types ─────────────────────────────────────────────────────────────────────
 type Mode = "choose" | "project" | "enquiry" | "support" | "whatsapp";
