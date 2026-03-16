@@ -1,4 +1,4 @@
-import { useState, useRef } from "react";
+import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import {
   ArrowRight, ArrowLeft, Check, Plus, X, Zap, Building2, ShoppingBag,
@@ -599,6 +599,7 @@ export function WebDesignStartPage() {
 
   const goNext = () => { if (!canAdvance()) return; setDirection(1);  setStep((s) => Math.min(s + 1, TOTAL_STEPS)); };
   const goBack = () => {                              setDirection(-1); setStep((s) => Math.max(s - 1, 1)); };
+  useEffect(() => { window.scrollTo({ top: 0, behavior: 'smooth' }); }, [step]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import {
   ArrowRight, ArrowLeft, Check, HelpCircle, ChevronDown,
@@ -319,6 +319,7 @@ export function SeoStartPage() {
 
   const next = () => { setDir(1); setStep(s => Math.min(s + 1, TOTAL_STEPS)); };
   const back = () => { setDir(-1); setStep(s => Math.max(s - 1, 1)); };
+  useEffect(() => { window.scrollTo({ top: 0, behavior: 'smooth' }); }, [step]);
 
   const toggleGoal = (g: string) =>
     setData(d => ({ ...d, goals: d.goals.includes(g) ? d.goals.filter(x => x !== g) : [...d.goals, g] }));

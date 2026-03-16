@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import {
   ArrowRight, ArrowLeft, Check, RotateCcw, HelpCircle, ChevronDown,
@@ -792,6 +792,7 @@ export function WebAppStartPage() {
 
   const goNext = () => { if (!canAdvance()) return; setDirection(1);  setStep(s=>Math.min(s+1,TOTAL_STEPS)); };
   const goBack = () => {                             setDirection(-1); setStep(s=>Math.max(s-1,1)); };
+  useEffect(() => { window.scrollTo({ top: 0, behavior: 'smooth' }); }, [step]);
   const handleReset = () => { setData(initialData); setDirection(-1); setStep(1); setShowBreakdown(false); };
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
