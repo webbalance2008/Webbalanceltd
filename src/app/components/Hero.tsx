@@ -6,14 +6,14 @@ import { HeroDevices } from "./HeroDevices";
 import { SolarSystem } from "./SolarSystem";
 import { usePreloaderDone } from "../contexts/PreloaderContext";
 
-// Department colours — the left "start" of the gradient cycles, white stays on the right
+// Department colours — must match serviceColors.ts primary values
 const DEPT_COLORS = [
-  "#00d4e8", // Web Design — brand cyan
+  "#5ec4d4", // Web Design — soft teal-cyan
   "#b89fd4", // Web Apps — lavender purple
-  "#4ade80", // SEO — green
-  "#f59e0b", // Branding — amber
-  "#60a5fa", // Hosting — blue
-  "#f472b6", // Support — pink
+  "#3dd68c", // SEO — green
+  "#f472b6", // Branding — pink-magenta
+  "#f59e6a", // Hosting — warm orange
+  "#00d4e8", // Support — brand cyan
 ];
 
 const BRAND_CYAN = "#00d4e8";
@@ -51,7 +51,7 @@ const PHASES = [
     line2: "turn heads &",
     line3: "drive results.",
     body: <>Award-winning web design that blends stunning aesthetics with conversion-focused architecture — crafted to turn visitors into customers.</>,
-    gradientColor: "#00d4e8",
+    gradientColor: "#5ec4d4",
     label: "Web Design",
     cta: { label: "Explore Web Design", href: "/web-design", secondary: { label: "Start a Project", href: "/start/web-design" } },
   },
@@ -69,7 +69,7 @@ const PHASES = [
     line2: "Reach further.",
     line3: "Grow faster.",
     body: <>Data-led SEO strategies that put your business at the top of search results — and keep it there. More visibility, more traffic, more revenue.</>,
-    gradientColor: "#4ade80",
+    gradientColor: "#3dd68c",
     label: "SEO",
     cta: { label: "Explore SEO", href: "/seo", secondary: { label: "Start a Project", href: "/start/seo" } },
   },
@@ -78,7 +78,7 @@ const PHASES = [
     line2: "as bold as",
     line3: "your ambition.",
     body: <>Strategic brand design — from logo to full visual guidelines — that makes you instantly recognisable, memorable, and trusted.</>,
-    gradientColor: "#f59e0b",
+    gradientColor: "#f472b6",
     label: "Branding",
     cta: { label: "Explore Branding", href: "/branding", secondary: { label: "Start a Project", href: "/start/branding" } },
   },
@@ -87,7 +87,7 @@ const PHASES = [
     line2: "Always fast.",
     line3: "Always secure.",
     body: <>Managed hosting and dedicated ongoing support — so your website performs at its peak, every hour of every day.</>,
-    gradientColor: "#60a5fa",
+    gradientColor: "#f59e6a",
     label: "Hosting & Support",
     cta: { label: "Explore Hosting", href: "/hosting", secondary: { label: "Start a Project", href: "/start/hosting" } },
   },
