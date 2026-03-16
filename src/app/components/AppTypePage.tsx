@@ -23,12 +23,14 @@ const BG_CARD   = "#1a2840";   /* elevated panel */
 export interface AppTypeIndustry {
   name: string;
   description: string;
+  detail?: string;
 }
 
 export interface AppTypeFeature {
   icon: LucideIcon;
   title: string;
   body: string;
+  detail?: string;
 }
 
 export interface AppTypeProcess {
@@ -195,9 +197,9 @@ function ScreenWireframe({ layout }: { layout: ScreenLayout }) {
   const w = 280;
   const h = 180;
   const accent = ACC;
-  const accLow = ACC_20;
-  const accVLow = ACC_08;
-  const line = ACC_10;
+  const accLow = ACC_35;
+  const accVLow = ACC_20;
+  const line = ACC_25;
 
   // Common browser chrome
   const chrome = (
@@ -205,10 +207,10 @@ function ScreenWireframe({ layout }: { layout: ScreenLayout }) {
       <rect x="0" y="0" width={w} height={h} rx="6" fill="#0d1926" stroke={line} strokeWidth="1" />
       <rect x="0" y="0" width={w} height="20" rx="6" fill="#111e2e" />
       <rect x="0" y="14" width={w} height="6" fill="#111e2e" />
-      <circle cx="12" cy="10" r="3" fill="rgba(255,255,255,0.08)" />
-      <circle cx="22" cy="10" r="3" fill="rgba(255,255,255,0.08)" />
-      <circle cx="32" cy="10" r="3" fill="rgba(255,255,255,0.08)" />
-      <rect x="80" y="6" width="120" height="8" rx="4" fill="rgba(255,255,255,0.04)" />
+      <circle cx="12" cy="10" r="3" fill="rgba(184,159,212,0.25)" />
+      <circle cx="22" cy="10" r="3" fill="rgba(184,159,212,0.15)" />
+      <circle cx="32" cy="10" r="3" fill="rgba(184,159,212,0.1)" />
+      <rect x="80" y="6" width="120" height="8" rx="4" fill="rgba(255,255,255,0.08)" />
     </>
   );
 
@@ -234,15 +236,15 @@ function ScreenWireframe({ layout }: { layout: ScreenLayout }) {
         ))}
         {/* Chart area */}
         <rect x="65" y="82" width="205" height="88" rx="3" fill="#152030" stroke={line} strokeWidth="0.5" />
-        <polyline points="75,155 100,140 125,148 150,130 175,135 200,118 225,125 250,110" fill="none" stroke={accent} strokeWidth="1.5" opacity="0.4" />
-        <polyline points="75,155 100,148 125,152 150,142 175,145 200,138 225,140 250,132" fill="none" stroke={accLow} strokeWidth="1" opacity="0.3" />
+        <polyline points="75,155 100,140 125,148 150,130 175,135 200,118 225,125 250,110" fill="none" stroke={accent} strokeWidth="1.5" opacity="0.85" />
+        <polyline points="75,155 100,148 125,152 150,142 175,145 200,138 225,140 250,132" fill="none" stroke={accLow} strokeWidth="1" opacity="0.5" />
       </>
     ),
     calendar: (
       <>
         {chrome}
         <rect x="10" y="28" width="60" height="5" rx="2" fill="rgba(255,255,255,0.12)" />
-        <rect x={w-70} y="27" width="55" height="8" rx="4" fill={accent} opacity="0.15" />
+        <rect x={w-70} y="27" width="55" height="8" rx="4" fill={accent} opacity="0.4" />
         <rect x={w-65} y="29" width="45" height="4" rx="2" fill={accent} opacity="0.5" />
         {/* Day headers */}
         {[0,1,2,3,4,5,6].map(d => (
@@ -557,7 +559,7 @@ function FeatureModal({ feature, onClose }: { feature: AppTypeFeature; onClose: 
               <Icon size={20} strokeWidth={1.25} style={{ color: ACC }} />
             </div>
             <h3 style={{ fontFamily: "'Montserrat', sans-serif" }} className="text-white text-2xl mb-4 font-light">{feature.title}</h3>
-            <p style={{ fontFamily: "'Inter', sans-serif" }} className="text-white/55 text-sm leading-[1.85]">{feature.body}</p>
+            <p style={{ fontFamily: "'Inter', sans-serif" }} className="text-white/55 text-sm leading-[1.85]">{feature.detail || feature.body}</p>
           </div>
         </motion.div>
       </motion.div>
@@ -595,21 +597,21 @@ function FeaturesSection({ features }: { features: AppTypeFeature[] }) {
                 animate={inView ? { opacity: 1, y: 0 } : {}}
                 transition={{ delay: i * 0.07 }}
                 className="group cursor-pointer relative p-6 transition-colors duration-300"
-                style={{ border: `1px solid ${ACC_10}` }}
+                style={{ border: `1px solid ${ACC_25}`, backgroundColor: ACC_05 }}
                 onClick={() => setActive(f)}
-                onMouseEnter={e => { (e.currentTarget as HTMLElement).style.borderColor = ACC_35; (e.currentTarget as HTMLElement).style.backgroundColor = ACC_05; }}
-                onMouseLeave={e => { (e.currentTarget as HTMLElement).style.borderColor = ACC_10; (e.currentTarget as HTMLElement).style.backgroundColor = "transparent"; }}
+                onMouseEnter={e => { (e.currentTarget as HTMLElement).style.borderColor = ACC_50; (e.currentTarget as HTMLElement).style.backgroundColor = ACC_10; }}
+                onMouseLeave={e => { (e.currentTarget as HTMLElement).style.borderColor = ACC_25; (e.currentTarget as HTMLElement).style.backgroundColor = ACC_05; }}
               >
-                <div className="absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                <div className="absolute top-4 right-4 opacity-60 group-hover:opacity-100 transition-opacity duration-300">
                   <Plus size={12} style={{ color: ACC }} />
                 </div>
-                <div className="mb-5 inline-flex items-center justify-center w-11 h-11 border" style={{ borderColor: ACC_20 }}>
-                  <Icon size={18} strokeWidth={1.25} style={{ color: ACC }} className="opacity-70 group-hover:opacity-100 transition-opacity duration-300" />
+                <div className="mb-5 inline-flex items-center justify-center w-11 h-11 border" style={{ borderColor: ACC_35 }}>
+                  <Icon size={18} strokeWidth={1.25} style={{ color: ACC }} className="opacity-90 group-hover:opacity-100 transition-opacity duration-300" />
                 </div>
                 <h3 style={{ fontFamily: "'Montserrat', sans-serif", color: "white", transition: "color 0.3s" }} className="text-xl mb-3 group-hover:!text-[#b89fd4] transition-colors">
                   {f.title}
                 </h3>
-                <p style={{ fontFamily: "'Inter', sans-serif" }} className="text-white/40 text-sm leading-relaxed line-clamp-3">
+                <p style={{ fontFamily: "'Inter', sans-serif" }} className="text-white/55 text-sm leading-relaxed line-clamp-3">
                   {f.body}
                 </p>
               </motion.div>
@@ -651,7 +653,7 @@ function IndustryModal({ industry, onClose }: { industry: AppTypeIndustry; onClo
             </button>
             <span style={{ color: ACC }} className="text-[10px] tracking-[0.3em] uppercase font-mono mb-4 block" >✦ Industry</span>
             <h3 style={{ fontFamily: "'Montserrat', sans-serif" }} className="text-white text-2xl mb-4 font-light">{industry.name}</h3>
-            <p style={{ fontFamily: "'Inter', sans-serif" }} className="text-white/55 text-sm leading-[1.85]">{industry.description}</p>
+            <p style={{ fontFamily: "'Inter', sans-serif" }} className="text-white/55 text-sm leading-[1.85]">{industry.detail || industry.description}</p>
           </div>
         </motion.div>
       </motion.div>
@@ -696,12 +698,12 @@ function IndustriesSection({ industries }: { industries: AppTypeIndustry[] }) {
               animate={inView ? { opacity: 1, y: 0 } : {}}
               transition={{ delay: i * 0.06 }}
               className="p-8 group transition-colors duration-300 cursor-pointer relative"
-              style={{ backgroundColor: BG_CARD }}
+              style={{ backgroundColor: "#1c2f48" }}
               onClick={() => setActive(ind)}
-              onMouseEnter={e => { (e.currentTarget as HTMLElement).style.backgroundColor = "#1e3248"; }}
-              onMouseLeave={e => { (e.currentTarget as HTMLElement).style.backgroundColor = BG_CARD; }}
+              onMouseEnter={e => { (e.currentTarget as HTMLElement).style.backgroundColor = "#223557"; }}
+              onMouseLeave={e => { (e.currentTarget as HTMLElement).style.backgroundColor = "#1c2f48"; }}
             >
-              <div className="absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+              <div className="absolute top-4 right-4 opacity-60 group-hover:opacity-100 transition-opacity duration-300">
                 <Plus size={12} style={{ color: ACC }} />
               </div>
               <div className="flex items-start gap-4">
@@ -713,7 +715,7 @@ function IndustriesSection({ industries }: { industries: AppTypeIndustry[] }) {
                   >
                     {ind.name}
                   </h3>
-                  <p style={{ fontFamily: "'Inter', sans-serif" }} className="text-white/35 text-sm leading-relaxed">
+                  <p style={{ fontFamily: "'Inter', sans-serif" }} className="text-white/55 text-sm leading-relaxed">
                     {ind.description}
                   </p>
                 </div>

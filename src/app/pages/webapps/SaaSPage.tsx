@@ -22,57 +22,69 @@ export function SaaSPage() {
           icon: Layers,
           title: "Multi-Tenant Architecture",
           body: "A single codebase serves all customers, with complete data isolation between organisations. Each tenant gets their own secure, configurable workspace.",
+          detail: "Multi-tenancy is the architectural decision that makes SaaS economically viable — one codebase, one infrastructure, serving hundreds or thousands of customers simultaneously. But it must be implemented correctly from the start. Each customer organisation lives in a completely isolated data environment: there is no possibility of one tenant accessing another's data, even through edge cases or API queries. Customers can configure their own workspace — settings, branding, user permissions, integrations — without affecting anyone else. And when you deploy an update, every customer benefits simultaneously.",
         },
         {
           icon: CreditCard,
           title: "Subscription Billing",
           body: "Stripe-powered billing handles plan tiers, usage-based pricing, free trials, proration, and automatic renewals — without manual intervention.",
+          detail: "Stripe Billing is the most powerful subscription infrastructure available, and we implement it in full. Plan tiers with monthly and annual pricing, usage-based components (per seat, per API call, per GB), free trial periods that convert automatically without requiring a card upfront, prorated charges when customers upgrade mid-cycle, and coupon codes for promotional campaigns. Failed payment recovery operates through an intelligent dunning sequence — retry cadences, customer notifications, and grace periods — recovering revenue that would otherwise be lost to card declines. The entire billing lifecycle runs without manual intervention.",
         },
         {
           icon: Users,
           title: "Team & Permissions System",
           body: "Role-based access control lets customers manage their own team members, invite collaborators, and assign granular permissions within their account.",
+          detail: "SaaS products are rarely used by a single person — most customers are organisations that need to manage their own team access. A robust permissions system lets account owners invite team members by email, assign them roles (admin, editor, viewer, or custom), and adjust or revoke access without contacting support. Granular permission controls mean different team members see different parts of the application based on their role. Large enterprise customers may need to map your permission system to their own SSO groups — we build for that requirement from day one.",
         },
         {
           icon: CloudCog,
           title: "Scalable Infrastructure",
           body: "Built on cloud infrastructure that scales horizontally as your user base grows. Auto-scaling, queuing, and caching mean you'll never outgrow your stack.",
+          detail: "The infrastructure choices made at the start of a SaaS product determine how expensive and painful growth will be. We architect for horizontal scalability from the beginning: stateless application servers that can be replicated as load increases, database architectures that handle read scaling, background job queues that process workloads asynchronously rather than blocking user requests, and caching layers that reduce database load for frequently accessed data. When you go from 100 to 10,000 customers, the infrastructure scales with you — not against you.",
         },
         {
           icon: BarChart3,
           title: "Admin & Analytics",
           body: "A comprehensive operator dashboard gives you visibility into MRR, churn, active users, feature adoption, and any metric that matters to your business.",
+          detail: "As the SaaS operator, you need to see your business clearly: which customers are active, which are at risk of churning, which features are driving engagement, and what your revenue trajectory looks like. The operator dashboard surfaces all of this: MRR and ARR with growth trends, churn rate with cohort analysis, daily/weekly/monthly active user counts, feature adoption heat maps, trial-to-paid conversion rates, and customer health scores that flag accounts showing declining engagement. When a customer is at risk, you know before they cancel.",
         },
         {
           icon: ShieldCheck,
           title: "Enterprise-Grade Security",
           body: "SOC 2-aligned security practices, GDPR compliance, SSO integration, API key management, and audit logging — built in from day one.",
+          detail: "Security is not a feature to add later — it's a foundation to build on from day one. Enterprise customers will ask about your security posture before signing, and the answers need to be comprehensive. We build with SOC 2-aligned practices: encrypted data at rest and in transit, SSO via SAML and OIDC for enterprise customers, API key management with scopes and rotation, comprehensive audit logging of all user actions, GDPR-compliant data handling with export and deletion tools, and penetration testing as part of the build process. Security posture that can withstand enterprise procurement scrutiny from launch.",
         },
       ]}
       industries={[
         {
           name: "HR & Workforce Management",
           description: "Rota scheduling, timesheet management, compliance tracking, and employee self-service platforms for multi-site businesses.",
+          detail: "HR and workforce management software is one of the most consistently successful SaaS verticals because the pain it replaces — manual rotas, paper timesheets, scattered compliance records — is universal and deeply felt. A well-built platform handles rota creation with availability rules and skill matching, timesheet submission and approval, holiday and absence management, compliance tracking (right to work, training certificates), and employee self-service for payslips and HR requests. Multi-site businesses in hospitality, care, retail, and facilities management are the sweet spot: high staff volumes, complex scheduling, and operations that can't afford administrative errors.",
         },
         {
           name: "Property & Real Estate",
           description: "Landlord management portals, letting agent CRMs, property inspection tools, and maintenance management platforms.",
+          detail: "Property management software serves a market with enormous complexity and a clear willingness to pay for tools that reduce it. A letting agent CRM manages the full lifecycle of a tenancy — from applicant tracking through to end-of-tenancy deposit reconciliation. Landlord portals give portfolio owners visibility of income, expenditure, maintenance, and compliance across all properties. Inspection tools with mobile-optimised property report capture and photo documentation replace paper forms entirely. The regulatory requirements of the property sector (EPC certificates, gas safety, deposit protection) create clear, automatable compliance workflows.",
         },
         {
           name: "Legal & Professional Services",
           description: "Matter management, time tracking, client billing, and document automation tools for law firms and professional practices.",
+          detail: "Law firms and professional practices have been chronically underserved by software that understands how they actually work. A well-designed practice management SaaS handles matter or engagement setup with team assignment and budget tracking, time recording at task level with automatic billing calculation, document generation from templates with variable data, client billing with disbursement capture, and utilisation and recovery reporting that tells partners exactly how profitably each matter is running. White-label options let you offer this as a product to firms in your network.",
         },
         {
           name: "Hospitality & Events",
           description: "Venue management software, event planning tools, catering management platforms, and group booking coordination systems.",
+          detail: "Hospitality and events management is operationally complex and data-intensive: venues managing multiple spaces, events teams coordinating dozens of suppliers, catering businesses tracking dietary requirements for hundreds of guests. SaaS products in this space handle venue booking and availability calendars, event project management with timeline and supplier coordination, catering pack management with dietary flags and allergen tracking, and post-event financial reconciliation. The market is large and the incumbent solutions are often legacy desktop software ripe for displacement.",
         },
         {
           name: "Marketing & Agency Tools",
           description: "Client reporting dashboards, campaign management platforms, SEO tracking tools, and agency white-label software products.",
+          detail: "Marketing agencies and consultancies often build internal tools to solve their own operational problems — and realise those tools have value for peers and clients in the wider market. Client reporting dashboards that aggregate data from Google Analytics, paid search, social, and email into a single branded view are a classic example: solving a universal agency pain point, with a natural white-label model. Campaign management platforms, SEO rank tracking tools, and social scheduling platforms have each been built by agencies for agencies — often growing into significant standalone businesses.",
         },
         {
           name: "Health & Fitness",
           description: "Studio management software, personal training platforms, class scheduling SaaS, and wellbeing programme management tools.",
+          detail: "The health and fitness industry runs on scheduling, memberships, and coach-client relationships — all of which demand software built for the specific workflows of the sector. Studio management SaaS handles class timetabling, instructor assignment, membership billing, and attendance tracking in one place. Personal training platforms connect coaches with their clients digitally — programme delivery, progress tracking, check-in messaging, and nutrition guidance. Corporate wellbeing platforms deliver structured employee health programmes at enterprise scale. Each of these is a distinct product opportunity with a clear, underserved market.",
         },
       ]}
       included={[
