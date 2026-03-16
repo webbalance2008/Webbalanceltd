@@ -1,14 +1,14 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import { AnimatePresence, motion } from "motion/react";
 import { ChevronLeft, ChevronRight, Play, Pause, MoveVertical } from "lucide-react";
-const laptopImg = "/device-laptop-frame-v4.png";
+const laptopImg = "/device-laptop-frame-new.svg";
 
 const CYAN     = "#00d4e8";
 const CYAN_RGB = "0, 212, 232";
-/* Backdrop for device blend so PNG black reveals blue-grey, not opaque black */
-const DEVICE_BG = "linear-gradient(to bottom, #0f1820 0%, #132030 40%, #162535 70%, #0f1820 100%)";
+const DEVICE_BG = "transparent";
 
-const LS = { left: "12.5%", top: "5%", right: "12.5%", bottom: "16%" };
+// Screen area from SVG viewBox 355×213.8: rect x=46.1 y=23.8 w=259.8 h=162.4
+const LS = { left: "12.98%", top: "11.13%", right: "13.83%", bottom: "12.91%" };
 
 /* ─── Drag-to-scroll hook with momentum ───────────────────────────────────────
    Attaches global document listeners so dragging outside the element still
@@ -173,18 +173,29 @@ export function DeviceMockups({ screenshots, mobileImages, projectTitle }: Devic
 
           {/* ── LAPTOP ─────────────────────────────────────── */}
           <div className="flex flex-col items-center" style={{ width:"760px", maxWidth:"100%" }}>
+            {/* Hidden clip-path definition: outer box minus screen rectangle (even-odd = hole) */}
+            {/* SVG viewBox 355×213.8 → screen rect x=46.1 y=23.8 w=259.8 h=162.4 */}
+            <svg aria-hidden style={{ position:'absolute', width:0, height:0, overflow:'hidden' }}>
+              <defs>
+                <clipPath id="laptop-frame-clip" clipPathUnits="objectBoundingBox">
+                  {/* Outer CW + inner CCW = nonzero winding punches a hole at the screen */}
+                  <path d="M0,0 H1 V1 H0 Z M0.1298,0.1113 V0.8709 H0.8617 V0.1113 Z" />
+                </clipPath>
+              </defs>
+            </svg>
+
             <div
               className="relative w-full"
               style={{
-                aspectRatio:"1001/669",
+                aspectRatio:"355/213.8",
                 isolation:"isolate",
                 background:DEVICE_BG,
               }}
             >
 
-              {/* Screenshot layer — behind PNG */}
+              {/* Screenshot layer — behind SVG frame */}
               <div className="absolute overflow-hidden bg-black"
-                style={{ left:LS.left, top:LS.top, right:LS.right, bottom:LS.bottom, zIndex:1, borderRadius:"4px", boxShadow:"0 0 0 2px rgba(255,255,255,0.06), inset 0 0 0 1px rgba(0,0,0,0.8)" }}>
+                style={{ left:LS.left, top:LS.top, right:LS.right, bottom:LS.bottom, zIndex:1, borderRadius:"2px" }}>
 
                 {scrollMode ? (
                   /* ── Single tall screenshot: drag to scroll ── */
@@ -202,7 +213,7 @@ export function DeviceMockups({ screenshots, mobileImages, projectTitle }: Devic
                     <img
                       src={screenshots[0]}
                       alt={`${projectTitle} full-page screenshot`}
-                      style={{ width:"100%", height:"auto", display:"block", pointerEvents:"none", imageRendering:"-webkit-optimize-contrast" }}
+                      style={{ width:"100%", height:"auto", display:"block", pointerEvents:"none" }}
                       draggable={false}
                     />
                   </div>
@@ -218,35 +229,35 @@ export function DeviceMockups({ screenshots, mobileImages, projectTitle }: Devic
                 )}
               </div>
 
-              {/* Laptop PNG frame on top — screen blend so black screen area reveals content */}
+              {/* Laptop SVG frame — clip-path punches out screen rectangle, content shows through */}
               <img src={laptopImg} alt="Laptop frame" draggable={false}
                 className="absolute inset-0 w-full h-full pointer-events-none select-none"
-                style={{ zIndex:2, mixBlendMode:"screen" }} />
+                style={{ zIndex:2, clipPath:'url(#laptop-frame-clip)' }} />
             </div>
 
             {/* ── Laptop reflection ──────────────────────────────── */}
             <div style={{
-              width: '100%', height: '32px', overflow: 'hidden', marginTop: '1px', flexShrink: 0,
-              WebkitMaskImage: 'linear-gradient(to bottom, rgba(0,0,0,0.5) 0%, rgba(0,0,0,0.15) 55%, transparent 100%)',
-              maskImage:       'linear-gradient(to bottom, rgba(0,0,0,0.5) 0%, rgba(0,0,0,0.15) 55%, transparent 100%)',
+              width: '100%', height: '16px', overflow: 'hidden', marginTop: '1px', flexShrink: 0,
+              WebkitMaskImage: 'linear-gradient(to bottom, rgba(0,0,0,0.4) 0%, transparent 100%)',
+              maskImage:       'linear-gradient(to bottom, rgba(0,0,0,0.4) 0%, transparent 100%)',
             }}>
               <img src={laptopImg} alt="" draggable={false} style={{
                 width: '100%', display: 'block',
                 transform: 'scaleY(-1)', transformOrigin: 'top center',
-                opacity: 0.38, filter: 'blur(0.8px)',
+                opacity: 0.32, filter: 'blur(0.8px)',
               }} />
             </div>
 
             {/* Controls — slideshow only; scroll mode gets a drag hint */}
             {scrollMode ? (
-              <div className="mt-2 flex items-center gap-2"
-                style={{ color:`rgba(${CYAN_RGB},0.4)`, fontFamily:"'DM Mono', monospace", fontSize:"10px", letterSpacing:"0.25em", marginTop:"-48px", position:"relative", zIndex:2 }}>
+              <div className="flex items-center gap-2"
+                style={{ color:`rgba(${CYAN_RGB},0.4)`, fontFamily:"'DM Mono', monospace", fontSize:"10px", letterSpacing:"0.25em", marginTop:"6px", position:"relative", zIndex:2 }}>
                 <MoveVertical size={11} style={{ color:`rgba(${CYAN_RGB},0.5)` }} />
                 <span className="uppercase tracking-[0.25em]">Drag to scroll</span>
               </div>
             ) : (
-              <div className="mt-2 flex items-center gap-3"
-                style={{ marginTop:"-48px", position:"relative", zIndex:2 }}>
+              <div className="flex items-center gap-3"
+                style={{ marginTop:"6px", position:"relative", zIndex:2 }}>
                 <Btn onClick={prev} title="Previous"><ChevronLeft size={13} /></Btn>
                 <div className="flex items-center gap-2 px-2">
                   {screenshots.map((_,i) => (
