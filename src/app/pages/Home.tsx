@@ -3,7 +3,6 @@ import { HowCanWeHelp } from "../components/HowCanWeHelp";
 import { CoreServices } from "../components/CoreServices";
 import { Projects } from "../components/Projects";
 import { Services } from "../components/Services";
-import { About } from "../components/About";
 import { InsightsSection } from "../components/InsightsSection";
 import { Contact } from "../components/Contact";
 import { useEffect, useRef, useState } from "react";
@@ -18,7 +17,6 @@ const SECTION_META = [
   { label: "Services",  Component: CoreServices },
   { label: "Projects",  Component: Projects },
   { label: "Expertise", Component: Services },
-  { label: "About",     Component: About },
   { label: "Insights",  Component: InsightsSection },
   { label: "Contact",   Component: Contact },
 ] as const;
