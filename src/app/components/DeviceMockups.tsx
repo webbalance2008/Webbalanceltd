@@ -1,10 +1,12 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import { AnimatePresence, motion } from "motion/react";
 import { ChevronLeft, ChevronRight, Play, Pause, MoveVertical } from "lucide-react";
-import laptopImg from "figma:asset/b3276bfb68b15424bc05e013879499c429a3efe5.png";
+const laptopImg = "/device-laptop-frame-v4.png";
 
 const CYAN     = "#00d4e8";
 const CYAN_RGB = "0, 212, 232";
+/* Backdrop for device blend so PNG black reveals blue-grey, not opaque black */
+const DEVICE_BG = "linear-gradient(to bottom, #0f1820 0%, #132030 40%, #162535 70%, #0f1820 100%)";
 
 const LS = { left: "12.5%", top: "5%", right: "12.5%", bottom: "16%" };
 
@@ -171,11 +173,18 @@ export function DeviceMockups({ screenshots, mobileImages, projectTitle }: Devic
 
           {/* ── LAPTOP ─────────────────────────────────────── */}
           <div className="flex flex-col items-center" style={{ width:"760px", maxWidth:"100%" }}>
-            <div className="relative w-full" style={{ aspectRatio:"1001/669" }}>
+            <div
+              className="relative w-full"
+              style={{
+                aspectRatio:"1001/669",
+                isolation:"isolate",
+                background:DEVICE_BG,
+              }}
+            >
 
               {/* Screenshot layer — behind PNG */}
               <div className="absolute overflow-hidden bg-black"
-                style={{ left:LS.left, top:LS.top, right:LS.right, bottom:LS.bottom, zIndex:1 }}>
+                style={{ left:LS.left, top:LS.top, right:LS.right, bottom:LS.bottom, zIndex:1, borderRadius:"4px", boxShadow:"0 0 0 2px rgba(255,255,255,0.06), inset 0 0 0 1px rgba(0,0,0,0.8)" }}>
 
                 {scrollMode ? (
                   /* ── Single tall screenshot: drag to scroll ── */
@@ -193,7 +202,7 @@ export function DeviceMockups({ screenshots, mobileImages, projectTitle }: Devic
                     <img
                       src={screenshots[0]}
                       alt={`${projectTitle} full-page screenshot`}
-                      style={{ width:"100%", height:"auto", display:"block", pointerEvents:"none" }}
+                      style={{ width:"100%", height:"auto", display:"block", pointerEvents:"none", imageRendering:"-webkit-optimize-contrast" }}
                       draggable={false}
                     />
                   </div>
@@ -209,10 +218,10 @@ export function DeviceMockups({ screenshots, mobileImages, projectTitle }: Devic
                 )}
               </div>
 
-              {/* Laptop PNG frame on top */}
+              {/* Laptop PNG frame on top — screen blend so black screen area reveals content */}
               <img src={laptopImg} alt="Laptop frame" draggable={false}
                 className="absolute inset-0 w-full h-full pointer-events-none select-none"
-                style={{ zIndex:2 }} />
+                style={{ zIndex:2, mixBlendMode:"screen" }} />
             </div>
 
             {/* ── Laptop reflection ──────────────────────────────── */}
@@ -262,7 +271,10 @@ export function DeviceMockups({ screenshots, mobileImages, projectTitle }: Devic
           </div>
 
           {/* ── PHONE ──────────────────────────────────────── */}
-          <div className="flex flex-col items-center flex-shrink-0" style={{ width:"224px", marginBottom:"0px" }}>
+          <div
+            className="flex flex-col items-center flex-shrink-0"
+            style={{ width:"224px", marginBottom:"0px", isolation:"isolate", background:DEVICE_BG, borderRadius:12 }}
+          >
             <PhoneSVG>
               <div
                 ref={mobileDrag.ref}
@@ -281,7 +293,7 @@ export function DeviceMockups({ screenshots, mobileImages, projectTitle }: Devic
                   <img
                     src={mobileImages[0]}
                     alt={`${projectTitle} mobile screenshot`}
-                    style={{ width:"100%", height:"auto", display:"block", pointerEvents:"none" }}
+                    style={{ width:"100%", height:"auto", display:"block", pointerEvents:"none", imageRendering:"-webkit-optimize-contrast" }}
                     draggable={false}
                   />
                 ) : (

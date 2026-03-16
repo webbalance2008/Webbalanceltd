@@ -1,7 +1,7 @@
 import { useRef } from "react";
 import { motion, useInView } from "motion/react";
 import { useIsMobile } from "../hooks/useIsMobile";
-import officeImg from "figma:asset/67a711565d0f28e25e06827e2e5f4c775d1b8654.png";
+const officeImg = "";
 
 export function About() {
   const ref = useRef(null);

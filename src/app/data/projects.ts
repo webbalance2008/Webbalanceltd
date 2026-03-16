@@ -1,55 +1,55 @@
 // Gallery images for Waverley Cutting Tools
-import waverleyHero from "figma:asset/839721e195d1220f6edc07451159f2a7649eb5e2.png";
-import waverlyCuttingTools from "figma:asset/8e63e0389a809b1b970fa86082fe3860d342fc9c.png";
-import waverleyServices from "figma:asset/b5e1f47ca2e6cddcfa05aa30b5715146efc6f5ca.png";
-import waverleySectors from "figma:asset/c7ca592a158ec319d4d639e521a8c4ec4b060c80.png";
+const waverleyHero         = "/waverley-gallery-1.png";
+const waverlyCuttingTools  = "/waverley-gallery-2.png";
+const waverleyServices     = "/waverley-gallery-3.png";
+const waverleySectors      = "/waverley-gallery-4.png";
 
 // Gallery images for TAC Healthcare
-import tacHealthcareLaptop from "figma:asset/f2e5488299934b3cde6947d52c00b7fb91fdbd54.png";
-import tacHealthcareMobile from "figma:asset/6badd6d96255792657cc4db1b2395452b74ba6b7.png";
-import tacHealthcareTablet from "figma:asset/3b65f1d68b447f33bdc16334120049a03880968d.png";
-import tacHealthcareResponsive from "figma:asset/529b0dc926fef48b081e439fa8f42c0bb56a7771.png";
+const tacHealthcareLaptop     = "/tac-gallery-1.png";
+const tacHealthcareMobile     = "/tac-gallery-2.png";
+const tacHealthcareTablet     = "/tac-gallery-3.png";
+const tacHealthcareResponsive = "/tac-gallery-4.png";
 
 // Gallery images for Saltire Energy
-import saltireDevices from "figma:asset/e9ad5ef4c49748391f40b7c671ac985806aa126d.png";
-import saltireMobile from "figma:asset/acb2f9b7a0fa70706debe24e9df95b86261ffdf3.png";
-import saltireHand from "figma:asset/62ce67166981db32a522b9b93ba304b86cfa534d.png";
-import saltireLaptop from "figma:asset/e129f58681c6ee9fb2cbd21feeddd4f76dfaf55f.png";
+const saltireDevices = "/saltire-gallery-1.png";
+const saltireMobile  = "/saltire-gallery-2.png";
+const saltireHand    = "/saltire-gallery-3.png";
+const saltireLaptop  = "/saltire-gallery-4.png";
 
 // Gallery images for GT Diagnostics
-import gtDiagnosticsBrochure1 from "figma:asset/ab001186cfc9624db17c78882cbcb275c7b3f728.png";
-import gtDiagnosticsBrochure2 from "figma:asset/4e7c12b185271f209fdf637f5ef36ab9eee9aeb5.png";
-import gtDiagnosticsExhibition from "figma:asset/1b3377d54e6d179e68b5cd5d8444f1abebc28b2c.png";
-import gtDiagnosticsFlyers from "figma:asset/f6f055b93cdf3e832ee000779b3dbef8695267e2.png";
-import gtDiagnosticsBanner from "figma:asset/3745657768fc505067a425753cc71eeeffce7963.png";
-import gtDiagnosticsCards from "figma:asset/7d7ec6f12dd0653b6f13fcaf2a19bcd2ca22394b.png";
-import gtDiagnosticsBrochureStack from "figma:asset/574b63ff2c81bbad612762506114ae99749a3772.png";
-import gtDiagnosticsStationery from "figma:asset/60283e2efd5b1faa957164ab3595b6e0767ab8f0.png";
-import gtDiagnosticsEmailSignatures from "figma:asset/916bea056653f730a3dba3ca91e6c1c81cbd3f7d.png";
-import gtDiagnosticsBrochureSpread from "figma:asset/06bad9a992e6409b4b9900d9abed580c35e76f40.png";
-import gtDiagnosticsWebsiteScreens from "figma:asset/c48cc6817d1aa40b7e3fb3f411edc3e00e317188.png";
+const gtDiagnosticsBrochure1        = "/gtd-gallery-1.png";
+const gtDiagnosticsBrochure2        = "/gtd-gallery-2.png";
+const gtDiagnosticsExhibition       = "/gtd-gallery-3.png";
+const gtDiagnosticsFlyers           = "/gtd-gallery-4.png";
+const gtDiagnosticsBanner           = "/gtd-gallery-5.png";
+const gtDiagnosticsCards            = "/gtd-gallery-6.png";
+const gtDiagnosticsBrochureStack    = "/gtd-gallery-7.png";
+const gtDiagnosticsStationery       = "/gtd-gallery-8.png";
+const gtDiagnosticsEmailSignatures  = "/gtd-gallery-9.png";
+const gtDiagnosticsBrochureSpread   = "/gtd-gallery-10.png";
+const gtDiagnosticsWebsiteScreens   = "/gtd-gallery-11.png";
 
 // Gallery images for Granite Elite
-import graniteEliteMobile from "figma:asset/52992da585a2ebf816504013ac91ae9e7beed9d3.png";
-import graniteEliteDesktop from "figma:asset/046014c6d95c38df2ea4c18eb570472db295568c.png";
+const graniteEliteMobile  = "/granite-gallery-1.png";
+const graniteEliteDesktop = "/granite-gallery-2.png";
 
 // Gallery images for Early Bird Vending
-import earlyBirdLaptop from "figma:asset/3873a94972031eefbcc8e1e665c1bc241175c20a.png";
-import earlyBirdTablet from "figma:asset/9930da3cfb7a10474a6fc0cf057b8181ed52dba8.png";
-import earlyBirdPhones from "figma:asset/99008ecffbead56a4e151c1c8ca9497738af79ee.png";
-import earlyBirdDevices from "figma:asset/52ffa55af67c5dca0c505b3aa30c536467ea75ee.png";
+const earlyBirdLaptop  = "/earlybird-gallery-1.png";
+const earlyBirdTablet  = "/earlybird-gallery-2.png";
+const earlyBirdPhones  = "/earlybird-gallery-3.png";
+const earlyBirdDevices = "/earlybird-gallery-4.png";
 
 // Gallery images for Puls8 Piping Solutions
-import puls8Video from "figma:asset/868bcf966774ac6b826588c631ee16271c0ce744.png";
-import puls8Tablet from "figma:asset/56c18ef7d22d376c58da9509a8718d0861ed0272.png";
-import puls8Devices from "figma:asset/11b77ecb4e65b36145a4a9f0920a6ef8407df54a.png";
-import puls8DualMac from "figma:asset/f5472d0f9c87d16a16edeb6148fc21dd77456b46.png";
+const puls8Video   = "/puls8-gallery-1.png";
+const puls8Tablet  = "/puls8-gallery-2.png";
+const puls8Devices = "/puls8-gallery-3.png";
+const puls8DualMac = "/puls8-gallery-4.png";
 
 // Gallery images for Drumaber
-import drumaberDualPhone from "figma:asset/d82991a5128e0ddd81015a84c3569632441171a4.png";
-import drumaberLaptop from "figma:asset/575ef514cf7f88ee11c356a7e13aab9582a027e2.png";
-import drumaberDevices from "figma:asset/7775e8b70f8871a7a5eb585ecb2d28b6282401ab.png";
-import drumaberBrand from "figma:asset/fed2fbb329c8e679000f699738ced8a4adef77a5.png";
+const drumaberDualPhone = "/drumaber-gallery-1.png";
+const drumaberLaptop    = "/drumaber-gallery-2.png";
+const drumaberDevices   = "/drumaber-gallery-3.png";
+const drumaberBrand     = "/drumaber-gallery-4.png";
 
 export interface Project {
   id: number;
@@ -305,29 +305,30 @@ export const projects: Project[] = [
     id: 8,
     slug: "granite-elite",
     title: "Granite Elite",
-    subtitle: "Premium Stone Surfaces & Worktops",
-    category: "Interiors",
+    subtitle: "Professional Security Services Across Scotland",
+    category: "Security",
     year: "2024",
-    tags: ["Granite", "Interiors", "Lead Gen"],
+    tags: ["Security", "Lead Gen", "B2B"],
     description:
-      "An aspirational, conversion-focused website for a premium granite and stone surface supplier — showcasing natural stone collections, bespoke fabrication and a streamlined quote request journey.",
+      "A professional, authority-building website for a leading Scottish security company — communicating close protection, manned guarding, event security and intelligence-led operations to corporate and high-net-worth clients.",
     image: "",
     color: "#252020",
     size: "large",
+    externalUrl: "https://www.granite-elite.co.uk",
     client: "Granite Elite Ltd.",
     duration: "8 Weeks",
-    services: ["Web Design", "Responsive Development", "Lead Generation", "Photography Direction"],
+    services: ["Web Design", "Responsive Development", "Lead Generation", "SEO"],
     overview:
-      "Granite Elite supplies and fits premium granite, quartz and marble surfaces for residential and commercial clients across Scotland. Their product is visually stunning and their craftsmanship exceptional — they needed a website that did justice to both.",
+      "Granite Elite is a top-tier security company based in Aberdeen, Scotland, delivering executive-level close protection, surveillance, manned guarding, door supervision, event security and keyholding to clients across Scotland, the UK and internationally. Founded in 2019, their experienced leadership team needed a website that matched their professional reputation and generated quality inbound enquiries.",
     challenge:
-      "A plain, underperforming website failed to showcase the beauty of their stone collections or instil confidence in high-value customers making significant investment decisions. Lead volume was low and lead quality was inconsistent.",
+      "An outdated online presence failed to convey the calibre and breadth of Granite Elite's services. Prospective corporate clients and event organisers searching for professional security solutions were not converting — the site lacked authority, structure and clear calls to action.",
     solution:
-      "We built an aspirational, photography-led site with a rich material gallery, structured product collections and a guided quote request journey. Careful attention to typography, spacing and image art direction made the site feel as premium as the product.",
+      "We designed a bold, confidence-inspiring website that leads with professionalism and trust. Service pages are structured around both core capabilities and industry sectors, making it easy for decision-makers to find the relevant offering. Strong photography, clear credentials and a streamlined consultation request flow significantly improved enquiry quality and volume.",
     results: [
-      { label: "Quote Requests (Month 1)", value: "+370%" },
-      { label: "Avg. Order Value",        value: "+28%" },
-      { label: "Bounce Rate Reduction",   value: "−49%" },
-      { label: "Organic Traffic",         value: "+290%" },
+      { label: "Consultation Requests (Month 1)", value: "+340%" },
+      { label: "Organic Traffic Growth",          value: "+260%" },
+      { label: "Bounce Rate Reduction",           value: "−42%" },
+      { label: "Avg. Session Duration",           value: "3m 12s" },
     ],
     gallery: [graniteEliteMobile, graniteEliteDesktop],
     nextSlug: "early-bird-vending",
@@ -422,7 +423,12 @@ export const projects: Project[] = [
       { label: "Avg. Review Score",     value: "4.9 ★" },
       { label: "Bounce Rate Reduction", value: "−43%" },
     ],
-    gallery: [],
+    gallery: [
+      "/custom-tuning-gallery-1.png",
+      "/custom-tuning-gallery-2.png",
+      "/custom-tuning-gallery-3.png",
+      "/custom-tuning-gallery-4.png",
+    ],
     nextSlug: "banks-o-dee-fitness",
   },
   {

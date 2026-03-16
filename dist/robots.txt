@@ -1,0 +1,9 @@
+# Web Balance — robots.txt
+# https://web-balance.co.uk
+
+User-agent: *
+Allow: /
+Disallow: /api/
+Disallow: /functions/
+
+Sitemap: https://web-balance.co.uk/sitemap.xml

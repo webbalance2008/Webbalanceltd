@@ -6,37 +6,37 @@ import { ArrowLeft, ArrowUpRight, ArrowRight } from "lucide-react";
 import { getProjectBySlug, projects } from "../data/projects";
 import { projectImages } from "../data/projectImages";
 import { SEOHead } from "../components/SEOHead";
-import grandMeridianHero from "figma:asset/0c22f8467ac4d1e0aeb2f657367085dd0d601328.png";
-import omalleysHero      from "figma:asset/76980031e465901dbe9effca6e7bb53e38a025c8.png";
-import omalleysFullPage  from "figma:asset/23dd6b5ffeb917c8edef1b2d6d804973168104ac.png";
-import omalleysGallery1  from "figma:asset/ca31457574153df5bb492b383d3d881dac33bce1.png";
-import omalleysGallery2  from "figma:asset/2f30aee01c376604141cf010f6d7fa6fb7cd30df.png";
-import omalleysGallery3  from "figma:asset/ab589e8fafd6aefbf3e4a23af871b07eff8ddc1f.png";
-import omalleysGallery4  from "figma:asset/a7cfad25ff17d46dad7c914f163d7e3ffb68ba6e.png";
-import omalleysMobile    from "figma:asset/6f015b587d1a774f9c708c57e895474041db5fae.png";
+const grandMeridianHero = "";
+const omalleysHero     = "/omalleys-hero.png";
+const omalleysFullPage = "/omalleys-laptop-scroll.png";
+const omalleysGallery1 = "/omalleys-gallery-1.png";
+const omalleysGallery2 = "/omalleys-gallery-2.png";
+const omalleysGallery3 = "/omalleys-gallery-3.png";
+const omalleysGallery4 = "/omalleys-gallery-4.png";
+const omalleysMobile   = "/omalleys-phone-scroll.png";
 
-// Aberdeen Northern Hotel assets
-import aberdeenPhone    from "figma:asset/039906d38103753ff9c15f2a91ffbbe17ccaf941.png";
-import aberdeenLaptop   from "figma:asset/e28c9f6e1425ca366fbba021f5c0d6a55f7a014f.png";
-import aberdeenTablets  from "figma:asset/bda355f131c818192afdcbc00910d2438b756240.png";
-import aberdeenDesktop  from "figma:asset/0ea1b1a73d4946a50062f9be86b014c274174475.png";
-import aberdeenLogo     from "figma:asset/4365289a546d2665f328ef5640f3e852ffc908e2.png";
-import aberdeenRoom     from "figma:asset/b32d2237279d567cf9de9c6ad1ac288d62c299a0.png";
+// Aberdeen Northern Hotel assets (awaiting real images)
+const aberdeenPhone   = "";
+const aberdeenLaptop  = "";
+const aberdeenTablets = "";
+const aberdeenDesktop = "";
+const aberdeenLogo    = "";
+const aberdeenRoom    = "";
 
 // Banks O' Dee Sports & Fitness assets
-import banksPhonesHero  from "figma:asset/beb8a3b14cc753068b76ed2041a86d6cc3f6a676.png";
-import banksLaptop      from "figma:asset/38c7ff17b096c648434c58285d42b2256c7032df.png";
-import banksDesktop     from "figma:asset/4a4448c727ce87c52d5111c532f6f7b8331e7976.png";
-import banksMember      from "figma:asset/2605096395be4431eb3170cb07986251a42474c9.png";
-import banksGym         from "figma:asset/f1f32c882f2143b5d171ec65cf629a236a633872.png";
+const banksPhonesHero = "/banks-gallery-1.png";
+const banksLaptop     = "/banks-gallery-2.png";
+const banksDesktop    = "/banks-gallery-3.png";
+const banksMember     = "/banks-gallery-4.png";
+const banksGym        = "/banks-gallery-5.png";
 
 import { DeviceMockups } from "../components/DeviceMockups";
 
 // Romar Abrado gallery assets
-import romarGallery1 from "figma:asset/5521fbf80e92ab43066a4372147cfa7dd90475f8.png";
-import romarGallery2 from "figma:asset/e8602033f02697622efb8f955d5cee89cc7c4048.png";
-import romarGallery3 from "figma:asset/13148c95d1ec2cafd7110511a9fcba637e86fd3a.png";
-import romarGallery4 from "figma:asset/b51729c35426c81023ef6af4f21480c467b26853.png";
+const romarGallery1 = "/romar-gallery-1.png";
+const romarGallery2 = "/romar-gallery-2.png";
+const romarGallery3 = "/romar-gallery-3.png";
+const romarGallery4 = "/romar-gallery-4.png";
 
 // Web Design department colour
 const CYAN     = "#00d4e8";
@@ -83,7 +83,7 @@ export function ProjectPage() {
       : project.slug === "aberdeen-northern-hotel"
       ? aberdeenLaptop
       : project.slug === "banks-o-dee-fitness"
-      ? banksLaptop
+      ? projectImages[project.slug] ?? project.image
       : projectImages[project.slug] ?? project.image;
 
   // For O'Malley's, use the full-page screenshot in scroll mode
@@ -103,7 +103,7 @@ export function ProjectPage() {
       : project.slug === "aberdeen-northern-hotel"
       ? [aberdeenLaptop, aberdeenPhone, aberdeenTablets, aberdeenDesktop, aberdeenRoom]
       : project.slug === "banks-o-dee-fitness"
-      ? [banksLaptop, banksPhonesHero, banksDesktop, banksMember, banksGym]
+      ? [banksLaptop, banksPhonesHero, banksDesktop, banksMember, banksGym, "/banks-gallery-6.png"]
       : project.slug === "romar-abrado"
       ? [romarGallery1, romarGallery2, romarGallery3, romarGallery4]
       : project.gallery;
@@ -254,7 +254,7 @@ export function ProjectPage() {
           </div>
         </section>
 
-        {/* ─── DEVICE MOCKUPS ───────────────────────────────────── */}
+        {/* ─── DEVICE MOCKUPS (O'Malley's only) ─────────── */}
         {project.slug === "omalleys-irish-bar" && (
           <DeviceMockups
             screenshots={screenshots}

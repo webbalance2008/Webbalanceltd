@@ -1,29 +1,15 @@
 import { useState, useMemo, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "motion/react";
-import laptopImg1 from "figma:asset/ce59ee156d0d8072651a8da0a13ff6f04edbe8c8.png";
-import laptopImg2 from "figma:asset/a1cda730e072ed6bb06551d27d69e0aee21194e8.png";
-import laptopImg3 from "figma:asset/c20a8b4fab13529d1bfd238eead48e32ff2b73a1.png";
-import laptopImg4 from "figma:asset/5e862106f38d8c4eb17ab6c833c9381a3f52cf24.png";
-import laptopImg5 from "figma:asset/804c9037eed6d0c4bd3376c253e29007fae5eb54.png";
-import laptopImg6 from "figma:asset/2b4da7082565d85c0ac9bba5cf2663452a0107d8.png";
-import laptopImg7 from "figma:asset/3bc383f9ec318bc1ed39067a41cf1ecd7ac09ba9.png";
-import phonesImg1 from "figma:asset/ea66bb08c0cadf8488cb0b9c5240abd3e16edde5.png";
-import phonesImg2 from "figma:asset/f5e854e28cc3f55c6f2f6731702303cb00d2fa1c.png";
-import phonesImg3 from "figma:asset/4a4605f09d6b8ffd9486f6be1abe85e3cac82fdb.png";
-import phonesImg4 from "figma:asset/38ace8938bef6a8deb42bdaff8b0d108d3c726b5.png";
-import phonesImg5 from "figma:asset/c1372c3f4af48fd9e3aa884ace088cc04e7db9cf.png";
-import phonesImg6 from "figma:asset/a26482936a49a132ca48162a966e3e11e134f0d1.png";
-import phonesImg7 from "figma:asset/d21d59932fb10cf372851c5e08610b95433ce0c7.png";
 
-// ─── Matched pairs (laptop + phone from the same project set) ────────────────
-const IMAGE_PAIRS: { laptop: string; phone: string }[] = [
-  { laptop: laptopImg1, phone: phonesImg1 },
-  { laptop: laptopImg2, phone: phonesImg2 },
-  { laptop: laptopImg3, phone: phonesImg3 },
-  { laptop: laptopImg4, phone: phonesImg4 },
-  { laptop: laptopImg5, phone: phonesImg5 },
-  { laptop: laptopImg6, phone: phonesImg6 },
-  { laptop: laptopImg7, phone: phonesImg7 },
+// ─── Matched pairs (laptop + phone) — one per client ────────────────────────
+const IMAGE_PAIRS: { laptop: string; phone: string; client: string }[] = [
+  { laptop: "/hero-laptop-granite-elite.png",  phone: "/hero-phone-granite-elite.png",  client: "Granite Elite" },
+  { laptop: "/hero-laptop-tac.png",            phone: "/hero-phone-tac.png",            client: "TAC Healthcare" },
+  { laptop: "/hero-laptop-gt-diagnostics.png", phone: "/hero-phone-gt-diagnostics.png", client: "GT Diagnostics" },
+  { laptop: "/hero-laptop-banks-odee.png",     phone: "/hero-phone-banks-odee.png",     client: "Banks O'Dee" },
+  { laptop: "/hero-laptop-romar-abrado.png",   phone: "/hero-phone-romar-abrado.png",   client: "Romar Abrado" },
+  { laptop: "/hero-laptop-sfs.png",            phone: "/hero-phone-sfs.png",            client: "SFS Fire Protection" },
+  { laptop: "/hero-laptop-waverley.png",       phone: "/hero-phone-waverley.png",       client: "Waverley" },
 ];
 
 // Department colours — one per dot, cycling through the 6 brand colours
@@ -165,7 +151,7 @@ export function HeroDevices({ accentColor, cycleSignal }: HeroDevicesProps) {
             <motion.img
               key={`laptop-${activeIndex}`}
               src={pair.laptop}
-              alt="Laptop website preview"
+              alt={`${pair.client} website design — laptop`}
               className="w-full h-auto"
               draggable={false}
               initial={{ opacity: 0 }}
@@ -189,7 +175,7 @@ export function HeroDevices({ accentColor, cycleSignal }: HeroDevicesProps) {
             <button
               key={i}
               onClick={() => handleDotClick(i)}
-              aria-label={`View project set ${i + 1}`}
+              aria-label={`View ${IMAGE_PAIRS[i].client}`}
               style={{
                 width: isActive ? 24 : 8,
                 height: 8,
@@ -213,19 +199,19 @@ export function HeroDevices({ accentColor, cycleSignal }: HeroDevicesProps) {
         transition={{ duration: 5, repeat: Infinity, ease: "easeInOut", delay: 1 }}
         className="absolute select-none"
         style={{
-          width: 270,
+          width: 130,
           bottom: "14%",
-          right: "-6%",
+          right: "2%",
           zIndex: 10,
           filter: `drop-shadow(0 20px 30px rgba(0,0,0,0.75)) drop-shadow(0 0 16px ${accentColor}33)`,
           transition: "filter 1.2s ease",
         }}
       >
         <AnimatePresence mode="wait">
-          <motion.img
-            key={`phone-${activeIndex}`}
-            src={pair.phone}
-            alt="Mobile website previews"
+            <motion.img
+              key={`phone-${activeIndex}`}
+              src={pair.phone}
+              alt={`${pair.client} website design — mobile`}
             className="w-full h-auto"
             draggable={false}
             initial={{ opacity: 0 }}
