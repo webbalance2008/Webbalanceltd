@@ -6,7 +6,7 @@ import {
 import * as Tabs from "@radix-ui/react-tabs";
 import {
   BarChart2, Globe, DollarSign, LogOut, RefreshCw, Check, X,
-  Plus, Trash2, Save, Eye, EyeOff, TrendingUp, Users, FileText, MousePointer, Sliders,
+  Plus, Trash2, Save, Eye, EyeOff, TrendingUp, Users, FileText, MousePointer, Sliders, Zap,
 } from "lucide-react";
 import { supabase } from "../../utils/supabaseClient";
 import { ProtectedRoute } from "../../components/admin/ProtectedRoute";
@@ -43,6 +43,12 @@ interface SeoRow {
   no_index: boolean;
   isNew?: boolean;
   isDirty?: boolean;
+}
+
+interface SeoCheck {
+  label: string;
+  status: "pass" | "warn" | "fail";
+  message: string;
 }
 
 interface PricingRow {
@@ -378,73 +384,363 @@ function AnalyticsTab() {
   );
 }
 
+// ─── SEO score engine ─────────────────────────────────────────────────────────
+function scoreSeoRow(row: SeoRow): { score: number; color: string; label: string; checks: SeoCheck[] } {
+  const checks: SeoCheck[] = [];
+  const kws        = (row.keywords    || "").split(",").map(k => k.trim().toLowerCase()).filter(Boolean);
+  const titleLower = (row.title       || "").toLowerCase();
+  const descLower  = (row.description || "").toLowerCase();
+
+  // Title length
+  const tLen = (row.title || "").length;
+  if      (tLen === 0)             checks.push({ label: "Title",        status: "fail", message: "Title is missing" });
+  else if (tLen >= 50 && tLen <= 60) checks.push({ label: "Title length",  status: "pass", message: `${tLen} chars — perfect (50–60)` });
+  else if (tLen >= 35 && tLen < 70)  checks.push({ label: "Title length",  status: "warn", message: `${tLen} chars — aim for 50–60` });
+  else                               checks.push({ label: "Title length",  status: "fail", message: `${tLen} chars — ${tLen < 35 ? "too short" : "too long"}` });
+
+  // Description length
+  const dLen = (row.description || "").length;
+  if      (dLen === 0)               checks.push({ label: "Description",        status: "fail", message: "Description is missing" });
+  else if (dLen >= 140 && dLen <= 160) checks.push({ label: "Description length", status: "pass", message: `${dLen} chars — perfect (140–160)` });
+  else if (dLen >= 100 && dLen < 180)  checks.push({ label: "Description length", status: "warn", message: `${dLen} chars — aim for 140–160` });
+  else                                 checks.push({ label: "Description length", status: "fail", message: `${dLen} chars — ${dLen < 100 ? "too short" : "too long"}` });
+
+  // Keyword analysis
+  if (kws.length === 0) {
+    checks.push({ label: "Keywords", status: "fail", message: "No focus keywords set" });
+  } else {
+    const kwInTitle = kws.some(k => titleLower.includes(k));
+    const kwInDesc  = kws.some(k => descLower.includes(k));
+    checks.push({ label: "Keyword in title",       status: kwInTitle ? "pass" : "fail", message: kwInTitle ? "Focus keyword found in title"       : "Add focus keyword to title" });
+    checks.push({ label: "Keyword in description", status: kwInDesc  ? "pass" : "warn", message: kwInDesc  ? "Focus keyword found in description" : "Consider adding keyword to description" });
+  }
+
+  // No-index warning
+  if (row.no_index) checks.push({ label: "Indexing", status: "warn", message: "Page excluded from search engines" });
+
+  const passing = checks.filter(c => c.status === "pass").length;
+  const score   = checks.length > 0 ? Math.round((passing / checks.length) * 100) : 0;
+  const color   = score >= 75 ? "#3dd68c" : score >= 45 ? "#f59e6a" : "#f87171";
+  const label   = score >= 75 ? "Good"    : score >= 45 ? "Needs work" : "Poor";
+  return { score, color, label, checks };
+}
+
+// ─── Char counter ─────────────────────────────────────────────────────────────
+function CharCounter({ value, min, max }: { value: string; min: number; max: number }) {
+  const len   = (value || "").length;
+  const color = len >= min && len <= max ? "#3dd68c" : len >= Math.round(min * 0.7) && len <= Math.round(max * 1.15) ? "#f59e6a" : "#f87171";
+  return (
+    <span style={{ fontFamily: MONO, fontSize: "0.625rem", color, letterSpacing: "0.08em" }}>
+      {len} / {min}–{max}
+    </span>
+  );
+}
+
+// ─── SEO edit modal ───────────────────────────────────────────────────────────
+function SeoEditModal({ row, onClose, onSave }: {
+  row: SeoRow;
+  onClose: () => void;
+  onSave: (updated: SeoRow) => void;
+}) {
+  const [draft, setDraft]           = useState<SeoRow>({ ...row });
+  const [aiLoading, setAiLoading]   = useState(false);
+  const [aiError, setAiError]       = useState<string | null>(null);
+  const [apiKey, setApiKey]         = useState(() => sessionStorage.getItem("wb_claude_key") || "");
+  const [showKey, setShowKey]       = useState(false);
+  const scoreData = scoreSeoRow(draft);
+  const set = (field: keyof SeoRow, val: string | boolean) => setDraft(d => ({ ...d, [field]: val }));
+
+  const handleAutoOptimise = async () => {
+    if (!apiKey) { setAiError("Enter your Claude API key to use AI optimisation."); return; }
+    setAiLoading(true);
+    setAiError(null);
+    sessionStorage.setItem("wb_claude_key", apiKey);
+    const prompt = `You are an expert SEO copywriter for "Web Balance", a UK digital agency specialising in web design, web apps, SEO, hosting, and branding.
+
+Optimise the SEO meta tags for this page:
+- Page path: ${draft.page_path}
+- Current title: ${draft.title || "(none)"}
+- Current description: ${draft.description || "(none)"}
+- Current keywords: ${draft.keywords || "(none)"}
+
+Rules:
+1. Title: 50–60 characters. Include the primary keyword naturally. End with "| Web Balance" only if within character limit.
+2. Description: 140–160 characters. Include the primary keyword. End with a compelling call-to-action.
+3. Keywords: 4–6 comma-separated terms, ordered by importance.
+
+Respond with ONLY a raw JSON object, no markdown, no explanation:
+{"title":"...","description":"...","keywords":"..."}`;
+    try {
+      const res = await fetch("https://api.anthropic.com/v1/messages", {
+        method: "POST",
+        headers: {
+          "x-api-key": apiKey,
+          "anthropic-version": "2023-06-01",
+          "content-type": "application/json",
+          "anthropic-dangerous-direct-browser-access": "true",
+        },
+        body: JSON.stringify({ model: "claude-sonnet-4-6", max_tokens: 512, messages: [{ role: "user", content: prompt }] }),
+      });
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({})) as { error?: { message?: string } };
+        throw new Error(err?.error?.message || `HTTP ${res.status}`);
+      }
+      const json  = await res.json() as { content: { text: string }[] };
+      const text  = (json.content?.[0]?.text || "").trim();
+      const parsed = JSON.parse(text) as { title?: string; description?: string; keywords?: string };
+      if (parsed.title)       setDraft(d => ({ ...d, title:       parsed.title! }));
+      if (parsed.description) setDraft(d => ({ ...d, description: parsed.description! }));
+      if (parsed.keywords)    setDraft(d => ({ ...d, keywords:    parsed.keywords! }));
+    } catch (e) {
+      setAiError((e as Error).message || "Failed to get AI suggestion");
+    } finally {
+      setAiLoading(false);
+    }
+  };
+
+  const inputBase = {
+    width: "100%", background: CARD, border: `1px solid ${BORDER}`, color: "#fff",
+    fontFamily: BODY, fontSize: "0.9375rem", padding: "10px 14px", outline: "none",
+  } as const;
+  const focusIn  = (e: React.FocusEvent<HTMLInputElement | HTMLTextAreaElement>) => { e.currentTarget.style.borderColor = "rgba(0,212,232,0.5)"; };
+  const focusOut = (e: React.FocusEvent<HTMLInputElement | HTMLTextAreaElement>) => { e.currentTarget.style.borderColor = BORDER; };
+
+  return (
+    <div
+      className="fixed inset-0 z-50 flex items-start justify-center overflow-y-auto py-8 px-4"
+      style={{ background: "rgba(0,0,0,0.82)", backdropFilter: "blur(6px)" }}
+      onClick={e => { if (e.target === e.currentTarget) onClose(); }}
+    >
+      <div className="w-full max-w-2xl" style={{ background: BG, border: `1px solid ${BORDER}` }}>
+
+        {/* Header */}
+        <div className="flex items-center justify-between px-6 py-4" style={{ borderBottom: `1px solid ${BORDER}` }}>
+          <div>
+            <p style={{ fontFamily: MONO, color: TEAL, fontSize: "0.5rem", letterSpacing: "0.25em", textTransform: "uppercase" }}>SEO Editor</p>
+            <p style={{ fontFamily: MONO, color: "#fff", fontSize: "0.875rem", marginTop: "3px" }}>{draft.page_path}</p>
+          </div>
+          <div className="flex items-center gap-3">
+            <div className="flex items-center gap-2 px-3 py-1.5" style={{ border: `1px solid ${scoreData.color}50`, background: `${scoreData.color}10` }}>
+              <div className="w-2 h-2 rounded-full" style={{ background: scoreData.color }} />
+              <span style={{ fontFamily: MONO, color: scoreData.color, fontSize: "0.625rem", letterSpacing: "0.1em" }}>
+                {scoreData.label} · {scoreData.score}%
+              </span>
+            </div>
+            <button
+              onClick={onClose}
+              className="w-8 h-8 flex items-center justify-center"
+              style={{ border: `1px solid ${BORDER}`, color: "rgba(255,255,255,0.5)", background: "transparent" }}
+              onMouseEnter={e => { e.currentTarget.style.color = "#fff"; }}
+              onMouseLeave={e => { e.currentTarget.style.color = "rgba(255,255,255,0.5)"; }}
+            ><X size={14} /></button>
+          </div>
+        </div>
+
+        <div className="px-6 py-5 space-y-5">
+          {/* Title */}
+          <div>
+            <div className="flex items-center justify-between mb-1.5">
+              <label style={{ fontFamily: MONO, color: "rgba(255,255,255,0.4)", fontSize: "0.5rem", letterSpacing: "0.2em", textTransform: "uppercase" }}>Title</label>
+              <CharCounter value={draft.title} min={50} max={60} />
+            </div>
+            <input value={draft.title} onChange={e => set("title", e.target.value)}
+              placeholder="Page title — aim for 50–60 characters" style={inputBase}
+              onFocus={focusIn} onBlur={focusOut} />
+          </div>
+
+          {/* Description */}
+          <div>
+            <div className="flex items-center justify-between mb-1.5">
+              <label style={{ fontFamily: MONO, color: "rgba(255,255,255,0.4)", fontSize: "0.5rem", letterSpacing: "0.2em", textTransform: "uppercase" }}>Description</label>
+              <CharCounter value={draft.description} min={140} max={160} />
+            </div>
+            <textarea value={draft.description} onChange={e => set("description", e.target.value)}
+              placeholder="Meta description — aim for 140–160 characters" rows={3}
+              style={{ ...inputBase, resize: "vertical" }}
+              onFocus={focusIn} onBlur={focusOut} />
+          </div>
+
+          {/* Keywords */}
+          <div>
+            <label style={{ fontFamily: MONO, color: "rgba(255,255,255,0.4)", fontSize: "0.5rem", letterSpacing: "0.2em", textTransform: "uppercase", display: "block", marginBottom: "6px" }}>Focus Keywords</label>
+            <input value={draft.keywords} onChange={e => set("keywords", e.target.value)}
+              placeholder="keyword one, keyword two, keyword three" style={inputBase}
+              onFocus={focusIn} onBlur={focusOut} />
+          </div>
+
+          {/* OG Image */}
+          <div>
+            <label style={{ fontFamily: MONO, color: "rgba(255,255,255,0.4)", fontSize: "0.5rem", letterSpacing: "0.2em", textTransform: "uppercase", display: "block", marginBottom: "6px" }}>OG Image URL</label>
+            <input value={draft.og_image} onChange={e => set("og_image", e.target.value)}
+              placeholder="https://..." style={inputBase}
+              onFocus={focusIn} onBlur={focusOut} />
+          </div>
+
+          {/* No-index */}
+          <button
+            onClick={() => set("no_index", !draft.no_index)}
+            className="flex items-center gap-2.5 px-3 py-2 transition-all"
+            style={{ border: `1px solid ${draft.no_index ? "#f87171" : BORDER}`, background: draft.no_index ? "rgba(248,113,113,0.1)" : "transparent" }}
+          >
+            {draft.no_index ? <EyeOff size={13} style={{ color: "#f87171" }} /> : <Eye size={13} style={{ color: "rgba(255,255,255,0.4)" }} />}
+            <span style={{ fontFamily: MONO, fontSize: "0.5625rem", letterSpacing: "0.15em", textTransform: "uppercase", color: draft.no_index ? "#f87171" : "rgba(255,255,255,0.4)" }}>
+              {draft.no_index ? "No-Index: On — hidden from Google" : "No-Index: Off — visible to Google"}
+            </span>
+          </button>
+
+          {/* SEO analysis panel */}
+          <div style={{ border: `1px solid ${BORDER}`, background: CARD, padding: "16px" }}>
+            <p style={{ fontFamily: MONO, color: "rgba(255,255,255,0.35)", fontSize: "0.5rem", letterSpacing: "0.2em", textTransform: "uppercase", marginBottom: "14px" }}>SEO Analysis</p>
+            <div className="space-y-2.5">
+              {scoreData.checks.map((c, i) => (
+                <div key={i} className="flex items-start gap-3">
+                  <div className="mt-1 flex-shrink-0">
+                    <div className="w-3 h-3 rounded-full" style={{ background: c.status === "pass" ? "#3dd68c" : c.status === "warn" ? "#f59e6a" : "#f87171" }} />
+                  </div>
+                  <div>
+                    <span style={{ fontFamily: MONO, fontSize: "0.5625rem", letterSpacing: "0.1em", color: "rgba(255,255,255,0.45)", textTransform: "uppercase" }}>{c.label}: </span>
+                    <span style={{ fontFamily: BODY, fontSize: "0.8125rem", color: "rgba(255,255,255,0.8)" }}>{c.message}</span>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Claude AI optimiser */}
+          <div style={{ border: `1px solid rgba(0,212,232,0.2)`, background: "rgba(0,212,232,0.03)", padding: "16px" }}>
+            <p style={{ fontFamily: MONO, color: TEAL, fontSize: "0.5rem", letterSpacing: "0.2em", textTransform: "uppercase", marginBottom: "12px" }}>
+              Auto-Optimise with Claude AI
+            </p>
+            <div className="flex gap-2 mb-2">
+              <input
+                type={showKey ? "text" : "password"}
+                value={apiKey}
+                onChange={e => setApiKey(e.target.value)}
+                placeholder="sk-ant-api03-..."
+                style={{ flex: 1, background: CARD, border: `1px solid ${BORDER}`, color: "#fff", fontFamily: MONO, fontSize: "0.75rem", padding: "8px 12px", outline: "none" }}
+                onFocus={e => { e.currentTarget.style.borderColor = "rgba(0,212,232,0.4)"; }}
+                onBlur={e  => { e.currentTarget.style.borderColor = BORDER; }}
+              />
+              <button
+                onClick={() => setShowKey(s => !s)}
+                className="w-9 flex items-center justify-center"
+                style={{ border: `1px solid ${BORDER}`, background: "transparent", color: "rgba(255,255,255,0.4)" }}
+              >{showKey ? <EyeOff size={13} /> : <Eye size={13} />}</button>
+              <button
+                onClick={handleAutoOptimise}
+                disabled={aiLoading}
+                className="flex items-center gap-2 px-4 py-2 transition-all"
+                style={{ background: aiLoading ? "rgba(0,212,232,0.35)" : TEAL, color: "#0e1822", fontFamily: MONO, fontSize: "0.5625rem", letterSpacing: "0.15em", textTransform: "uppercase", cursor: aiLoading ? "wait" : "pointer", whiteSpace: "nowrap" }}
+              >
+                {aiLoading ? <RefreshCw size={12} className="animate-spin" /> : <Zap size={12} />}
+                {aiLoading ? "Optimising…" : "Auto-Optimise"}
+              </button>
+            </div>
+            {aiError && <p style={{ fontFamily: BODY, color: "#f87171", fontSize: "0.8125rem", marginBottom: "8px" }}>{aiError}</p>}
+            <p style={{ fontFamily: BODY, color: "rgba(255,255,255,0.3)", fontSize: "0.75rem" }}>
+              Claude suggests an optimised title, description, and keywords applied to the fields above for review. API key is saved to session storage only.
+            </p>
+          </div>
+        </div>
+
+        {/* Footer */}
+        <div className="flex items-center justify-end gap-3 px-6 py-4" style={{ borderTop: `1px solid ${BORDER}` }}>
+          <button
+            onClick={onClose}
+            className="px-5 py-2.5 transition-all"
+            style={{ fontFamily: MONO, fontSize: "0.5625rem", letterSpacing: "0.15em", textTransform: "uppercase", color: "rgba(255,255,255,0.5)", border: `1px solid ${BORDER}`, background: "transparent" }}
+            onMouseEnter={e => { e.currentTarget.style.color = "#fff"; }}
+            onMouseLeave={e => { e.currentTarget.style.color = "rgba(255,255,255,0.5)"; }}
+          >Cancel</button>
+          <button
+            onClick={() => onSave(draft)}
+            className="flex items-center gap-2 px-5 py-2.5"
+            style={{ fontFamily: MONO, fontSize: "0.5625rem", letterSpacing: "0.15em", textTransform: "uppercase", background: TEAL, color: "#0e1822" }}
+          ><Save size={12} /> Save & Close</button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 // ─── SEO tab ─────────────────────────────────────────────────────────────────
+const SEO_SERVICE_ROOTS = ["/web-design", "/web-apps", "/seo", "/hosting", "/branding"];
+
 function SeoTab() {
-  const [rows, setRows] = useState<SeoRow[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [saving, setSaving] = useState<string | null>(null);
+  const [rows, setRows]               = useState<SeoRow[]>([]);
+  const [loading, setLoading]         = useState(true);
+  const [saving, setSaving]           = useState<string | null>(null);
+  const [editingIdx, setEditingIdx]   = useState<number | null>(null);
 
   useEffect(() => {
     supabase.from("seo_settings").select("*").order("page_path").then(({ data }) => {
       const dbRows = (data ?? []) as SeoRow[];
-      const dbMap = new Map(dbRows.map(r => [r.page_path, r]));
-      // Start with DB rows (authoritative), then fill in any defaults not yet in DB
+      const dbMap  = new Map(dbRows.map(r => [r.page_path, r]));
       const defaults = SITE_SEO_DEFAULTS.filter(d => !dbMap.has(d.page_path))
         .map(d => ({ ...d, isNew: true, isDirty: false }));
-      setRows([
-        ...dbRows.map(r => ({ ...r, isDirty: false })),
-        ...defaults,
-      ]);
+      setRows([...dbRows.map(r => ({ ...r, isDirty: false })), ...defaults]);
       setLoading(false);
     });
   }, []);
 
-  const updateRow = (idx: number, field: keyof SeoRow, value: string | boolean) => {
-    setRows(prev => prev.map((r, i) => i === idx ? { ...r, [field]: value, isDirty: true } : r));
-  };
-
-  const saveRow = async (idx: number) => {
-    const row = rows[idx];
-    setSaving(row.page_path);
-    const { id, isNew, isDirty, ...data } = row;
+  const persistRow = async (idx: number, rowData: SeoRow) => {
+    setSaving(rowData.page_path);
+    const { id, isNew, isDirty, ...data } = rowData;
     const { error } = isNew || !id
       ? await supabase.from("seo_settings").upsert({ ...data, updated_at: new Date().toISOString() }, { onConflict: "page_path" }).select()
       : await supabase.from("seo_settings").update({ ...data, updated_at: new Date().toISOString() }).eq("id", id);
-
-    if (!error) {
-      setRows(prev => prev.map((r, i) => i === idx ? { ...r, isDirty: false, isNew: false } : r));
-    }
+    if (!error) setRows(prev => prev.map((r, i) => i === idx ? { ...r, isDirty: false, isNew: false } : r));
     setSaving(null);
+  };
+
+  const handleModalSave = async (updated: SeoRow) => {
+    if (editingIdx === null) return;
+    const idx = editingIdx;
+    setEditingIdx(null);
+    const saved = { ...updated };
+    setRows(prev => prev.map((r, i) => i === idx ? { ...saved, isDirty: true } : r));
+    await persistRow(idx, saved);
   };
 
   const deleteRow = async (idx: number) => {
     const row = rows[idx];
-    if (row.id && !row.isNew) {
-      await supabase.from("seo_settings").delete().eq("id", row.id);
-    }
+    if (row.id && !row.isNew) await supabase.from("seo_settings").delete().eq("id", row.id);
     setRows(prev => prev.filter((_, i) => i !== idx));
   };
 
   const addRow = () => {
-    setRows(prev => [...prev, {
-      page_path: "/",
-      title: "",
-      description: "",
-      keywords: "",
-      og_image: "",
-      no_index: false,
-      isNew: true,
-      isDirty: true,
-    }]);
+    const newIdx = rows.length;
+    setRows(prev => [...prev, { page_path: "/new-page", title: "", description: "", keywords: "", og_image: "", no_index: false, isNew: true, isDirty: true }]);
+    setEditingIdx(newIdx);
   };
+
+  // Build sort key so service groups (root + children) appear together
+  const sortKey = (path: string) => {
+    if (path === "/") return "0_/";
+    const ri = SEO_SERVICE_ROOTS.findIndex(r => path === r || path.startsWith(r + "/"));
+    if (ri >= 0) return `1_${ri}_${path === SEO_SERVICE_ROOTS[ri] ? "0" : "1_" + path}`;
+    return `2_${path}`;
+  };
+
+  const sortedRows = rows
+    .map((row, idx) => ({
+      row, idx,
+      isServiceRoot: SEO_SERVICE_ROOTS.includes(row.page_path),
+      depth: SEO_SERVICE_ROOTS.some(r => row.page_path.startsWith(r + "/")) ? 1 : 0,
+    }))
+    .sort((a, b) => sortKey(a.row.page_path).localeCompare(sortKey(b.row.page_path)));
 
   if (loading) return <Spinner />;
 
   return (
     <div className="space-y-4">
+      {editingIdx !== null && rows[editingIdx] && (
+        <SeoEditModal row={rows[editingIdx]} onClose={() => setEditingIdx(null)} onSave={handleModalSave} />
+      )}
+
       <div className="flex items-center justify-between">
-        <p style={{ fontFamily: BODY, color: "rgba(255,255,255,0.75)", fontSize: "0.9375rem" }}>
-          Edit meta tags per page. Unsaved rows show current hardcoded defaults — save to override them live.
+        <p style={{ fontFamily: BODY, color: "rgba(255,255,255,0.6)", fontSize: "0.875rem" }}>
+          Click any row to edit, run SEO analysis, or auto-optimise with Claude AI.
         </p>
         <button
           onClick={addRow}
@@ -458,62 +754,68 @@ function SeoTab() {
       </div>
 
       <div className="overflow-x-auto">
-        <table className="w-full" style={{ borderCollapse: "collapse", minWidth: "900px" }}>
+        <table className="w-full" style={{ borderCollapse: "collapse", minWidth: "700px" }}>
           <thead>
             <tr style={{ borderBottom: `1px solid ${BORDER}` }}>
-              {["Path", "Title", "Description", "Keywords", "No Index", ""].map(h => (
-                <th key={h} className="pb-3 pr-4 text-left" style={{ fontFamily: MONO, color: "rgba(255,255,255,0.3)", fontSize: "0.5rem", letterSpacing: "0.2em", textTransform: "uppercase", fontWeight: 400 }}>
-                  {h}
-                </th>
+              {["Path", "Title", "Description", "Score", ""].map((h, i) => (
+                <th key={i} className="pb-3 pr-4 text-left" style={{ fontFamily: MONO, color: "rgba(255,255,255,0.3)", fontSize: "0.5rem", letterSpacing: "0.2em", textTransform: "uppercase", fontWeight: 400 }}>{h}</th>
               ))}
             </tr>
           </thead>
           <tbody>
-            {rows.map((row, idx) => (
-              <tr key={idx} style={{ borderBottom: `1px solid rgba(255,255,255,0.04)`, opacity: row.isNew && !row.isDirty ? 0.6 : 1 }}>
-                <td className="py-2 pr-3" style={{ minWidth: "120px" }}>
-                  <EditableCell value={row.page_path} onChange={v => updateRow(idx, "page_path", v)} mono placeholder="/page-path" />
-                </td>
-                <td className="py-2 pr-3" style={{ minWidth: "200px" }}>
-                  <EditableCell value={row.title} onChange={v => updateRow(idx, "title", v)} placeholder="Page title" />
-                </td>
-                <td className="py-2 pr-3" style={{ minWidth: "260px" }}>
-                  <EditableCell value={row.description} onChange={v => updateRow(idx, "description", v)} placeholder="Meta description" />
-                </td>
-                <td className="py-2 pr-3" style={{ minWidth: "160px" }}>
-                  <EditableCell value={row.keywords} onChange={v => updateRow(idx, "keywords", v)} placeholder="kw1, kw2" />
-                </td>
-                <td className="py-2 pr-3 text-center" style={{ minWidth: "70px" }}>
-                  <button
-                    onClick={() => updateRow(idx, "no_index", !row.no_index)}
-                    className="w-8 h-8 flex items-center justify-center mx-auto transition-all"
-                    style={{
-                      border: `1px solid ${row.no_index ? "#f87171" : "rgba(255,255,255,0.15)"}`,
-                      background: row.no_index ? "rgba(248,113,113,0.1)" : "transparent",
-                    }}
-                  >
-                    {row.no_index
-                      ? <EyeOff size={12} style={{ color: "#f87171" }} />
-                      : <Eye size={12} style={{ color: "rgba(255,255,255,0.3)" }} />
-                    }
-                  </button>
-                </td>
-                <td className="py-2" style={{ minWidth: "80px" }}>
-                  <div className="flex items-center gap-1">
-                    {row.isDirty && (
-                      <button
-                        onClick={() => saveRow(idx)}
-                        disabled={saving === row.page_path}
-                        className="w-7 h-7 flex items-center justify-center transition-all"
-                        style={{ background: TEAL, opacity: saving === row.page_path ? 0.5 : 1 }}
-                        title="Save"
-                      >
-                        {saving === row.page_path
-                          ? <RefreshCw size={11} style={{ color: "#0e1822" }} className="animate-spin" />
-                          : <Save size={11} style={{ color: "#0e1822" }} />
-                        }
-                      </button>
-                    )}
+            {sortedRows.map(({ row, idx, isServiceRoot, depth }) => {
+              const score = scoreSeoRow(row);
+              return (
+                <tr
+                  key={idx}
+                  onClick={() => setEditingIdx(idx)}
+                  style={{
+                    borderBottom: `1px solid rgba(255,255,255,0.04)`,
+                    cursor: "pointer",
+                    transition: "background 0.12s",
+                    background: isServiceRoot ? "rgba(0,212,232,0.04)" : "transparent",
+                  }}
+                  onMouseEnter={e => { e.currentTarget.style.background = "rgba(255,255,255,0.04)"; }}
+                  onMouseLeave={e => { e.currentTarget.style.background = isServiceRoot ? "rgba(0,212,232,0.04)" : "transparent"; }}
+                >
+                  {/* Path */}
+                  <td className="py-2.5 pr-3" style={{ minWidth: "160px" }}>
+                    <div className="flex items-center" style={{ paddingLeft: depth > 0 ? "16px" : "0" }}>
+                      {depth > 0 && (
+                        <span style={{ color: "rgba(0,212,232,0.3)", fontFamily: MONO, fontSize: "0.7rem", marginRight: "5px", flexShrink: 0 }}>└</span>
+                      )}
+                      <span style={{ fontFamily: MONO, fontSize: "0.6875rem", color: isServiceRoot ? TEAL : depth > 0 ? "rgba(255,255,255,0.7)" : "rgba(255,255,255,0.9)", fontWeight: isServiceRoot ? 600 : 400 }}>
+                        {row.page_path}
+                      </span>
+                      {saving === row.page_path && <RefreshCw size={9} className="animate-spin ml-2 flex-shrink-0" style={{ color: TEAL }} />}
+                      {row.isDirty && saving !== row.page_path && <span style={{ marginLeft: "5px", color: "#f59e6a", fontSize: "0.5rem", flexShrink: 0 }}>●</span>}
+                    </div>
+                  </td>
+                  {/* Title */}
+                  <td className="py-2.5 pr-3" style={{ maxWidth: "200px" }}>
+                    <span style={{ fontFamily: BODY, fontSize: "0.8125rem", color: row.title ? "rgba(255,255,255,0.8)" : "rgba(255,255,255,0.2)", display: "block", overflow: "hidden", whiteSpace: "nowrap", textOverflow: "ellipsis" }}>
+                      {row.title || "No title set"}
+                    </span>
+                  </td>
+                  {/* Description */}
+                  <td className="py-2.5 pr-3" style={{ maxWidth: "280px" }}>
+                    <span style={{ fontFamily: BODY, fontSize: "0.8125rem", color: row.description ? "rgba(255,255,255,0.55)" : "rgba(255,255,255,0.15)", display: "block", overflow: "hidden", whiteSpace: "nowrap", textOverflow: "ellipsis" }}>
+                      {row.description || "No description set"}
+                    </span>
+                  </td>
+                  {/* Score — 3-dot traffic light */}
+                  <td className="py-2.5 pr-3" style={{ minWidth: "100px" }}>
+                    <div className="flex items-center gap-2">
+                      <div className="flex gap-1">
+                        <div className="w-2.5 h-2.5 rounded-full" style={{ background: score.score > 0  ? score.color : "rgba(255,255,255,0.1)" }} />
+                        <div className="w-2.5 h-2.5 rounded-full" style={{ background: score.score >= 45 ? score.color : "rgba(255,255,255,0.1)" }} />
+                        <div className="w-2.5 h-2.5 rounded-full" style={{ background: score.score >= 75 ? score.color : "rgba(255,255,255,0.1)" }} />
+                      </div>
+                      <span style={{ fontFamily: MONO, fontSize: "0.5625rem", color: score.color }}>{score.label}</span>
+                    </div>
+                  </td>
+                  {/* Delete */}
+                  <td className="py-2.5" style={{ width: "36px" }} onClick={e => e.stopPropagation()}>
                     <button
                       onClick={() => deleteRow(idx)}
                       className="w-7 h-7 flex items-center justify-center transition-all"
@@ -521,49 +823,21 @@ function SeoTab() {
                       onMouseEnter={e => { e.currentTarget.style.background = "rgba(248,113,113,0.1)"; }}
                       onMouseLeave={e => { e.currentTarget.style.background = "transparent"; }}
                       title="Delete"
-                    >
-                      <Trash2 size={11} style={{ color: "#f87171" }} />
-                    </button>
-                  </div>
-                </td>
-              </tr>
-            ))}
+                    ><Trash2 size={11} style={{ color: "#f87171" }} /></button>
+                  </td>
+                </tr>
+              );
+            })}
           </tbody>
         </table>
       </div>
+
       {rows.length === 0 && (
         <p style={{ fontFamily: BODY, color: "rgba(255,255,255,0.25)", fontSize: "0.875rem" }} className="text-center py-8">
-          No SEO overrides yet. Click "Add Page" to add one.
+          No SEO overrides yet. Click "Add Page" to get started.
         </p>
       )}
     </div>
-  );
-}
-
-function EditableCell({
-  value, onChange, placeholder, mono = false,
-}: {
-  value: string; onChange: (v: string) => void; placeholder?: string; mono?: boolean;
-}) {
-  return (
-    <input
-      value={value}
-      onChange={e => onChange(e.target.value)}
-      placeholder={placeholder}
-      style={{
-        fontFamily: mono ? MONO : BODY,
-        fontSize: mono ? "0.6875rem" : "0.8125rem",
-        color: value ? "#fff" : "rgba(255,255,255,0.35)",
-        background: "transparent",
-        border: "1px solid transparent",
-        width: "100%",
-        padding: "4px 8px",
-        outline: "none",
-        transition: "border-color 0.15s",
-      }}
-      onFocus={e => { e.currentTarget.style.borderColor = "rgba(0,212,232,0.4)"; }}
-      onBlur={e => { e.currentTarget.style.borderColor = "transparent"; }}
-    />
   );
 }
 
