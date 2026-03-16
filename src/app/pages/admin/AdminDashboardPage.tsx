@@ -57,6 +57,34 @@ interface PricingRow {
   isDirty?: boolean;
 }
 
+// ─── Site SEO defaults (hardcoded fallbacks for all known pages) ──────────────
+const SITE_SEO_DEFAULTS: Omit<SeoRow, "id" | "isNew" | "isDirty">[] = [
+  { page_path: "/",                    title: "Web Balance",                                       description: "Award-Winning Web Design & Development Agency",                                                                                                   keywords: "web design UK, bespoke website design, web development agency, SEO services, custom web apps, hosting, branding", og_image: "", no_index: false },
+  { page_path: "/web-design",          title: "Web Design Services",                               description: "Bespoke, conversion-focused website design for ambitious UK brands. We craft beautiful, high-performance websites tailored to your business.",         keywords: "bespoke web design, website design UK, conversion-focused design, custom website, web design agency",              og_image: "", no_index: false },
+  { page_path: "/web-design/start",    title: "Web Design Quote Builder",                          description: "Walk through our 7-step web design wizard to build a tailored quote for your bespoke website. Get a personalised estimate in minutes.",              keywords: "web design quote, website cost estimator, bespoke website wizard, UK web design pricing",                         og_image: "", no_index: false },
+  { page_path: "/web-design/packages", title: "Web Design Packages & Pricing — Web Balance",      description: "Transparent web design packages for businesses of every size — from starter brochure sites to bespoke enterprise builds. No hidden fees.",            keywords: "web design pricing, website packages, web design cost UK, affordable web design",                                  og_image: "", no_index: false },
+  { page_path: "/web-design/portfolio",title: "Web Design Portfolio",                              description: "Explore our portfolio of bespoke web design projects — from hospitality and healthcare to industrial and technology businesses across the UK.",        keywords: "web design portfolio, website examples, bespoke websites, UK web design work",                                     og_image: "", no_index: false },
+  { page_path: "/web-apps",            title: "Custom Web App Development",                        description: "We build powerful, scalable custom web applications — from booking systems and SaaS platforms to customer portals and internal tools.",                keywords: "custom web app development, SaaS platform, booking system, customer portal, web application UK",                   og_image: "", no_index: false },
+  { page_path: "/web-apps/start",      title: "Web App Quote Builder",                             description: "Walk through our 8-step web app wizard to scope your custom application and get a tailored estimate. Booking systems, portals, SaaS, and more.",     keywords: "web app quote, custom app cost, bespoke web application, UK web app development pricing",                         og_image: "", no_index: false },
+  { page_path: "/web-apps/packages",   title: "Web App Packages & Pricing — Web Balance",         description: "Custom web application packages from MVP to Enterprise. Booking systems, portals, SaaS platforms — transparent pricing with no hidden fees.",         keywords: "web app pricing, custom software packages, web application cost UK, SaaS development pricing",                    og_image: "", no_index: false },
+  { page_path: "/seo",                 title: "SEO Services",                                      description: "Strategy-led SEO that gets your business found on Google. Technical SEO, content strategy, link building, and local SEO — all built around measurable growth.", keywords: "SEO services UK, search engine optimisation, technical SEO, local SEO, content strategy, link building",          og_image: "", no_index: false },
+  { page_path: "/seo/start",           title: "SEO Quote Builder",                                 description: "Walk through our SEO wizard to scope your search engine optimisation campaign. Get a tailored strategy estimate in minutes.",                         keywords: "SEO quote, search engine optimisation pricing, SEO cost estimator, UK SEO services",                               og_image: "", no_index: false },
+  { page_path: "/seo/packages",        title: "SEO Packages & Pricing — Web Balance",              description: "Results-driven SEO packages from Foundation to Domination. Monthly plans with keyword research, content strategy, link building, and transparent reporting.", keywords: "SEO packages UK, SEO pricing, monthly SEO plans, search engine optimisation cost",                                og_image: "", no_index: false },
+  { page_path: "/hosting",             title: "Managed Web Hosting",                               description: "Fast, secure, UK-based managed hosting for business websites. 99.9% uptime guarantee, daily backups, SSL, and expert support included.",               keywords: "managed web hosting UK, business website hosting, WordPress hosting, fast hosting, secure hosting",                og_image: "", no_index: false },
+  { page_path: "/hosting/start",       title: "Hosting Quote Builder",                             description: "Configure your managed hosting plan with our step-by-step wizard. UK-based servers, daily backups, SSL, and expert support — get a tailored estimate.", keywords: "managed hosting quote, UK web hosting, hosting pricing, business hosting plan",                                    og_image: "", no_index: false },
+  { page_path: "/hosting/packages",    title: "Hosting & Support Packages — Web Balance",         description: "Managed cloud hosting plans from Starter to Enterprise. SSL, daily backups, CDN, staging environments, and dedicated UK support included.",             keywords: "managed hosting UK, website hosting plans, cloud hosting pricing, web hosting packages",                          og_image: "", no_index: false },
+  { page_path: "/branding",            title: "Branding & Identity Design",                        description: "We create distinctive brand identities for ambitious businesses — from logo design and visual systems to brand guidelines, print, and digital collateral.", keywords: "brand identity design, logo design UK, branding agency, visual identity, brand guidelines",                       og_image: "", no_index: false },
+  { page_path: "/branding/start",      title: "Branding Quote Builder",                            description: "Walk through our branding wizard to scope your brand identity project. Logo design, brand guidelines, print, and more — get a tailored estimate.",      keywords: "branding quote, logo design pricing, brand identity cost, UK branding agency",                                     og_image: "", no_index: false },
+  { page_path: "/branding/packages",   title: "Branding Packages & Pricing — Web Balance",        description: "Professional branding packages from Identity to Premium. Logo design, brand strategy, visual identity systems, and launch campaign assets.",             keywords: "branding packages UK, brand identity pricing, logo design cost, branding agency pricing",                         og_image: "", no_index: false },
+  { page_path: "/packages",            title: "Packages — Mix & Match Services | Web Balance",    description: "Build your perfect digital package. Mix and match Web Design, Web Apps, SEO, Hosting, and Branding services — see your total instantly.",               keywords: "web design packages, digital services pricing, mix and match web services, website pricing UK",                   og_image: "", no_index: false },
+  { page_path: "/build-your-quote",    title: "Build Your Quote | Web Balance",                    description: "Walk through a tailored brief, get an accurate project quote, and review payment options — all in minutes.",                                           keywords: "web design quote, website cost, project brief, get a quote, web development pricing",                              og_image: "", no_index: false },
+  { page_path: "/contact",             title: "Contact Us",                                        description: "Get in touch with the Web Balance team. Whether you have a project in mind or just want to explore what's possible — we'd love to hear from you.",       keywords: "contact web design agency, get a website quote, web design enquiry UK",                                           og_image: "", no_index: false },
+  { page_path: "/support",             title: "Website Support & Maintenance Plans",               description: "Keep your website fast, secure, and always evolving with a Web Balance support plan. Monthly care packages from £49/mo.",                              keywords: "website support plan, web maintenance, website care plan, website management UK",                                  og_image: "", no_index: false },
+  { page_path: "/insights",            title: "Insights — Web Design & Digital Marketing Blog",   description: "Practical articles on web design, SEO, branding, and digital strategy from the Web Balance team. Stay ahead of the curve.",                            keywords: "web design blog, digital marketing insights, SEO articles, website tips, UX design",                               og_image: "", no_index: false },
+  { page_path: "/testimonials",        title: "Client Testimonials",                               description: "Hear from the businesses Web Balance has helped grow online. Real results, real relationships — from Aberdeen to Edinburgh and beyond.",                 keywords: "web design testimonials, client reviews, web agency reviews UK",                                                   og_image: "", no_index: false },
+  { page_path: "/our-reach",           title: "Web Design & Digital Services Across the UK",      description: "Web Balance serves businesses across Scotland and the UK — from Edinburgh and Glasgow to London and Manchester. Local expertise, national reach.",         keywords: "web design Scotland, web design Glasgow, web design Edinburgh, UK web agency, local web design",                  og_image: "", no_index: false },
+];
+
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 function fmt(n: number) {
   return n.toLocaleString("en-GB");
@@ -357,7 +385,15 @@ function SeoTab() {
 
   useEffect(() => {
     supabase.from("seo_settings").select("*").order("page_path").then(({ data }) => {
-      setRows((data ?? []).map(r => ({ ...r, isDirty: false })));
+      const dbRows = (data ?? []) as SeoRow[];
+      const dbMap = new Map(dbRows.map(r => [r.page_path, r]));
+      // Start with DB rows (authoritative), then fill in any defaults not yet in DB
+      const defaults = SITE_SEO_DEFAULTS.filter(d => !dbMap.has(d.page_path))
+        .map(d => ({ ...d, isNew: true, isDirty: false }));
+      setRows([
+        ...dbRows.map(r => ({ ...r, isDirty: false })),
+        ...defaults,
+      ]);
       setLoading(false);
     });
   }, []);
@@ -407,7 +443,7 @@ function SeoTab() {
     <div className="space-y-4">
       <div className="flex items-center justify-between">
         <p style={{ fontFamily: BODY, color: "rgba(255,255,255,0.4)", fontSize: "0.875rem" }}>
-          Override SEO meta tags per page. Leave blank to use the hardcoded defaults.
+          Edit meta tags per page. Unsaved rows show current hardcoded defaults — save to override them live.
         </p>
         <button
           onClick={addRow}
@@ -433,7 +469,7 @@ function SeoTab() {
           </thead>
           <tbody>
             {rows.map((row, idx) => (
-              <tr key={idx} style={{ borderBottom: `1px solid rgba(255,255,255,0.04)` }}>
+              <tr key={idx} style={{ borderBottom: `1px solid rgba(255,255,255,0.04)`, opacity: row.isNew && !row.isDirty ? 0.6 : 1 }}>
                 <td className="py-2 pr-3" style={{ minWidth: "120px" }}>
                   <EditableCell value={row.page_path} onChange={v => updateRow(idx, "page_path", v)} mono placeholder="/page-path" />
                 </td>
@@ -545,7 +581,26 @@ function PricingTab() {
       .order("department")
       .order("display_order")
       .then(({ data }) => {
-        setRows((data ?? []).map(r => ({ ...r, features: Array.isArray(r.features) ? r.features : JSON.parse(r.features), isDirty: false })));
+        if (data && data.length > 0) {
+          setRows(data.map(r => ({ ...r, features: Array.isArray(r.features) ? r.features : JSON.parse(r.features), isDirty: false })));
+        } else {
+          // DB not yet seeded — show static defaults as editable rows
+          const staticRows: PricingRow[] = departmentPackages.flatMap((dept, _di) =>
+            dept.tiers.map((tier, ti) => ({
+              id: `static-${dept.key}-${tier.id}`,
+              department: dept.key,
+              tier_key: tier.id,
+              name: tier.name,
+              price: tier.price,
+              price_type: tier.pricingType as "one-time" | "monthly",
+              features: tier.features,
+              highlight: tier.highlight ?? false,
+              display_order: ti,
+              isDirty: false,
+            }))
+          );
+          setRows(staticRows);
+        }
         setLoading(false);
       });
   }, []);
@@ -556,17 +611,19 @@ function PricingTab() {
 
   const saveRow = async (row: PricingRow) => {
     setSaving(row.id);
+    const isStatic = row.id.startsWith("static-");
     const { id, isDirty, ...data } = row;
-    const { error } = await supabase
-      .from("pricing_packages")
-      .update({ ...data, updated_at: new Date().toISOString() })
-      .eq("id", id);
+    const payload = { ...data, updated_at: new Date().toISOString() };
+
+    const { data: saved, error } = isStatic
+      ? await supabase.from("pricing_packages").upsert(payload, { onConflict: "department,tier_key" }).select().single()
+      : await supabase.from("pricing_packages").update(payload).eq("id", id).select().single();
 
     setSaving(null);
-    if (!error) {
-      setRows(prev => prev.map(r => r.id === id ? { ...r, isDirty: false } : r));
-      setSaved(id);
-      setTimeout(() => setSaved(s => s === id ? null : s), 2000);
+    if (!error && saved) {
+      setRows(prev => prev.map(r => r.id === id ? { ...r, id: saved.id, isDirty: false } : r));
+      setSaved(saved.id);
+      setTimeout(() => setSaved(s => s === saved.id ? null : s), 2000);
     }
   };
 
