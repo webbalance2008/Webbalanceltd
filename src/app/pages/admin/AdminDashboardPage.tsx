@@ -6,11 +6,12 @@ import {
 import * as Tabs from "@radix-ui/react-tabs";
 import {
   BarChart2, Globe, DollarSign, LogOut, RefreshCw, Check, X,
-  Plus, Trash2, Save, Eye, EyeOff, TrendingUp, Users, FileText, MousePointer,
+  Plus, Trash2, Save, Eye, EyeOff, TrendingUp, Users, FileText, MousePointer, Sliders,
 } from "lucide-react";
 import { supabase } from "../../utils/supabaseClient";
 import { ProtectedRoute } from "../../components/admin/ProtectedRoute";
 import { departmentPackages } from "../../data/packages";
+import { RATE_DEFAULTS } from "../../hooks/usePricingRates";
 
 // ─── Style constants ─────────────────────────────────────────────────────────
 const MONO  = "'DM Mono', monospace";
@@ -855,6 +856,159 @@ function PricingTab() {
   );
 }
 
+// ─── Rates tab ───────────────────────────────────────────────────────────────
+interface RateRow {
+  id?: string;
+  category: string;
+  key: string;
+  label: string;
+  value: number;
+  unit: string;
+  isDirty?: boolean;
+}
+
+const RATE_CATEGORY_LABELS: Record<string, string> = {
+  global:      "Global",
+  "web-apps":  "Web Apps",
+  "web-design":"Web Design",
+  seo:         "SEO",
+  hosting:     "Hosting",
+  branding:    "Branding",
+};
+const RATE_CATEGORY_ORDER = ["global", "web-apps", "web-design", "seo", "hosting", "branding"];
+
+function RatesTab() {
+  const [rows, setRows] = useState<RateRow[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState<string | null>(null);
+
+  useEffect(() => {
+    supabase.from("pricing_rates").select("*").order("category").order("key").then(({ data }) => {
+      if (data && data.length > 0) {
+        setRows(data.map(r => ({ ...r, isDirty: false })));
+      } else {
+        // DB not seeded yet — show defaults
+        const staticRows: RateRow[] = Object.entries(RATE_DEFAULTS).map(([compositeKey, value]) => {
+          const dot = compositeKey.indexOf(".");
+          const category = compositeKey.slice(0, dot);
+          const key = compositeKey.slice(dot + 1);
+          return { category, key, label: key.replace(/_/g, " "), value, unit: "", isDirty: false };
+        });
+        setRows(staticRows);
+      }
+      setLoading(false);
+    });
+  }, []);
+
+  const updateRow = (idx: number, value: number) => {
+    setRows(prev => prev.map((r, i) => i === idx ? { ...r, value, isDirty: true } : r));
+  };
+
+  const saveRow = async (idx: number) => {
+    const row = rows[idx];
+    const compositeKey = `${row.category}.${row.key}`;
+    setSaving(compositeKey);
+    const payload = { category: row.category, key: row.key, label: row.label, value: row.value, unit: row.unit, updated_at: new Date().toISOString() };
+    const { data: saved, error } = row.id
+      ? await supabase.from("pricing_rates").update(payload).eq("id", row.id).select().single()
+      : await supabase.from("pricing_rates").upsert(payload, { onConflict: "category,key" }).select().single();
+    setSaving(null);
+    if (!error && saved) {
+      setRows(prev => prev.map((r, i) => i === idx ? { ...r, id: saved.id, isDirty: false } : r));
+    }
+  };
+
+  if (loading) return <Spinner />;
+
+  // Group by category
+  const grouped: Record<string, RateRow[]> = {};
+  for (const row of rows) {
+    if (!grouped[row.category]) grouped[row.category] = [];
+    grouped[row.category].push(row);
+  }
+
+  const DEPT_COLORS_MAP: Record<string, string> = { global: TEAL, "web-apps": DEPT_COLORS["web-apps"], "web-design": DEPT_COLORS["web-design"], seo: DEPT_COLORS.seo, hosting: DEPT_COLORS.hosting, branding: DEPT_COLORS.branding };
+
+  return (
+    <div className="space-y-10">
+      <p style={{ fontFamily: BODY, color: "rgba(255,255,255,0.75)", fontSize: "0.9375rem" }}>
+        Edit rates used in the quote builders — hourly rate, domain fees, add-on costs, retainer prices, and more.
+      </p>
+
+      {RATE_CATEGORY_ORDER.filter(cat => grouped[cat]).map(cat => {
+        const color = DEPT_COLORS_MAP[cat] ?? TEAL;
+        return (
+          <div key={cat}>
+            <div className="flex items-center gap-3 mb-4">
+              <span className="w-4 h-px" style={{ background: color }} />
+              <p style={{ fontFamily: MONO, color, fontSize: "0.75rem", letterSpacing: "0.2em", textTransform: "uppercase" }}>
+                {RATE_CATEGORY_LABELS[cat] ?? cat}
+              </p>
+            </div>
+
+            <div style={{ border: `1px solid ${BORDER}`, background: CARD }}>
+              <table className="w-full" style={{ borderCollapse: "collapse" }}>
+                <thead>
+                  <tr style={{ borderBottom: `1px solid ${BORDER}` }}>
+                    <th className="p-4 text-left" style={{ fontFamily: MONO, color: "rgba(255,255,255,0.65)", fontSize: "0.625rem", letterSpacing: "0.15em", textTransform: "uppercase", fontWeight: 400, width: "55%" }}>Rate</th>
+                    <th className="p-4 text-right" style={{ fontFamily: MONO, color: "rgba(255,255,255,0.65)", fontSize: "0.625rem", letterSpacing: "0.15em", textTransform: "uppercase", fontWeight: 400, width: "20%" }}>Value (£)</th>
+                    <th className="p-4 text-left" style={{ fontFamily: MONO, color: "rgba(255,255,255,0.65)", fontSize: "0.625rem", letterSpacing: "0.15em", textTransform: "uppercase", fontWeight: 400, width: "15%" }}>Unit</th>
+                    <th className="p-4" style={{ width: "10%" }} />
+                  </tr>
+                </thead>
+                <tbody>
+                  {grouped[cat].map((row, idx) => {
+                    const globalIdx = rows.indexOf(row);
+                    const compositeKey = `${row.category}.${row.key}`;
+                    return (
+                      <tr key={compositeKey} style={{ borderBottom: `1px solid rgba(255,255,255,0.04)` }}>
+                        <td className="px-4 py-3">
+                          <span style={{ fontFamily: BODY, color: "#fff", fontSize: "0.875rem" }}>{row.label}</span>
+                          <span style={{ fontFamily: MONO, color: "rgba(255,255,255,0.3)", fontSize: "0.5625rem", marginLeft: "0.75rem" }}>{row.key}</span>
+                        </td>
+                        <td className="px-4 py-3 text-right" style={{ minWidth: "100px" }}>
+                          <input
+                            type="number"
+                            value={row.value}
+                            onChange={e => updateRow(globalIdx, Number(e.target.value))}
+                            style={{
+                              fontFamily: SANS, color: "#fff", fontWeight: 300, fontSize: "1rem",
+                              background: "transparent", border: "none", borderBottom: "1px solid rgba(255,255,255,0.1)",
+                              width: "100%", padding: "2px 0", outline: "none", textAlign: "right",
+                            }}
+                            onFocus={e => { e.currentTarget.style.borderBottomColor = color; }}
+                            onBlur={e => { e.currentTarget.style.borderBottomColor = "rgba(255,255,255,0.1)"; }}
+                          />
+                        </td>
+                        <td className="px-4 py-3">
+                          <span style={{ fontFamily: MONO, color: "rgba(255,255,255,0.55)", fontSize: "0.6875rem" }}>{row.unit}</span>
+                        </td>
+                        <td className="px-4 py-3 text-center">
+                          {row.isDirty && (
+                            <button
+                              onClick={() => saveRow(globalIdx)}
+                              disabled={saving === compositeKey}
+                              className="flex items-center justify-center gap-1 px-3 py-1.5 mx-auto transition-all"
+                              style={{ background: color, fontFamily: MONO, fontSize: "0.5625rem", letterSpacing: "0.15em", textTransform: "uppercase", color: "#0e1822", opacity: saving === compositeKey ? 0.5 : 1 }}
+                            >
+                              {saving === compositeKey ? <RefreshCw size={10} className="animate-spin" /> : <Save size={10} />}
+                              Save
+                            </button>
+                          )}
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        );
+      })}
+    </div>
+  );
+}
+
 // ─── Spinner ──────────────────────────────────────────────────────────────────
 function Spinner() {
   return (
@@ -944,7 +1098,8 @@ function Dashboard() {
             <Tabs.List className="flex" style={{ gap: 0 }}>
               <TabTrigger value="analytics" icon={BarChart2}   label="Analytics" />
               <TabTrigger value="seo"       icon={Globe}       label="SEO" />
-              <TabTrigger value="pricing"   icon={DollarSign}  label="Pricing" />
+              <TabTrigger value="pricing"   icon={DollarSign}  label="Packages" />
+              <TabTrigger value="rates"     icon={Sliders}     label="Rates" />
             </Tabs.List>
           </div>
         </div>
@@ -953,6 +1108,7 @@ function Dashboard() {
           <Tabs.Content value="analytics"><AnalyticsTab /></Tabs.Content>
           <Tabs.Content value="seo"><SeoTab /></Tabs.Content>
           <Tabs.Content value="pricing"><PricingTab /></Tabs.Content>
+          <Tabs.Content value="rates"><RatesTab /></Tabs.Content>
         </div>
       </Tabs.Root>
 
