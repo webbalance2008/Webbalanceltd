@@ -1,10 +1,13 @@
 import { DepartmentHero } from "./DepartmentHero";
 import { SEOHead } from "./SEOHead";
-import { ArrowRight, Check } from "lucide-react";
+import { ArrowRight, Check, X, Plus } from "lucide-react";
 import { Link } from "react-router";
 import type { LucideIcon } from "lucide-react";
 import type { ScreenLayout } from "./AppTypePage";
 import { useIsMobile } from "../hooks/useIsMobile";
+import { useState, useEffect, useRef } from "react";
+import { motion, useInView, AnimatePresence } from "motion/react";
+import { createPortal } from "react-dom";
 
 /* ── Teal-cyan palette (Web Design department) ────────────── */
 const ACC       = "#5ec4d4";
@@ -376,11 +379,77 @@ function ConceptsSection({ concepts }: { concepts: WebsiteConcept[] }) {
   );
 }
 
+/* ── Feature modal ────────────────────────────────────────── */
+function FeatureModal({ feature, onClose }: { feature: WebsiteTypeFeature; onClose: () => void }) {
+  const Icon = feature.icon;
+  useEffect(() => {
+    const handler = (e: KeyboardEvent) => { if (e.key === "Escape") onClose(); };
+    window.addEventListener("keydown", handler);
+    return () => window.removeEventListener("keydown", handler);
+  }, [onClose]);
+  return createPortal(
+    <>
+      <motion.div className="fixed inset-0 bg-black/75 backdrop-blur-sm z-[200]" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={onClose} />
+      <motion.div className="fixed inset-0 z-[201] flex items-center justify-center px-4 pointer-events-none" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
+        <motion.div className="relative w-full max-w-lg pointer-events-auto overflow-hidden" style={{ background: "#1a2840", border: `1px solid ${ACC_20}` }}
+          initial={{ opacity: 0, y: 32, scale: 0.97 }} animate={{ opacity: 1, y: 0, scale: 1 }} exit={{ opacity: 0, y: 20, scale: 0.97 }} transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }} onClick={e => e.stopPropagation()}>
+          <div className="h-px w-full" style={{ background: `linear-gradient(to right, ${ACC}, transparent)` }} />
+          <div className="p-8">
+            <button onClick={onClose} className="absolute top-5 right-5 w-8 h-8 flex items-center justify-center transition-colors duration-200" style={{ color: "rgba(255,255,255,0.3)" }} onMouseEnter={e => { (e.currentTarget as HTMLElement).style.color = "white"; }} onMouseLeave={e => { (e.currentTarget as HTMLElement).style.color = "rgba(255,255,255,0.3)"; }}>
+              <X size={16} />
+            </button>
+            <div className="mb-6 inline-flex items-center justify-center w-12 h-12 border" style={{ borderColor: ACC_35 }}>
+              <Icon size={20} strokeWidth={1.25} style={{ color: ACC }} />
+            </div>
+            <h3 style={{ fontFamily: "'Montserrat', sans-serif" }} className="text-white text-2xl mb-4 font-light">{feature.title}</h3>
+            <p style={{ fontFamily: "'Inter', sans-serif" }} className="text-white/55 text-sm leading-[1.85]">{feature.body}</p>
+          </div>
+        </motion.div>
+      </motion.div>
+    </>,
+    document.body
+  );
+}
+
+/* ── Industry modal ───────────────────────────────────────── */
+function IndustryModal({ industry, onClose }: { industry: WebsiteTypeIndustry; onClose: () => void }) {
+  useEffect(() => {
+    const handler = (e: KeyboardEvent) => { if (e.key === "Escape") onClose(); };
+    window.addEventListener("keydown", handler);
+    return () => window.removeEventListener("keydown", handler);
+  }, [onClose]);
+  return createPortal(
+    <>
+      <motion.div className="fixed inset-0 bg-black/75 backdrop-blur-sm z-[200]" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={onClose} />
+      <motion.div className="fixed inset-0 z-[201] flex items-center justify-center px-4 pointer-events-none" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
+        <motion.div className="relative w-full max-w-lg pointer-events-auto overflow-hidden" style={{ background: "#1a2840", border: `1px solid ${ACC_20}` }}
+          initial={{ opacity: 0, y: 32, scale: 0.97 }} animate={{ opacity: 1, y: 0, scale: 1 }} exit={{ opacity: 0, y: 20, scale: 0.97 }} transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }} onClick={e => e.stopPropagation()}>
+          <div className="h-px w-full" style={{ background: `linear-gradient(to right, ${ACC}, transparent)` }} />
+          <div className="p-8">
+            <button onClick={onClose} className="absolute top-5 right-5 w-8 h-8 flex items-center justify-center transition-colors duration-200" style={{ color: "rgba(255,255,255,0.3)" }} onMouseEnter={e => { (e.currentTarget as HTMLElement).style.color = "white"; }} onMouseLeave={e => { (e.currentTarget as HTMLElement).style.color = "rgba(255,255,255,0.3)"; }}>
+              <X size={16} />
+            </button>
+            <span style={{ color: ACC }} className="text-[10px] tracking-[0.3em] uppercase font-mono mb-4 block">✦ Industry</span>
+            <h3 style={{ fontFamily: "'Montserrat', sans-serif" }} className="text-white text-2xl mb-4 font-light">{industry.name}</h3>
+            <p style={{ fontFamily: "'Inter', sans-serif" }} className="text-white/55 text-sm leading-[1.85]">{industry.description}</p>
+          </div>
+        </motion.div>
+      </motion.div>
+    </>,
+    document.body
+  );
+}
+
 /* ── Features ─────────────────────────────────────────────── */
 function FeaturesSection({ features }: { features: WebsiteTypeFeature[] }) {
   const ref = useRef(null);
   const inView = useInView(ref, { once: true, margin: "-5%" });
   const isMobile = useIsMobile();
+  const [active, setActive] = useState<WebsiteTypeFeature | null>(null);
+  useEffect(() => {
+    document.body.style.overflow = active ? "hidden" : "";
+    return () => { document.body.style.overflow = ""; };
+  }, [active]);
   return (
     <section className="py-24" style={{ borderBottom: `1px solid ${ACC_08}` }}>
       <div ref={ref} className="max-w-[1440px] mx-auto px-8 md:px-16">
@@ -389,19 +458,27 @@ function FeaturesSection({ features }: { features: WebsiteTypeFeature[] }) {
           {features.map((f, i) => {
             const Icon = f.icon;
             return (
-              <motion.div key={f.title} initial={isMobile ? false : { opacity: 0, y: 30 }} animate={inView ? { opacity: 1, y: 0 } : {}} transition={{ delay: i * 0.07 }} className="group">
-                <div className="mb-5 inline-flex items-center justify-center w-11 h-11 border transition-colors duration-300" style={{ borderColor: ACC_20 }}
-                  onMouseEnter={e => { (e.currentTarget as HTMLElement).style.borderColor = ACC_50; }}
-                  onMouseLeave={e => { (e.currentTarget as HTMLElement).style.borderColor = ACC_20; }}>
-                  <Icon size={18} strokeWidth={1.25} style={{ color: ACC_50 }} className="opacity-70 group-hover:opacity-100 transition-opacity duration-300" />
+              <motion.div key={f.title} initial={isMobile ? false : { opacity: 0, y: 30 }} animate={inView ? { opacity: 1, y: 0 } : {}} transition={{ delay: i * 0.07 }}
+                className="group cursor-pointer relative p-6 transition-colors duration-300" style={{ border: `1px solid ${ACC_10}` }}
+                onClick={() => setActive(f)}
+                onMouseEnter={e => { (e.currentTarget as HTMLElement).style.borderColor = ACC_35; (e.currentTarget as HTMLElement).style.backgroundColor = ACC_05; }}
+                onMouseLeave={e => { (e.currentTarget as HTMLElement).style.borderColor = ACC_10; (e.currentTarget as HTMLElement).style.backgroundColor = "transparent"; }}>
+                <div className="absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                  <Plus size={12} style={{ color: ACC }} />
+                </div>
+                <div className="mb-5 inline-flex items-center justify-center w-11 h-11 border" style={{ borderColor: ACC_20 }}>
+                  <Icon size={18} strokeWidth={1.25} style={{ color: ACC }} className="opacity-70 group-hover:opacity-100 transition-opacity duration-300" />
                 </div>
                 <h3 style={{ fontFamily: "'Montserrat', sans-serif", color: "white", transition: "color 0.3s" }} className="text-xl mb-3 group-hover:!text-[#5ec4d4] transition-colors">{f.title}</h3>
-                <p style={{ fontFamily: "'Inter', sans-serif" }} className="text-white/40 text-sm leading-relaxed">{f.body}</p>
+                <p style={{ fontFamily: "'Inter', sans-serif" }} className="text-white/40 text-sm leading-relaxed line-clamp-3">{f.body}</p>
               </motion.div>
             );
           })}
         </div>
       </div>
+      <AnimatePresence>
+        {active && <FeatureModal feature={active} onClose={() => setActive(null)} />}
+      </AnimatePresence>
     </section>
   );
 }
@@ -411,6 +488,11 @@ function IndustriesSection({ industries }: { industries: WebsiteTypeIndustry[] }
   const ref = useRef(null);
   const inView = useInView(ref, { once: true, margin: "-5%" });
   const isMobile = useIsMobile();
+  const [active, setActive] = useState<WebsiteTypeIndustry | null>(null);
+  useEffect(() => {
+    document.body.style.overflow = active ? "hidden" : "";
+    return () => { document.body.style.overflow = ""; };
+  }, [active]);
   return (
     <section className="py-24" style={{ borderBottom: `1px solid ${ACC_08}` }}>
       <div ref={ref} className="max-w-[1440px] mx-auto px-8 md:px-16">
@@ -421,9 +503,13 @@ function IndustriesSection({ industries }: { industries: WebsiteTypeIndustry[] }
         <div className="grid grid-cols-1 md:grid-cols-2 gap-px" style={{ backgroundColor: ACC_08 }}>
           {industries.map((ind, i) => (
             <motion.div key={ind.name} initial={isMobile ? false : { opacity: 0, y: 20 }} animate={inView ? { opacity: 1, y: 0 } : {}} transition={{ delay: i * 0.06 }}
-              className="p-8 group transition-colors duration-300" style={{ backgroundColor: BG_CARD }}
+              className="p-8 group transition-colors duration-300 cursor-pointer relative" style={{ backgroundColor: BG_CARD }}
+              onClick={() => setActive(ind)}
               onMouseEnter={e => { (e.currentTarget as HTMLElement).style.backgroundColor = "#1e3248"; }}
               onMouseLeave={e => { (e.currentTarget as HTMLElement).style.backgroundColor = BG_CARD; }}>
+              <div className="absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                <Plus size={12} style={{ color: ACC }} />
+              </div>
               <div className="flex items-start gap-4">
                 <span className="text-[10px] mt-1 flex-shrink-0" style={{ color: ACC }}>✦</span>
                 <div>
@@ -435,6 +521,9 @@ function IndustriesSection({ industries }: { industries: WebsiteTypeIndustry[] }
           ))}
         </div>
       </div>
+      <AnimatePresence>
+        {active && <IndustryModal industry={active} onClose={() => setActive(null)} />}
+      </AnimatePresence>
     </section>
   );
 }
