@@ -1,7 +1,7 @@
 import { projects } from "../data/projects";
 import type { Project } from "../data/projects";
 import { projectImages } from "../data/projectImages";
-import { motion, useInView } from "motion/react";
+import { motion, useInView, AnimatePresence } from "motion/react";
 import { ArrowUpRight, ChevronLeft, ChevronRight } from "lucide-react";
 import { useNavigate } from "react-router";
 import { useState, useRef, useCallback, useEffect } from "react";
@@ -175,9 +175,17 @@ export function Projects() {
   const inView = useInView(ref, { once: true, margin: "-10%" });
   const navigate = useNavigate();
   const [mobileIndex, setMobileIndex] = useState(0);
+  const [desktopPage, setDesktopPage] = useState(0);
+  const [direction, setDirection] = useState(1); // 1 = forward, -1 = back
   const isMobile = useIsMobile();
 
   const displayed = projects.slice(0, 6);
+  const totalPages = Math.ceil(displayed.length / 2);
+
+  const goToPage = useCallback((page: number) => {
+    setDirection(page > desktopPage ? 1 : -1);
+    setDesktopPage(page);
+  }, [desktopPage]);
 
   const scrollToIndex = useCallback((index: number) => {
     if (scrollRef.current) {
@@ -197,6 +205,14 @@ export function Projects() {
       setMobileIndex(Math.min(newIndex, displayed.length - 1));
     }
   }, [displayed.length]);
+
+  const pageProjects = displayed.slice(desktopPage * 2, desktopPage * 2 + 2);
+
+  const slideVariants = {
+    enter: (dir: number) => ({ opacity: 0, x: dir * 60 }),
+    center: { opacity: 1, x: 0 },
+    exit: (dir: number) => ({ opacity: 0, x: dir * -60 }),
+  };
 
   return (
     <section id="work" className="py-16 md:py-32" style={{ background: "linear-gradient(180deg, #16212e 0%, #1a2840 50%, #16212e 100%)" }}>
@@ -235,11 +251,68 @@ export function Projects() {
           </motion.p>
         </div>
 
-        {/* Desktop: Grid */}
-        <div className="hidden md:grid grid-cols-2 gap-4">
-          {displayed.map((project, i) => (
-            <ProjectCard key={project.id} project={project} index={i} />
-          ))}
+        {/* Desktop: Carousel — 2 projects per slide */}
+        <div className="hidden md:block">
+          <div className="overflow-hidden">
+            <AnimatePresence mode="wait" custom={direction}>
+              <motion.div
+                key={desktopPage}
+                custom={direction}
+                variants={slideVariants}
+                initial="enter"
+                animate="center"
+                exit="exit"
+                transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
+                className="grid grid-cols-2 gap-4"
+              >
+                {pageProjects.map((project, i) => (
+                  <ProjectCard key={project.id} project={project} index={i} />
+                ))}
+              </motion.div>
+            </AnimatePresence>
+          </div>
+
+          {/* Desktop carousel controls */}
+          <div className="flex items-center justify-center gap-4 mt-8">
+            <button
+              onClick={() => goToPage(Math.max(0, desktopPage - 1))}
+              disabled={desktopPage === 0}
+              className={`w-10 h-10 flex items-center justify-center border transition-all duration-300 ${
+                desktopPage === 0
+                  ? "border-white/10 text-white/20"
+                  : "border-[#00A9A5]/50 text-[#00A9A5] hover:border-[#00A9A5] hover:bg-[#00A9A5]/10"
+              }`}
+              aria-label="Previous page"
+            >
+              <ChevronLeft size={16} />
+            </button>
+            <div className="flex gap-2">
+              {Array.from({ length: totalPages }).map((_, i) => (
+                <button
+                  key={i}
+                  onClick={() => goToPage(i)}
+                  className={`transition-all duration-300 ${
+                    i === desktopPage
+                      ? "w-8 h-1.5 bg-[#00A9A5]"
+                      : "w-1.5 h-1.5 bg-white/20 hover:bg-white/40"
+                  }`}
+                  aria-label={`Go to page ${i + 1}`}
+                />
+              ))}
+            </div>
+            <button
+              onClick={() => goToPage(Math.min(totalPages - 1, desktopPage + 1))}
+              disabled={desktopPage === totalPages - 1}
+              className={`w-10 h-10 flex items-center justify-center border transition-all duration-300 ${
+                desktopPage === totalPages - 1
+                  ? "border-white/10 text-white/20"
+                  : "border-[#00A9A5]/50 text-[#00A9A5] hover:border-[#00A9A5] hover:bg-[#00A9A5]/10"
+              }`}
+              aria-label="Next page"
+            >
+              <ChevronRight size={16} />
+            </button>
+          </div>
         </div>
 
         {/* Mobile: Horizontal scroll — 1 project visible */}
