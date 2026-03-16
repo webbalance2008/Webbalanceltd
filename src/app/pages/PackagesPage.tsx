@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect } from "react";
 import { useNavigate } from "react-router";
+import { useAnalytics } from "../hooks/useAnalytics";
 import {
   Check,
   X,
@@ -21,6 +22,7 @@ import {
   type PackageTier,
   type DepartmentPackages,
 } from "../data/packages";
+import { usePricing } from "../hooks/usePricing";
 
 // ─── Constants ───────────────────────────────────────────────────────────────
 
@@ -35,6 +37,10 @@ function fmt(n: number) {
 // ─── Page ────────────────────────────────────────────────────────────────────
 export function PackagesPage() {
   const navigate = useNavigate();
+  const { trackEvent } = useAnalytics();
+  const { packages: livePackages } = usePricing();
+  const activeDepts = livePackages.length > 0 ? livePackages : departmentPackages;
+
   const [selections, setSelections] = useState<Selections>(() =>
     Object.fromEntries(departmentPackages.map((d) => [d.key, null]))
   );
@@ -52,7 +58,7 @@ export function PackagesPage() {
   };
 
   // ── Compute totals ──
-  const selectedItems = departmentPackages
+  const selectedItems = activeDepts
     .map((dept) => {
       const tierId = selections[dept.key];
       if (!tierId) return null;
@@ -165,6 +171,11 @@ export function PackagesPage() {
     onRemove: (k: string) => setSelections((p) => ({ ...p, [k]: null })),
     onSubmit: () => {
       setSubmitted(true);
+      trackEvent("quote_submit", {
+        departments: selectedItems.map(i => i.dept.key),
+        oneTimeTotal: finalOneTime,
+        monthlyTotal: finalMonthly,
+      });
       sendEmail("packages", {
         selections: selectedItems.map(i => `${i.dept.label}: ${i.tier.name} (£${fmt(i.tier.price)} ${i.tier.pricingType})`),
         oneTimeTotal: `£${fmt(finalOneTime)}`,
@@ -172,7 +183,7 @@ export function PackagesPage() {
       });
     },
     onClear: () =>
-      setSelections(Object.fromEntries(departmentPackages.map((d) => [d.key, null]))),
+      setSelections(Object.fromEntries(activeDepts.map((d) => [d.key, null]))),
   };
 
   return (
@@ -293,7 +304,7 @@ export function PackagesPage() {
             /* ════════ BUILDER VIEW ════════ */
             <div className="flex flex-col lg:flex-row gap-8">
               <div className="flex-1 min-w-0">
-                {departmentPackages.map((dept) => {
+                {activeDepts.map((dept) => {
                   const DeptIcon = dept.icon;
                   const isExpanded = expandedDept === dept.key;
                   const selectedTier = selections[dept.key];
@@ -420,7 +431,7 @@ export function PackagesPage() {
             /* ════════ COMPARE VIEW ════════ */
             <div className="flex flex-col lg:flex-row gap-8">
               <div className="flex-1 min-w-0 space-y-8">
-                {departmentPackages.map((dept) => (
+                {activeDepts.map((dept) => (
                   <ComparisonTable
                     key={dept.key}
                     dept={dept}

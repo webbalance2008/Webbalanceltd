@@ -5,6 +5,10 @@ import { Root } from "./components/Root";
 // ── Eagerly load the homepage (critical path) ──────────────────────────────
 import { Home } from "./pages/Home";
 
+// ── Admin (outside Root layout — no nav/footer) ────────────────────────────
+const AdminLoginPage    = lazy(() => import("./pages/admin/AdminLoginPage"));
+const AdminDashboardPage = lazy(() => import("./pages/admin/AdminDashboardPage"));
+
 // ── Lazy-load every other route (code-split per page) ─────────────────────
 const ProjectPage         = lazy(() => import("./pages/ProjectPage").then(m => ({ default: m.ProjectPage })));
 
@@ -64,6 +68,11 @@ const PackagesPage = lazy(() => import("./pages/PackagesPage").then(m => ({ defa
 const NotFoundPage = lazy(() => import("./pages/NotFoundPage").then(m => ({ default: m.NotFoundPage })));
 
 export const router = createBrowserRouter([
+  // ── Admin routes (standalone — no site nav/footer) ─────────────────────────
+  { path: "/admin/login",   Component: AdminLoginPage },
+  { path: "/admin",         Component: AdminDashboardPage },
+
+  // ── Main site (wrapped in Root layout) ────────────────────────────────────
   {
     path: "/",
     Component: Root,

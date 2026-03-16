@@ -12,6 +12,7 @@ import {
   LocalBusinessSchema,
   WebSiteSchema,
 } from "./StructuredData";
+import { useAnalytics } from "../hooks/useAnalytics";
 
 /** Returns true when the viewport is ≥768 px (desktop breakpoint) */
 function useIsDesktop() {
@@ -32,8 +33,10 @@ function useIsDesktop() {
 
 function ScrollToTop() {
   const { pathname } = useLocation();
+  const { trackEvent } = useAnalytics();
   useEffect(() => {
     window.scrollTo(0, 0);
+    trackEvent("page_view");
   }, [pathname]);
   return null;
 }
