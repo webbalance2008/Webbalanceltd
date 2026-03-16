@@ -9,6 +9,7 @@ import {
 } from "lucide-react";
 import { SEOHead } from "../components/SEOHead";
 import { useIsMobile } from "../hooks/useIsMobile";
+import { usePricingRates } from "../hooks/usePricingRates";
 
 const ACCENT      = "#f59e6a";
 const ACCENT_RGB  = "245, 158, 106";
@@ -270,6 +271,12 @@ function PlanCard({ plan, isActive, isRecommended, onClick }: {
 
 export function HostingStartPage() {
   const isMobile = useIsMobile();
+  const rates = usePricingRates();
+  const resolvedPlans = plans.map(p => ({
+    ...p,
+    monthly: rates[`hosting.${p.id}_monthly`] ?? p.monthly,
+    setup:   rates[`hosting.${p.id}_setup`]   ?? p.setup,
+  }));
   const [step, setStep]   = useState(1);
   const [dir, setDir]     = useState(1);
   const [data, setData]   = useState<HostingFormData>(initialData);
@@ -300,7 +307,7 @@ export function HostingStartPage() {
   const trafficOpt = trafficLevels.find(t => t.id === data.traffic);
   const recommendedPlan = trafficOpt?.rec ?? "";
 
-  const selectedPlan = plans.find(p => p.id === data.plan);
+  const selectedPlan = resolvedPlans.find(p => p.id === data.plan);
   const isEnterprisePlan = data.plan === "enterprise";
 
   const variants = {
@@ -467,10 +474,10 @@ export function HostingStartPage() {
               <div className="mt-6 sm:mt-8 space-y-4">
                 {recommendedPlan && (
                   <p style={{ fontFamily: "'DM Mono',monospace", color: `rgba(${ACCENT_RGB},0.6)`, fontSize: "11px", letterSpacing: "0.3em" }} className="uppercase mb-4">
-                    Based on your traffic estimate, we recommend {plans.find(p => p.id === recommendedPlan)?.name}
+                    Based on your traffic estimate, we recommend {resolvedPlans.find(p => p.id === recommendedPlan)?.name}
                   </p>
                 )}
-                {plans.map(plan => (
+                {resolvedPlans.map(plan => (
                   <PlanCard key={plan.id} plan={plan} isActive={data.plan === plan.id} isRecommended={plan.id === recommendedPlan && data.plan !== plan.id} onClick={() => setData(d => ({ ...d, plan: plan.id }))} />
                 ))}
               </div>
