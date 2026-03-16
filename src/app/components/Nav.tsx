@@ -255,7 +255,7 @@ export function Nav() {
                         />
 
                         {/* ── Render sectioned dropdown for service departments ── */}
-                        {renderDropdownContent(item, itemColors, setOpenDropdown)}
+                        <DesktopDropdownContent item={item} itemColors={itemColors} setOpenDropdown={setOpenDropdown} />
                       </motion.div>
                     )}
                   </AnimatePresence>
@@ -365,11 +365,11 @@ export function Nav() {
                           transition={{ duration: 0.2 }}
                           className="overflow-hidden"
                         >
-                          {renderMobileDropdownContent(
-                            item,
-                            itemColors,
-                            () => setMenuOpen(false)
-                          )}
+                          <MobileDropdownContent
+                            item={item}
+                            itemColors={itemColors}
+                            onClose={() => setMenuOpen(false)}
+                          />
                         </motion.div>
                       )}
                     </AnimatePresence>
@@ -407,11 +407,17 @@ export function Nav() {
 // ═══════════════════════════════════════════════════════════════════════════════
 // ─── Desktop dropdown renderer ────────────────────────────────────────────────
 // ═══════════════════════════════════════════════════════════════════════════════
-function renderDropdownContent(
-  item: NavItem,
-  itemColors: ReturnType<typeof getServiceColors> | null,
-  setOpenDropdown: (v: string | null) => void
-) {
+function DesktopDropdownContent({
+  item,
+  itemColors,
+  setOpenDropdown,
+}: {
+  item: NavItem;
+  itemColors: ReturnType<typeof getServiceColors> | null;
+  setOpenDropdown: (v: string | null) => void;
+}) {
+  const [secondaryOpen, setSecondaryOpen] = useState(false);
+
   const children = item.children!;
   const primaryItems = children.filter((c) => c.primary);
   const secondaryItems = children.filter((c) => !c.primary);
@@ -495,48 +501,80 @@ function renderDropdownContent(
           </div>
         </div>
 
-        {/* Divider + section label */}
-        <div className="px-5 pt-3 pb-1.5">
-          <div
-            className="h-px mb-3"
+        {/* Collapsible section toggle */}
+        {item.secondaryLabel && (
+          <button
+            onClick={() => setSecondaryOpen((o) => !o)}
+            className="flex items-center justify-between w-full px-4 py-2.5 mt-1 mb-1 transition-all duration-200"
             style={{
               background: itemColors
-                ? `rgba(${itemColors.rgb}, 0.12)`
-                : "rgba(255,255,255,0.07)",
+                ? secondaryOpen
+                  ? `rgba(${itemColors.rgb}, 0.18)`
+                  : `rgba(${itemColors.rgb}, 0.1)`
+                : "rgba(255,255,255,0.06)",
+              borderTop: itemColors
+                ? `1px solid rgba(${itemColors.rgb}, 0.15)`
+                : "1px solid rgba(255,255,255,0.07)",
+              borderBottom: secondaryOpen
+                ? itemColors
+                  ? `1px solid rgba(${itemColors.rgb}, 0.15)`
+                  : "1px solid rgba(255,255,255,0.07)"
+                : "1px solid transparent",
+              cursor: "pointer",
             }}
-          />
-          {item.secondaryLabel && (
-            <p
+          >
+            <span
               style={{
                 fontFamily: "'DM Mono', monospace",
-                fontSize: "0.75rem",
+                fontSize: "0.7rem",
                 letterSpacing: "0.25em",
-                color: itemColors
-                  ? `${itemColors.primary}80`
-                  : "rgba(255,255,255,0.3)",
+                color: itemColors ? itemColors.primary : "#00d4e8",
                 textTransform: "uppercase",
+                fontWeight: 600,
               }}
             >
               {item.secondaryLabel}
-            </p>
-          )}
-        </div>
+            </span>
+            <ChevronDown
+              size={13}
+              style={{
+                color: itemColors ? itemColors.primary : "#00d4e8",
+                transform: secondaryOpen ? "rotate(180deg)" : "none",
+                transition: "transform 0.25s ease",
+                flexShrink: 0,
+              }}
+            />
+          </button>
+        )}
 
-        {/* Secondary items */}
-        <div className="pb-3">
-          {secondaryItems.map((child) => {
-            const idx = animIndex++;
-            return (
-              <DropdownLink
-                key={child.path}
-                child={child}
-                index={idx}
-                onClose={() => setOpenDropdown(null)}
-                accentColor={itemColors?.primary}
-              />
-            );
-          })}
-        </div>
+        {/* Secondary items — collapsible */}
+        <AnimatePresence initial={false}>
+          {secondaryOpen && (
+            <motion.div
+              key="secondary"
+              initial={{ height: 0, opacity: 0 }}
+              animate={{ height: "auto", opacity: 1 }}
+              exit={{ height: 0, opacity: 0 }}
+              transition={{ duration: 0.22, ease: "easeInOut" }}
+              style={{ overflow: "hidden" }}
+            >
+              <div className="pb-3">
+                {secondaryItems.map((child) => {
+                  const idx = animIndex++;
+                  return (
+                    <DropdownLink
+                      key={child.path}
+                      child={child}
+                      index={idx}
+                      onClose={() => setOpenDropdown(null)}
+                      accentColor={itemColors?.primary}
+                    />
+                  );
+                })}
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </>
     );
   }
@@ -649,19 +687,21 @@ function DropdownLink({
 // ═══════════════════════════════════════════════════════════════════════════════
 // ─── Mobile dropdown renderer ────────────────────────────────────────────────
 // ═══════════════════════════════════════════════════════════════════════════════
-function renderMobileDropdownContent(
-  item: NavItem,
-  itemColors: ReturnType<typeof getServiceColors> | null,
-  onClose: () => void
-) {
+function MobileDropdownContent({
+  item,
+  itemColors,
+  onClose,
+}: {
+  item: NavItem;
+  itemColors: ReturnType<typeof getServiceColors> | null;
+  onClose: () => void;
+}) {
+  const [secondaryOpen, setSecondaryOpen] = useState(false);
+
   const children = item.children!;
   const primaryItems = children.filter((c) => c.primary);
   const secondaryItems = children.filter((c) => !c.primary);
   const hasSections = primaryItems.length > 0 && secondaryItems.length > 0;
-
-  const linkStyle = (accent?: boolean) => ({
-    fontFamily: "'Inter', sans-serif" as const,
-  });
 
   const renderLink = (child: NavChild, accent?: boolean) => (
     <Link
@@ -670,7 +710,7 @@ function renderMobileDropdownContent(
       onClick={onClose}
       className="block py-2.5 transition-colors text-lg"
       style={{
-        ...linkStyle(accent),
+        fontFamily: "'Inter', sans-serif",
         color: accent
           ? "rgba(255,255,255,0.7)"
           : "rgba(255,255,255,0.5)",
@@ -708,36 +748,76 @@ function renderMobileDropdownContent(
           {primaryItems.map((child) => renderLink(child, true))}
         </div>
 
-        {/* Section label */}
+        {/* Collapsible section toggle */}
         {item.secondaryLabel && (
-          <div className="pl-4 pt-3 pb-1">
-            <p
+          <button
+            onClick={() => setSecondaryOpen((o) => !o)}
+            className="flex items-center justify-between w-full px-4 py-2.5 mt-2 transition-all duration-200"
+            style={{
+              background: itemColors
+                ? secondaryOpen
+                  ? `rgba(${itemColors.rgb}, 0.18)`
+                  : `rgba(${itemColors.rgb}, 0.1)`
+                : "rgba(255,255,255,0.06)",
+              borderTop: itemColors
+                ? `1px solid rgba(${itemColors.rgb}, 0.15)`
+                : "1px solid rgba(255,255,255,0.07)",
+              borderBottom: secondaryOpen
+                ? itemColors
+                  ? `1px solid rgba(${itemColors.rgb}, 0.15)`
+                  : "1px solid rgba(255,255,255,0.07)"
+                : "1px solid transparent",
+              cursor: "pointer",
+            }}
+          >
+            <span
               style={{
                 fontFamily: "'DM Mono', monospace",
-                fontSize: "0.75rem",
-                letterSpacing: "0.2em",
+                fontSize: "0.7rem",
+                letterSpacing: "0.25em",
+                color: itemColors ? itemColors.primary : "#00d4e8",
                 textTransform: "uppercase",
-                color: itemColors
-                  ? `${itemColors.primary}70`
-                  : "rgba(255,255,255,0.25)",
+                fontWeight: 600,
               }}
             >
               {item.secondaryLabel}
-            </p>
-          </div>
+            </span>
+            <ChevronDown
+              size={13}
+              style={{
+                color: itemColors ? itemColors.primary : "#00d4e8",
+                transform: secondaryOpen ? "rotate(180deg)" : "none",
+                transition: "transform 0.25s ease",
+                flexShrink: 0,
+              }}
+            />
+          </button>
         )}
 
-        {/* Secondary items */}
-        <div
-          className="pl-4 py-1 space-y-0 border-l-2"
-          style={{
-            borderColor: itemColors
-              ? `${itemColors.primary}bb`
-              : "rgba(0,169,165,0.75)",
-          }}
-        >
-          {secondaryItems.map((child) => renderLink(child))}
-        </div>
+        {/* Secondary items — collapsible */}
+        <AnimatePresence initial={false}>
+          {secondaryOpen && (
+            <motion.div
+              key="mobile-secondary"
+              initial={{ height: 0, opacity: 0 }}
+              animate={{ height: "auto", opacity: 1 }}
+              exit={{ height: 0, opacity: 0 }}
+              transition={{ duration: 0.22, ease: "easeInOut" }}
+              style={{ overflow: "hidden" }}
+            >
+              <div
+                className="pl-4 py-1 space-y-0 border-l-2"
+                style={{
+                  borderColor: itemColors
+                    ? `${itemColors.primary}bb`
+                    : "rgba(0,169,165,0.75)",
+                }}
+              >
+                {secondaryItems.map((child) => renderLink(child))}
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </div>
     );
   }
