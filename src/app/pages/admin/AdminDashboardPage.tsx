@@ -139,13 +139,13 @@ function MetricCard({
         <Icon size={16} style={{ color }} />
       </div>
       <div>
-        <p style={{ fontFamily: MONO, color: "rgba(255,255,255,0.4)", fontSize: "0.5625rem", letterSpacing: "0.2em", textTransform: "uppercase" }}>
+        <p style={{ fontFamily: MONO, color: "rgba(255,255,255,0.65)", fontSize: "0.625rem", letterSpacing: "0.2em", textTransform: "uppercase" }}>
           {label}
         </p>
         <p style={{ fontFamily: SANS, color: "#fff", fontWeight: 300, fontSize: "1.75rem", lineHeight: 1.1 }} className="mt-1">
           {value}
         </p>
-        {sub && <p style={{ fontFamily: BODY, color: "rgba(255,255,255,0.3)", fontSize: "0.75rem" }} className="mt-0.5">{sub}</p>}
+        {sub && <p style={{ fontFamily: BODY, color: "rgba(255,255,255,0.55)", fontSize: "0.8125rem" }} className="mt-0.5">{sub}</p>}
       </div>
     </div>
   );
@@ -242,7 +242,7 @@ function AnalyticsTab() {
 
       {/* Visitor trend line chart */}
       <div style={{ background: CARD, border: `1px solid ${BORDER}` }} className="p-6">
-        <p style={{ fontFamily: MONO, color: "rgba(255,255,255,0.5)", fontSize: "0.5625rem", letterSpacing: "0.2em", textTransform: "uppercase" }} className="mb-5">
+        <p style={{ fontFamily: MONO, color: "#fff", fontSize: "0.75rem", letterSpacing: "0.15em", textTransform: "uppercase" }} className="mb-5">
           Daily Activity — Last 30 Days
         </p>
         <ResponsiveContainer width="100%" height={220}>
@@ -265,7 +265,7 @@ function AnalyticsTab() {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Event type bar chart */}
         <div style={{ background: CARD, border: `1px solid ${BORDER}` }} className="p-6">
-          <p style={{ fontFamily: MONO, color: "rgba(255,255,255,0.5)", fontSize: "0.5625rem", letterSpacing: "0.2em", textTransform: "uppercase" }} className="mb-5">
+          <p style={{ fontFamily: MONO, color: "#fff", fontSize: "0.75rem", letterSpacing: "0.15em", textTransform: "uppercase" }} className="mb-5">
             Events by Type
           </p>
           <ResponsiveContainer width="100%" height={200}>
@@ -283,17 +283,17 @@ function AnalyticsTab() {
 
         {/* Top pages */}
         <div style={{ background: CARD, border: `1px solid ${BORDER}` }} className="p-6">
-          <p style={{ fontFamily: MONO, color: "rgba(255,255,255,0.5)", fontSize: "0.5625rem", letterSpacing: "0.2em", textTransform: "uppercase" }} className="mb-5">
+          <p style={{ fontFamily: MONO, color: "#fff", fontSize: "0.75rem", letterSpacing: "0.15em", textTransform: "uppercase" }} className="mb-5">
             Top Pages (last 30 days)
           </p>
           <div className="space-y-2">
             {topPages.length === 0 && (
-              <p style={{ fontFamily: BODY, color: "rgba(255,255,255,0.25)", fontSize: "0.875rem" }}>No data yet</p>
+              <p style={{ fontFamily: BODY, color: "rgba(255,255,255,0.5)", fontSize: "0.875rem" }}>No data yet</p>
             )}
             {topPages.map(([path, count]) => (
               <div key={path} className="flex items-center gap-3">
                 <div className="flex-1 min-w-0">
-                  <p style={{ fontFamily: MONO, color: "rgba(255,255,255,0.7)", fontSize: "0.6875rem", letterSpacing: "0.05em" }} className="truncate">
+                  <p style={{ fontFamily: MONO, color: "#fff", fontSize: "0.8125rem", letterSpacing: "0.05em" }} className="truncate">
                     {path || "/"}
                   </p>
                 </div>
@@ -320,7 +320,7 @@ function AnalyticsTab() {
 
       {/* Recent form submissions */}
       <div style={{ background: CARD, border: `1px solid ${BORDER}` }} className="p-6">
-        <p style={{ fontFamily: MONO, color: "rgba(255,255,255,0.5)", fontSize: "0.5625rem", letterSpacing: "0.2em", textTransform: "uppercase" }} className="mb-5">
+        <p style={{ fontFamily: MONO, color: "#fff", fontSize: "0.75rem", letterSpacing: "0.15em", textTransform: "uppercase" }} className="mb-5">
           Recent Form Activity
         </p>
         {recentForms.length === 0 ? (
@@ -330,7 +330,7 @@ function AnalyticsTab() {
             <thead>
               <tr style={{ borderBottom: `1px solid ${BORDER}` }}>
                 {["Type", "Page", "Details", "Date"].map(h => (
-                  <th key={h} className="pb-3 text-left" style={{ fontFamily: MONO, color: "rgba(255,255,255,0.3)", fontSize: "0.5625rem", letterSpacing: "0.2em", textTransform: "uppercase", fontWeight: 400 }}>
+                  <th key={h} className="pb-3 text-left" style={{ fontFamily: MONO, color: "rgba(255,255,255,0.65)", fontSize: "0.6875rem", letterSpacing: "0.15em", textTransform: "uppercase", fontWeight: 400 }}>
                     {h}
                   </th>
                 ))}
@@ -353,17 +353,17 @@ function AnalyticsTab() {
                     </span>
                   </td>
                   <td className="py-2.5 pr-4">
-                    <span style={{ fontFamily: MONO, color: "rgba(255,255,255,0.5)", fontSize: "0.6875rem" }}>
+                    <span style={{ fontFamily: MONO, color: "rgba(255,255,255,0.85)", fontSize: "0.75rem" }}>
                       {e.page_url || "—"}
                     </span>
                   </td>
                   <td className="py-2.5 pr-4">
-                    <span style={{ fontFamily: BODY, color: "rgba(255,255,255,0.4)", fontSize: "0.75rem" }}>
+                    <span style={{ fontFamily: BODY, color: "rgba(255,255,255,0.75)", fontSize: "0.8125rem" }}>
                       {e.metadata ? Object.entries(e.metadata).map(([k,v]) => `${k}: ${v}`).join(" · ") : "—"}
                     </span>
                   </td>
                   <td className="py-2.5">
-                    <span style={{ fontFamily: MONO, color: "rgba(255,255,255,0.35)", fontSize: "0.625rem" }}>
+                    <span style={{ fontFamily: MONO, color: "rgba(255,255,255,0.6)", fontSize: "0.6875rem" }}>
                       {new Date(e.created_at).toLocaleDateString("en-GB", { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" })}
                     </span>
                   </td>
@@ -442,7 +442,7 @@ function SeoTab() {
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
-        <p style={{ fontFamily: BODY, color: "rgba(255,255,255,0.4)", fontSize: "0.875rem" }}>
+        <p style={{ fontFamily: BODY, color: "rgba(255,255,255,0.75)", fontSize: "0.9375rem" }}>
           Edit meta tags per page. Unsaved rows show current hardcoded defaults — save to override them live.
         </p>
         <button
@@ -552,7 +552,7 @@ function EditableCell({
       style={{
         fontFamily: mono ? MONO : BODY,
         fontSize: mono ? "0.6875rem" : "0.8125rem",
-        color: value ? "rgba(255,255,255,0.75)" : "rgba(255,255,255,0.2)",
+        color: value ? "#fff" : "rgba(255,255,255,0.35)",
         background: "transparent",
         border: "1px solid transparent",
         width: "100%",
@@ -641,7 +641,7 @@ function PricingTab() {
 
   return (
     <div className="space-y-10">
-      <p style={{ fontFamily: BODY, color: "rgba(255,255,255,0.4)", fontSize: "0.875rem" }}>
+      <p style={{ fontFamily: BODY, color: "rgba(255,255,255,0.75)", fontSize: "0.9375rem" }}>
         Edit prices here and click Save — changes take effect immediately on the live site.
       </p>
 
@@ -653,7 +653,7 @@ function PricingTab() {
           <div key={dept}>
             <div className="flex items-center gap-3 mb-4">
               <span className="w-4 h-px" style={{ background: color }} />
-              <p style={{ fontFamily: MONO, color, fontSize: "0.5625rem", letterSpacing: "0.25em", textTransform: "uppercase" }}>
+              <p style={{ fontFamily: MONO, color, fontSize: "0.75rem", letterSpacing: "0.2em", textTransform: "uppercase" }}>
                 {deptMeta?.label ?? dept}
               </p>
             </div>
@@ -672,7 +672,7 @@ function PricingTab() {
                   {row.highlight && (
                     <div
                       className="absolute top-0 right-0 px-2.5 py-1"
-                      style={{ fontFamily: MONO, fontSize: "0.5rem", letterSpacing: "0.2em", textTransform: "uppercase", background: color, color: "#0e1822" }}
+                      style={{ fontFamily: MONO, fontSize: "0.625rem", letterSpacing: "0.15em", textTransform: "uppercase", background: color, color: "#0e1822" }}
                     >
                       Recommended
                     </div>
@@ -680,7 +680,7 @@ function PricingTab() {
 
                   {/* Tier name */}
                   <div>
-                    <label style={{ fontFamily: MONO, color: "rgba(255,255,255,0.3)", fontSize: "0.5rem", letterSpacing: "0.2em", textTransform: "uppercase" }}>
+                    <label style={{ fontFamily: MONO, color: "rgba(255,255,255,0.7)", fontSize: "0.625rem", letterSpacing: "0.15em", textTransform: "uppercase" }}>
                       Tier name
                     </label>
                     <input
@@ -698,7 +698,7 @@ function PricingTab() {
 
                   {/* Price */}
                   <div>
-                    <label style={{ fontFamily: MONO, color: "rgba(255,255,255,0.3)", fontSize: "0.5rem", letterSpacing: "0.2em", textTransform: "uppercase" }}>
+                    <label style={{ fontFamily: MONO, color: "rgba(255,255,255,0.7)", fontSize: "0.625rem", letterSpacing: "0.15em", textTransform: "uppercase" }}>
                       Price (£)
                     </label>
                     <div className="flex items-center gap-3 mt-1">
@@ -722,7 +722,7 @@ function PricingTab() {
                         onChange={e => updateRow(row.id, "price_type", e.target.value)}
                         style={{
                           fontFamily: MONO, fontSize: "0.5625rem", letterSpacing: "0.1em",
-                          color: "rgba(255,255,255,0.5)", background: "#1a2a3a",
+                          color: "rgba(255,255,255,0.85)", background: "#1a2a3a",
                           border: "1px solid rgba(255,255,255,0.12)", padding: "4px 8px", outline: "none",
                         }}
                       >
@@ -735,12 +735,12 @@ function PricingTab() {
                   {/* Features */}
                   <div>
                     <div className="flex items-center justify-between mb-2">
-                      <label style={{ fontFamily: MONO, color: "rgba(255,255,255,0.3)", fontSize: "0.5rem", letterSpacing: "0.2em", textTransform: "uppercase" }}>
+                      <label style={{ fontFamily: MONO, color: "rgba(255,255,255,0.7)", fontSize: "0.625rem", letterSpacing: "0.15em", textTransform: "uppercase" }}>
                         Features ({row.features.length})
                       </label>
                       <button
                         onClick={() => setEditingFeatures(editingFeatures === row.id ? null : row.id)}
-                        style={{ fontFamily: MONO, fontSize: "0.5rem", letterSpacing: "0.15em", color, textTransform: "uppercase" }}
+                        style={{ fontFamily: MONO, fontSize: "0.625rem", letterSpacing: "0.15em", color, textTransform: "uppercase" }}
                       >
                         {editingFeatures === row.id ? "Done" : "Edit"}
                       </button>
@@ -758,7 +758,7 @@ function PricingTab() {
                                 updateRow(row.id, "features", newF);
                               }}
                               style={{
-                                fontFamily: BODY, fontSize: "0.75rem", color: "rgba(255,255,255,0.7)",
+                                fontFamily: BODY, fontSize: "0.8125rem", color: "rgba(255,255,255,0.9)",
                                 background: "transparent", border: "1px solid rgba(255,255,255,0.08)",
                                 padding: "3px 8px", outline: "none", flex: 1,
                               }}
@@ -777,7 +777,7 @@ function PricingTab() {
                         <button
                           onClick={() => updateRow(row.id, "features", [...row.features, ""])}
                           className="flex items-center gap-1 mt-1 transition-opacity hover:opacity-100 opacity-50"
-                          style={{ fontFamily: MONO, fontSize: "0.5rem", letterSpacing: "0.15em", color, textTransform: "uppercase" }}
+                          style={{ fontFamily: MONO, fontSize: "0.625rem", letterSpacing: "0.15em", color, textTransform: "uppercase" }}
                         >
                           <Plus size={10} /> Add feature
                         </button>
@@ -787,11 +787,11 @@ function PricingTab() {
                         {row.features.slice(0, 4).map((f, fi) => (
                           <li key={fi} className="flex items-start gap-2">
                             <Check size={10} style={{ color, marginTop: "3px", flexShrink: 0 }} />
-                            <span style={{ fontFamily: BODY, color: "rgba(255,255,255,0.5)", fontSize: "0.75rem" }}>{f}</span>
+                            <span style={{ fontFamily: BODY, color: "rgba(255,255,255,0.85)", fontSize: "0.8125rem" }}>{f}</span>
                           </li>
                         ))}
                         {row.features.length > 4 && (
-                          <li style={{ fontFamily: MONO, color: "rgba(255,255,255,0.25)", fontSize: "0.625rem", letterSpacing: "0.1em" }}>
+                          <li style={{ fontFamily: MONO, color: "rgba(255,255,255,0.55)", fontSize: "0.6875rem", letterSpacing: "0.1em" }}>
                             +{row.features.length - 4} more
                           </li>
                         )}
@@ -801,7 +801,7 @@ function PricingTab() {
 
                   {/* Highlight toggle */}
                   <div className="flex items-center justify-between pt-2" style={{ borderTop: `1px solid ${BORDER}` }}>
-                    <span style={{ fontFamily: MONO, color: "rgba(255,255,255,0.3)", fontSize: "0.5rem", letterSpacing: "0.15em", textTransform: "uppercase" }}>
+                    <span style={{ fontFamily: MONO, color: "rgba(255,255,255,0.7)", fontSize: "0.625rem", letterSpacing: "0.15em", textTransform: "uppercase" }}>
                       Recommended tier
                     </span>
                     <button
@@ -832,7 +832,7 @@ function PricingTab() {
                       disabled={saving === row.id}
                       className="w-full flex items-center justify-center gap-2 py-2.5 transition-all"
                       style={{
-                        fontFamily: MONO, fontSize: "0.5625rem", letterSpacing: "0.2em", textTransform: "uppercase",
+                        fontFamily: MONO, fontSize: "0.6875rem", letterSpacing: "0.15em", textTransform: "uppercase",
                         background: color, color: "#0e1822", opacity: saving === row.id ? 0.6 : 1,
                       }}
                     >
@@ -881,10 +881,10 @@ function TabTrigger({
       className="flex items-center gap-2.5 px-5 py-3 transition-all data-[state=active]:text-[#00d4e8]"
       style={{
         fontFamily: MONO,
-        fontSize: "0.5625rem",
-        letterSpacing: "0.2em",
+        fontSize: "0.75rem",
+        letterSpacing: "0.15em",
         textTransform: "uppercase",
-        color: "rgba(255,255,255,0.45)",
+        color: "rgba(255,255,255,0.6)",
         borderBottom: "2px solid transparent",
         background: "transparent",
         cursor: "pointer",
@@ -914,11 +914,11 @@ function Dashboard() {
         style={{ borderBottom: `1px solid ${BORDER}`, background: CARD }}
       >
         <div className="flex items-center gap-4">
-          <span style={{ fontFamily: MONO, color: "rgba(255,255,255,0.3)", fontSize: "0.5rem", letterSpacing: "0.3em", textTransform: "uppercase" }}>
+          <span style={{ fontFamily: MONO, color: "rgba(255,255,255,0.65)", fontSize: "0.625rem", letterSpacing: "0.25em", textTransform: "uppercase" }}>
             Web Balance
           </span>
-          <span style={{ color: BORDER }}>·</span>
-          <span style={{ fontFamily: MONO, color: TEAL, fontSize: "0.5rem", letterSpacing: "0.3em", textTransform: "uppercase" }}>
+          <span style={{ color: "rgba(255,255,255,0.3)" }}>·</span>
+          <span style={{ fontFamily: MONO, color: TEAL, fontSize: "0.625rem", letterSpacing: "0.25em", textTransform: "uppercase" }}>
             Admin
           </span>
         </div>
@@ -926,8 +926,8 @@ function Dashboard() {
           onClick={signOut}
           className="flex items-center gap-2 px-4 py-2 transition-all"
           style={{
-            fontFamily: MONO, fontSize: "0.5rem", letterSpacing: "0.2em", textTransform: "uppercase",
-            color: "rgba(255,255,255,0.4)", border: `1px solid ${BORDER}`, background: "transparent",
+            fontFamily: MONO, fontSize: "0.625rem", letterSpacing: "0.15em", textTransform: "uppercase",
+            color: "rgba(255,255,255,0.65)", border: `1px solid ${BORDER}`, background: "transparent",
           }}
           onMouseEnter={e => { e.currentTarget.style.color = "#fff"; e.currentTarget.style.borderColor = "rgba(255,255,255,0.25)"; }}
           onMouseLeave={e => { e.currentTarget.style.color = "rgba(255,255,255,0.4)"; e.currentTarget.style.borderColor = BORDER; }}
