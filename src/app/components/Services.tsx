@@ -1,8 +1,9 @@
-import { useRef, useState, useEffect } from "react";
 import { createPortal } from "react-dom";
 import { motion, useInView, AnimatePresence } from "motion/react";
 import { ArrowRight, X, Plus } from "lucide-react";
 import { Link } from "react-router";
+import { useEffect, useState, useRef } from "react";
+import { useIsMobile } from "../hooks/useIsMobile";
 
 const CYAN = "#00d4e8";
 const CYAN_RGB = "0, 212, 232";
@@ -266,36 +267,11 @@ function ServiceItem({
 }) {
   const ref = useRef(null);
   const inView = useInView(ref, { once: true, margin: "-5%" });
+  const isMobile = useIsMobile();
 
-  return (
-    <motion.div
-      ref={ref}
-      initial={{ opacity: 0, y: 30 }}
-      animate={inView ? { opacity: 1, y: 0 } : {}}
-      transition={{ duration: 0.7, delay: index * 0.1 }}
-      onClick={onOpen}
-      className="grid grid-cols-1 md:grid-cols-12 gap-6 py-10 cursor-pointer group transition-all duration-300 relative"
-      style={{ borderLeft: "2px solid transparent" }}
-      onMouseEnter={(e) => {
-        e.currentTarget.style.borderLeftColor = CYAN;
-        e.currentTarget.style.backgroundColor = `rgba(${CYAN_RGB}, 0.04)`;
-        e.currentTarget.style.paddingLeft = "1.5rem";
-        const h3 = e.currentTarget.querySelector("h3");
-        if (h3) (h3 as HTMLElement).style.color = CYAN;
-        const num = e.currentTarget.querySelector("[data-num]");
-        if (num) (num as HTMLElement).style.color = CYAN;
-      }}
-      onMouseLeave={(e) => {
-        e.currentTarget.style.borderLeftColor = "transparent";
-        e.currentTarget.style.backgroundColor = "transparent";
-        e.currentTarget.style.paddingLeft = "";
-        const h3 = e.currentTarget.querySelector("h3");
-        if (h3) (h3 as HTMLElement).style.color = "white";
-        const num = e.currentTarget.querySelector("[data-num]");
-        if (num) (num as HTMLElement).style.color = "rgba(255,255,255,0.2)";
-      }}
-    >
-      {/* Number */}
+  // Shared inner content — identical markup for both paths
+  const inner = (
+    <>
       <div className="md:col-span-1 flex items-start">
         <span
           data-num
@@ -305,8 +281,6 @@ function ServiceItem({
           {service.number}
         </span>
       </div>
-
-      {/* Title + learn more */}
       <div className="md:col-span-4 flex flex-col justify-center gap-3">
         <h3
           style={{ fontFamily: "'Montserrat', sans-serif", color: "white", transition: "color 0.3s" }}
@@ -315,39 +289,71 @@ function ServiceItem({
           {service.title}
         </h3>
         <div className="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-          <span
-            style={{ fontFamily: "'DM Mono', monospace", color: CYAN }}
-            className="text-[10px] tracking-[0.2em] uppercase"
-          >
+          <span style={{ fontFamily: "'DM Mono', monospace", color: CYAN }} className="text-[10px] tracking-[0.2em] uppercase">
             Learn more
           </span>
           <Plus size={11} style={{ color: CYAN }} />
         </div>
       </div>
-
-      {/* Description */}
       <div className="md:col-span-4 flex items-center">
-        <p
-          style={{ fontFamily: "'Inter', sans-serif" }}
-          className="text-white/75 text-sm leading-relaxed"
-        >
+        <p style={{ fontFamily: "'Inter', sans-serif" }} className="text-white/75 text-sm leading-relaxed">
           {service.description}
         </p>
       </div>
-
-      {/* Deliverables */}
       <div className="md:col-span-3 flex flex-col gap-2 justify-center">
         {service.deliverables.map((d) => (
-          <span
-            key={d}
-            style={{ fontFamily: "'DM Mono', monospace" }}
-            className="text-white/60 text-[10px] tracking-[0.2em] uppercase flex items-center gap-2"
-          >
+          <span key={d} style={{ fontFamily: "'DM Mono', monospace" }} className="text-white/60 text-[10px] tracking-[0.2em] uppercase flex items-center gap-2">
             <span className="w-3 h-px bg-[#00d4e8]/50" />
             {d}
           </span>
         ))}
       </div>
+    </>
+  );
+
+  const sharedClass = "grid grid-cols-1 md:grid-cols-12 gap-6 py-10 cursor-pointer group transition-all duration-300 relative";
+  const sharedStyle = { borderLeft: "2px solid transparent" };
+  const hoverHandlers = {
+    onMouseEnter: (e: React.MouseEvent<HTMLElement>) => {
+      e.currentTarget.style.borderLeftColor = CYAN;
+      e.currentTarget.style.backgroundColor = `rgba(${CYAN_RGB}, 0.04)`;
+      e.currentTarget.style.paddingLeft = "1.5rem";
+      const h3 = e.currentTarget.querySelector("h3");
+      if (h3) (h3 as HTMLElement).style.color = CYAN;
+      const num = e.currentTarget.querySelector("[data-num]");
+      if (num) (num as HTMLElement).style.color = CYAN;
+    },
+    onMouseLeave: (e: React.MouseEvent<HTMLElement>) => {
+      e.currentTarget.style.borderLeftColor = "transparent";
+      e.currentTarget.style.backgroundColor = "transparent";
+      e.currentTarget.style.paddingLeft = "";
+      const h3 = e.currentTarget.querySelector("h3");
+      if (h3) (h3 as HTMLElement).style.color = "white";
+      const num = e.currentTarget.querySelector("[data-num]");
+      if (num) (num as HTMLElement).style.color = "rgba(255,255,255,0.2)";
+    },
+  };
+
+  if (isMobile) {
+    return (
+      <div ref={ref} onClick={onOpen} className={sharedClass} style={sharedStyle} {...hoverHandlers}>
+        {inner}
+      </div>
+    );
+  }
+
+  return (
+    <motion.div
+      ref={ref}
+      initial={{ opacity: 0, y: 30 }}
+      animate={inView ? { opacity: 1, y: 0 } : {}}
+      transition={{ duration: 0.7, delay: index * 0.1 }}
+      onClick={onOpen}
+      className={sharedClass}
+      style={sharedStyle}
+      {...hoverHandlers}
+    >
+      {inner}
     </motion.div>
   );
 }
@@ -356,6 +362,7 @@ export function Services() {
   const ref = useRef(null);
   const inView = useInView(ref, { once: true, margin: "-10%" });
   const [activeService, setActiveService] = useState<Service | null>(null);
+  const isMobile = useIsMobile();
 
   useEffect(() => {
     if (activeService) {
@@ -378,7 +385,7 @@ export function Services() {
           {/* Header */}
           <div ref={ref} className="mb-10 md:mb-20">
             <motion.p
-              initial={{ opacity: 0, y: 10 }}
+              initial={isMobile ? false : { opacity: 0, y: 10 }}
               animate={inView ? { opacity: 1, y: 0 } : {}}
               transition={{ duration: 0.6 }}
               style={{ fontFamily: "'DM Mono', monospace" }}
@@ -388,7 +395,7 @@ export function Services() {
               What We Do
             </motion.p>
             <motion.h2
-              initial={{ opacity: 0, y: 20 }}
+              initial={isMobile ? false : { opacity: 0, y: 20 }}
               animate={inView ? { opacity: 1, y: 0 } : {}}
               transition={{ duration: 0.8, delay: 0.1 }}
               style={{ fontFamily: "'Montserrat', sans-serif" }}

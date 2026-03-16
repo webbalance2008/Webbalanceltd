@@ -50,11 +50,14 @@ function PageSkeleton() {
 }
 
 export function Root() {
-  const [preloaderDone, setPreloaderDone] = useState(false);
+  // On mobile, skip the preloader entirely — it blocks FCP for ~2.9 s
+  const [preloaderDone, setPreloaderDone] = useState(
+    () => typeof window !== "undefined" && window.innerWidth < 768
+  );
   const isDesktop = useIsDesktop();
 
   return (
-    <MotionConfig reducedMotion="never">
+    <MotionConfig reducedMotion={isDesktop ? "never" : "always"}>
       <PreloaderContext.Provider value={preloaderDone}>
         {/* ── Global resource hints ────────────────────────────────────── */}
         <Helmet>
@@ -73,7 +76,7 @@ export function Root() {
         <WebSiteSchema />
 
         <div className="bg-[#16212e] min-h-screen">
-          {!preloaderDone && (
+          {!preloaderDone && isDesktop && (
             <Preloader onComplete={() => setPreloaderDone(true)} />
           )}
           <ScrollToTop />

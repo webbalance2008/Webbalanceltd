@@ -9,6 +9,7 @@ import {
 } from "lucide-react";
 import { sendEmail } from "../utils/sendEmail";
 import { SEOHead } from "../components/SEOHead";
+import { useIsMobile } from "../hooks/useIsMobile";
 
 const ACCENT      = "#3dd68c";
 const ACCENT_RGB  = "61, 214, 140";
@@ -309,6 +310,7 @@ function AddOnCard({ addon, isActive, onClick, noneActive }: { addon: AddOn; isA
 // ─── Main Component ───────────────────────────────────────────────────────────
 
 export function SeoStartPage() {
+  const isMobile = useIsMobile();
   const [step, setStep]     = useState(1);
   const [dir, setDir]       = useState(1);
   const [data, setData]     = useState<SEOFormData>(initialData);
@@ -352,7 +354,7 @@ export function SeoStartPage() {
   if (submitted) {
     return (
       <div className="min-h-screen flex items-center justify-center px-6" style={{ backgroundColor: DEPT_BG }}>
-        <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="text-center max-w-lg">
+        <motion.div initial={isMobile ? false : { opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="text-center max-w-lg">
           <div className="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-8" style={{ backgroundColor: `rgba(${ACCENT_RGB},0.15)`, border: `1px solid ${ACCENT}` }}>
             <Check size={28} style={{ color: ACCENT }} />
           </div>

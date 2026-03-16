@@ -3,9 +3,11 @@ import { motion, AnimatePresence } from "motion/react";
 import { ChevronLeft, ChevronRight, ArrowRight } from "lucide-react";
 import { Link } from "react-router";
 import { articles } from "../data/articles";
+import { useIsMobile } from "../hooks/useIsMobile";
 
 export function InsightsSection() {
   const [currentPage, setCurrentPage] = useState(0);
+  const isMobile = useIsMobile();
   const articlesPerPage = 3;
   const totalPages = Math.ceil(articles.length / articlesPerPage);
 
@@ -56,8 +58,8 @@ export function InsightsSection() {
         <div className="flex justify-between items-end mb-10 md:mb-16">
           <div>
             <motion.p
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
+              initial={isMobile ? false : { opacity: 0, y: 20 }}
+              whileInView={isMobile ? undefined : { opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.6 }}
               style={{ fontFamily: "'DM Mono', monospace" }}
@@ -66,8 +68,8 @@ export function InsightsSection() {
               Latest Thinking
             </motion.p>
             <motion.h2
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
+              initial={isMobile ? false : { opacity: 0, y: 20 }}
+              whileInView={isMobile ? undefined : { opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.6, delay: 0.1 }}
               style={{ fontFamily: "'Montserrat', sans-serif" }}
@@ -76,8 +78,8 @@ export function InsightsSection() {
               Insights
             </motion.h2>
             <motion.p
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
+              initial={isMobile ? false : { opacity: 0, y: 20 }}
+              whileInView={isMobile ? undefined : { opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.6, delay: 0.2 }}
               style={{ fontFamily: "'Inter', sans-serif" }}
@@ -89,8 +91,8 @@ export function InsightsSection() {
 
           {/* Navigation arrows */}
           <motion.div
-            initial={{ opacity: 0, x: 20 }}
-            whileInView={{ opacity: 1, x: 0 }}
+            initial={isMobile ? false : { opacity: 0, x: 20 }}
+            whileInView={isMobile ? undefined : { opacity: 1, x: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.6, delay: 0.3 }}
             className="hidden md:flex items-center gap-3"
@@ -127,7 +129,7 @@ export function InsightsSection() {
           <AnimatePresence mode="wait">
             <motion.div
               key={currentPage}
-              initial={{ opacity: 0, x: 20 }}
+              initial={isMobile ? false : { opacity: 0, x: 20 }}
               animate={{ opacity: 1, x: 0 }}
               exit={{ opacity: 0, x: -20 }}
               transition={{ duration: 0.5 }}
@@ -136,7 +138,7 @@ export function InsightsSection() {
               {currentArticles.map((article, index) => (
                 <motion.div
                   key={article.id}
-                  initial={{ opacity: 0, y: 30 }}
+                  initial={isMobile ? false : { opacity: 0, y: 30 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.5, delay: index * 0.1 }}
                   className={index >= 2 ? "hidden lg:block" : index >= 1 ? "hidden md:block" : ""}
@@ -225,8 +227,8 @@ export function InsightsSection() {
 
         {/* Pagination dots */}
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
+          initial={isMobile ? false : { opacity: 0, y: 20 }}
+          whileInView={isMobile ? undefined : { opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.6, delay: 0.4 }}
           className="flex items-center justify-center gap-2 mt-8"
@@ -275,8 +277,8 @@ export function InsightsSection() {
 
         {/* View all CTA */}
         <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
+          initial={isMobile ? false : { opacity: 0, y: 30 }}
+          whileInView={isMobile ? undefined : { opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.6, delay: 0.5 }}
           className="text-center mt-10"

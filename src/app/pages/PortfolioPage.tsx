@@ -6,6 +6,7 @@ import { ArrowUpRight } from "lucide-react";
 import { useNavigate } from "react-router";
 import { SEOHead } from "../components/SEOHead";
 import { DepartmentHero } from "../components/DepartmentHero";
+import { useIsMobile } from "../hooks/useIsMobile";
 
 // Web Design department colour
 const CYAN     = "#00d4e8";
@@ -19,6 +20,7 @@ export function PortfolioPage() {
   const ref = useRef(null);
   const inView = useInView(ref, { once: true });
   const navigate = useNavigate();
+  const isMobile = useIsMobile();
 
   const filtered =
     activeCategory === "All"
@@ -89,8 +91,8 @@ export function PortfolioPage() {
             {/* Count label */}
             <motion.p
               key={activeCategory}
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
+              initial={isMobile ? false : { opacity: 0 }}
+              whileInView={isMobile ? undefined : { opacity: 1 }}
               style={{ fontFamily: "'DM Mono', monospace", color: CYAN }}
               className="text-[10px] tracking-[0.3em] uppercase flex items-center gap-3 mb-10"
             >
@@ -101,8 +103,8 @@ export function PortfolioPage() {
             <AnimatePresence mode="wait">
               <motion.div
                 key={activeCategory}
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
+                initial={isMobile ? false : { opacity: 0, y: 10 }}
+                whileInView={isMobile ? undefined : { opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -10 }}
                 transition={{ duration: 0.25 }}
                 className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"
@@ -111,8 +113,8 @@ export function PortfolioPage() {
                   <motion.div
                     key={project.id}
                     layout
-                    initial={{ opacity: 0, y: 30 }}
-                    animate={inView ? { opacity: 1, y: 0 } : {}}
+                    initial={isMobile ? false : { opacity: 0, y: 30 }}
+                    whileInView={isMobile ? undefined : { opacity: 1, y: 0 }}
                     exit={{ opacity: 0 }}
                     transition={{ duration: 0.5, delay: Math.min(i * 0.06, 0.45) }}
                     className="relative overflow-hidden group cursor-pointer"

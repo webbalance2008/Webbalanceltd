@@ -1,10 +1,12 @@
 import { useRef } from "react";
 import { motion, useInView } from "motion/react";
+import { useIsMobile } from "../hooks/useIsMobile";
 import { ContactRouter } from "./ContactRouter";
 
 export function Contact() {
   const ref = useRef(null);
   const inView = useInView(ref, { once: true, margin: "-10%" });
+  const isMobile = useIsMobile();
 
   return (
     <section id="contact" className="bg-[#16212e] py-12 md:py-20 border-t border-white/5">
@@ -13,7 +15,7 @@ export function Contact() {
           {/* Left */}
           <div className="flex flex-col justify-center">
             <motion.p
-              initial={{ opacity: 0, y: 10 }}
+              initial={isMobile ? false : { opacity: 0, y: 10 }}
               animate={inView ? { opacity: 1, y: 0 } : {}}
               transition={{ duration: 0.6 }}
               style={{ fontFamily: "'DM Mono', monospace" }}
@@ -24,7 +26,7 @@ export function Contact() {
             </motion.p>
 
             <motion.h2
-              initial={{ opacity: 0, y: 30 }}
+              initial={isMobile ? false : { opacity: 0, y: 30 }}
               animate={inView ? { opacity: 1, y: 0 } : {}}
               style={{ fontFamily: "'Montserrat', sans-serif" }}
               className="text-white text-4xl md:text-5xl leading-[1.15] mb-8 font-light"
@@ -33,7 +35,7 @@ export function Contact() {
             </motion.h2>
 
             <motion.p
-              initial={{ opacity: 0 }}
+              initial={isMobile ? false : { opacity: 0 }}
               animate={inView ? { opacity: 1 } : {}}
               transition={{ duration: 0.8, delay: 0.2 }}
               style={{ fontFamily: "'Inter', sans-serif" }}
@@ -46,7 +48,7 @@ export function Contact() {
 
           {/* Right — Smart Router */}
           <motion.div
-            initial={{ opacity: 0, y: 40 }}
+            initial={isMobile ? false : { opacity: 0, y: 40 }}
             animate={inView ? { opacity: 1, y: 0 } : {}}
             transition={{ duration: 0.9, delay: 0.2 }}
             className="flex flex-col"

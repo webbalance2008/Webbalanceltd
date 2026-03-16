@@ -2,6 +2,7 @@ import { motion, AnimatePresence } from "motion/react";
 import { Smartphone, Palette, TrendingUp, Server, Megaphone, HeadphonesIcon, ChevronRight } from "lucide-react";
 import { Link } from "react-router";
 import { useState } from "react";
+import { useIsMobile } from "../hooks/useIsMobile";
 
 const services = [
   {
@@ -62,6 +63,7 @@ const services = [
 
 export function CoreServices() {
   const [expandedMobile, setExpandedMobile] = useState<string | null>(null);
+  const isMobile = useIsMobile();
 
   const toggleMobile = (title: string) => {
     setExpandedMobile(expandedMobile === title ? null : title);
@@ -90,8 +92,8 @@ export function CoreServices() {
         {/* Section header */}
         <div className="text-left mb-10 md:mb-20">
           <motion.p
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
+            initial={isMobile ? false : { opacity: 0, y: 20 }}
+            whileInView={isMobile ? undefined : { opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.6 }}
             style={{ fontFamily: "'DM Mono', monospace" }}
@@ -100,8 +102,8 @@ export function CoreServices() {
             What We Do
           </motion.p>
           <motion.h2
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
+            initial={isMobile ? false : { opacity: 0, y: 20 }}
+            whileInView={isMobile ? undefined : { opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.6, delay: 0.1 }}
             style={{ fontFamily: "'Montserrat', sans-serif" }}
@@ -110,8 +112,8 @@ export function CoreServices() {
             Core Services
           </motion.h2>
           <motion.p
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
+            initial={isMobile ? false : { opacity: 0, y: 20 }}
+            whileInView={isMobile ? undefined : { opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.6, delay: 0.2 }}
             style={{ fontFamily: "'Inter', sans-serif" }}
@@ -128,8 +130,8 @@ export function CoreServices() {
             return (
               <motion.div
                 key={service.title}
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
+                initial={isMobile ? false : { opacity: 0, y: 30 }}
+                whileInView={isMobile ? undefined : { opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.5, delay: index * 0.1 }}
               >
@@ -215,8 +217,8 @@ export function CoreServices() {
             return (
               <motion.div
                 key={service.title}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
+                initial={isMobile ? false : { opacity: 0, y: 20 }}
+                whileInView={isMobile ? undefined : { opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.4, delay: index * 0.05 }}
               >
@@ -300,7 +302,7 @@ export function CoreServices() {
 
         {/* CTA */}
         <motion.div
-          initial={{ opacity: 0, y: 30 }}
+          initial={isMobile ? false : { opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.6, delay: 0.6 }}

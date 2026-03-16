@@ -4,6 +4,7 @@ import { ArrowRight, Check } from "lucide-react";
 import { Link } from "react-router";
 import type { LucideIcon } from "lucide-react";
 import type { ScreenLayout } from "./AppTypePage";
+import { useIsMobile } from "../hooks/useIsMobile";
 
 /* ── Teal-cyan palette (Web Design department) ────────────── */
 const ACC       = "#5ec4d4";
@@ -93,15 +94,16 @@ function SectionLabel({ children }: { children: React.ReactNode }) {
 function OverviewSection({ overview, overviewDetail }: { overview: string; overviewDetail: string }) {
   const ref = useRef(null);
   const inView = useInView(ref, { once: true, margin: "-5%" });
+  const isMobile = useIsMobile();
   return (
     <section className="py-24" style={{ borderBottom: `1px solid ${ACC_08}` }}>
       <div ref={ref} className="max-w-[1440px] mx-auto px-8 md:px-16 grid grid-cols-1 md:grid-cols-12 gap-12 md:gap-20">
         <div className="md:col-span-5">
-          <motion.div initial={{ opacity: 0, y: 10 }} animate={inView ? { opacity: 1, y: 0 } : {}} className="mb-6"><SectionLabel>What It Is</SectionLabel></motion.div>
-          <motion.p initial={{ opacity: 0, y: 20 }} animate={inView ? { opacity: 1, y: 0 } : {}} transition={{ delay: 0.1 }} style={{ fontFamily: "'Montserrat', sans-serif" }} className="text-white/85 text-2xl md:text-3xl leading-relaxed font-light">{overview}</motion.p>
+          <motion.div initial={isMobile ? false : { opacity: 0, y: 10 }} animate={inView ? { opacity: 1, y: 0 } : {}} className="mb-6"><SectionLabel>What It Is</SectionLabel></motion.div>
+          <motion.p initial={isMobile ? false : { opacity: 0, y: 20 }} animate={inView ? { opacity: 1, y: 0 } : {}} transition={{ delay: 0.1 }} style={{ fontFamily: "'Montserrat', sans-serif" }} className="text-white/85 text-2xl md:text-3xl leading-relaxed font-light">{overview}</motion.p>
         </div>
         <div className="md:col-span-7 flex items-center">
-          <motion.p initial={{ opacity: 0, y: 20 }} animate={inView ? { opacity: 1, y: 0 } : {}} transition={{ delay: 0.2 }} style={{ fontFamily: "'Inter', sans-serif" }} className="text-white/45 text-base leading-[1.9]">{overviewDetail}</motion.p>
+          <motion.p initial={isMobile ? false : { opacity: 0, y: 20 }} animate={inView ? { opacity: 1, y: 0 } : {}} transition={{ delay: 0.2 }} style={{ fontFamily: "'Inter', sans-serif" }} className="text-white/45 text-base leading-[1.9]">{overviewDetail}</motion.p>
         </div>
       </div>
     </section>
@@ -346,16 +348,17 @@ function ScreenWireframe({ layout }: { layout: ScreenLayout }) {
 function ConceptsSection({ concepts }: { concepts: WebsiteConcept[] }) {
   const ref = useRef(null);
   const inView = useInView(ref, { once: true, margin: "-5%" });
+  const isMobile = useIsMobile();
   return (
     <section className="py-24" style={{ borderBottom: `1px solid ${ACC_08}` }}>
       <div ref={ref} className="max-w-[1440px] mx-auto px-8 md:px-16">
-        <motion.div initial={{ opacity: 0, y: 10 }} animate={inView ? { opacity: 1, y: 0 } : {}} className="mb-4"><SectionLabel>What You Could Build</SectionLabel></motion.div>
-        <motion.h2 initial={{ opacity: 0, y: 20 }} animate={inView ? { opacity: 1, y: 0 } : {}} transition={{ delay: 0.1 }} style={{ fontFamily: "'Montserrat', sans-serif" }} className="text-white text-3xl md:text-4xl mb-14 max-w-2xl leading-tight font-light">
+        <motion.div initial={isMobile ? false : { opacity: 0, y: 10 }} animate={inView ? { opacity: 1, y: 0 } : {}} className="mb-4"><SectionLabel>What You Could Build</SectionLabel></motion.div>
+        <motion.h2 initial={isMobile ? false : { opacity: 0, y: 20 }} animate={inView ? { opacity: 1, y: 0 } : {}} transition={{ delay: 0.1 }} style={{ fontFamily: "'Montserrat', sans-serif" }} className="text-white text-3xl md:text-4xl mb-14 max-w-2xl leading-tight font-light">
           Website Ideas & Inspiration
         </motion.h2>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {concepts.map((concept, i) => (
-            <motion.div key={concept.title} initial={{ opacity: 0, y: 30 }} animate={inView ? { opacity: 1, y: 0 } : {}} transition={{ delay: 0.15 + i * 0.1 }} className="group">
+            <motion.div key={concept.title} initial={isMobile ? false : { opacity: 0, y: 30 }} animate={inView ? { opacity: 1, y: 0 } : {}} transition={{ delay: 0.15 + i * 0.1 }} className="group">
               <div className="overflow-hidden mb-5 border transition-all duration-400" style={{ borderColor: ACC_10 }}
                 onMouseEnter={e => { (e.currentTarget as HTMLElement).style.borderColor = ACC_35; }}
                 onMouseLeave={e => { (e.currentTarget as HTMLElement).style.borderColor = ACC_10; }}>
@@ -377,15 +380,16 @@ function ConceptsSection({ concepts }: { concepts: WebsiteConcept[] }) {
 function FeaturesSection({ features }: { features: WebsiteTypeFeature[] }) {
   const ref = useRef(null);
   const inView = useInView(ref, { once: true, margin: "-5%" });
+  const isMobile = useIsMobile();
   return (
     <section className="py-24" style={{ borderBottom: `1px solid ${ACC_08}` }}>
       <div ref={ref} className="max-w-[1440px] mx-auto px-8 md:px-16">
-        <motion.div initial={{ opacity: 0, y: 10 }} animate={inView ? { opacity: 1, y: 0 } : {}} className="mb-12"><SectionLabel>Core Capabilities</SectionLabel></motion.div>
+        <motion.div initial={isMobile ? false : { opacity: 0, y: 10 }} animate={inView ? { opacity: 1, y: 0 } : {}} className="mb-12"><SectionLabel>Core Capabilities</SectionLabel></motion.div>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {features.map((f, i) => {
             const Icon = f.icon;
             return (
-              <motion.div key={f.title} initial={{ opacity: 0, y: 30 }} animate={inView ? { opacity: 1, y: 0 } : {}} transition={{ delay: i * 0.07 }} className="group">
+              <motion.div key={f.title} initial={isMobile ? false : { opacity: 0, y: 30 }} animate={inView ? { opacity: 1, y: 0 } : {}} transition={{ delay: i * 0.07 }} className="group">
                 <div className="mb-5 inline-flex items-center justify-center w-11 h-11 border transition-colors duration-300" style={{ borderColor: ACC_20 }}
                   onMouseEnter={e => { (e.currentTarget as HTMLElement).style.borderColor = ACC_50; }}
                   onMouseLeave={e => { (e.currentTarget as HTMLElement).style.borderColor = ACC_20; }}>
@@ -406,16 +410,17 @@ function FeaturesSection({ features }: { features: WebsiteTypeFeature[] }) {
 function IndustriesSection({ industries }: { industries: WebsiteTypeIndustry[] }) {
   const ref = useRef(null);
   const inView = useInView(ref, { once: true, margin: "-5%" });
+  const isMobile = useIsMobile();
   return (
     <section className="py-24" style={{ borderBottom: `1px solid ${ACC_08}` }}>
       <div ref={ref} className="max-w-[1440px] mx-auto px-8 md:px-16">
-        <motion.div initial={{ opacity: 0, y: 10 }} animate={inView ? { opacity: 1, y: 0 } : {}} className="mb-4"><SectionLabel>Who It's For</SectionLabel></motion.div>
-        <motion.h2 initial={{ opacity: 0, y: 20 }} animate={inView ? { opacity: 1, y: 0 } : {}} transition={{ delay: 0.1 }} style={{ fontFamily: "'Montserrat', sans-serif" }} className="text-white text-4xl md:text-5xl mb-12 max-w-2xl leading-tight font-light">
+        <motion.div initial={isMobile ? false : { opacity: 0, y: 10 }} animate={inView ? { opacity: 1, y: 0 } : {}} className="mb-4"><SectionLabel>Who It's For</SectionLabel></motion.div>
+        <motion.h2 initial={isMobile ? false : { opacity: 0, y: 20 }} animate={inView ? { opacity: 1, y: 0 } : {}} transition={{ delay: 0.1 }} style={{ fontFamily: "'Montserrat', sans-serif" }} className="text-white text-4xl md:text-5xl mb-12 max-w-2xl leading-tight font-light">
           Industries We Design For
         </motion.h2>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-px" style={{ backgroundColor: ACC_08 }}>
           {industries.map((ind, i) => (
-            <motion.div key={ind.name} initial={{ opacity: 0, y: 20 }} animate={inView ? { opacity: 1, y: 0 } : {}} transition={{ delay: i * 0.06 }}
+            <motion.div key={ind.name} initial={isMobile ? false : { opacity: 0, y: 20 }} animate={inView ? { opacity: 1, y: 0 } : {}} transition={{ delay: i * 0.06 }}
               className="p-8 group transition-colors duration-300" style={{ backgroundColor: BG_CARD }}
               onMouseEnter={e => { (e.currentTarget as HTMLElement).style.backgroundColor = "#1e3248"; }}
               onMouseLeave={e => { (e.currentTarget as HTMLElement).style.backgroundColor = BG_CARD; }}>
@@ -438,21 +443,22 @@ function IndustriesSection({ industries }: { industries: WebsiteTypeIndustry[] }
 function IncludedSection({ included }: { included: string[] }) {
   const ref = useRef(null);
   const inView = useInView(ref, { once: true, margin: "-5%" });
+  const isMobile = useIsMobile();
   const half = Math.ceil(included.length / 2);
   return (
     <section className="py-24" style={{ borderBottom: `1px solid ${ACC_08}` }}>
       <div ref={ref} className="max-w-[1440px] mx-auto px-8 md:px-16">
         <div className="grid grid-cols-1 md:grid-cols-12 gap-12">
           <div className="md:col-span-4">
-            <motion.div initial={{ opacity: 0, y: 10 }} animate={inView ? { opacity: 1, y: 0 } : {}} className="mb-4"><SectionLabel>Included As Standard</SectionLabel></motion.div>
-            <motion.h2 initial={{ opacity: 0, y: 20 }} animate={inView ? { opacity: 1, y: 0 } : {}} transition={{ delay: 0.1 }} style={{ fontFamily: "'Montserrat', sans-serif" }} className="text-white text-3xl md:text-4xl leading-tight font-light">Everything You Need, Nothing You Don't</motion.h2>
+            <motion.div initial={isMobile ? false : { opacity: 0, y: 10 }} animate={inView ? { opacity: 1, y: 0 } : {}} className="mb-4"><SectionLabel>Included As Standard</SectionLabel></motion.div>
+            <motion.h2 initial={isMobile ? false : { opacity: 0, y: 20 }} animate={inView ? { opacity: 1, y: 0 } : {}} transition={{ delay: 0.1 }} style={{ fontFamily: "'Montserrat', sans-serif" }} className="text-white text-3xl md:text-4xl leading-tight font-light">Everything You Need, Nothing You Don't</motion.h2>
           </div>
           <div className="md:col-span-8">
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-10 gap-y-0">
               {[included.slice(0, half), included.slice(half)].map((col, ci) => (
                 <ul key={ci} className="space-y-0">
                   {col.map((item, i) => (
-                    <motion.li key={item} initial={{ opacity: 0, x: -12 }} animate={inView ? { opacity: 1, x: 0 } : {}} transition={{ delay: (ci * half + i) * 0.05 }} className="flex items-center gap-3 py-3.5" style={{ borderBottom: `1px solid ${ACC_08}` }}>
+                    <motion.li key={item} initial={isMobile ? false : { opacity: 0, x: -12 }} animate={inView ? { opacity: 1, x: 0 } : {}} transition={{ delay: (ci * half + i) * 0.05 }} className="flex items-center gap-3 py-3.5" style={{ borderBottom: `1px solid ${ACC_08}` }}>
                       <Check size={12} strokeWidth={2} style={{ color: ACC }} className="flex-shrink-0" />
                       <span style={{ fontFamily: "'Inter', sans-serif" }} className="text-white/55 text-sm">{item}</span>
                     </motion.li>
@@ -471,13 +477,14 @@ function IncludedSection({ included }: { included: string[] }) {
 function ProcessSection({ process }: { process: WebsiteTypeProcess[] }) {
   const ref = useRef(null);
   const inView = useInView(ref, { once: true, margin: "-5%" });
+  const isMobile = useIsMobile();
   return (
     <section className="py-24" style={{ borderBottom: `1px solid ${ACC_08}` }}>
       <div ref={ref} className="max-w-[1440px] mx-auto px-8 md:px-16">
-        <motion.div initial={{ opacity: 0, y: 10 }} animate={inView ? { opacity: 1, y: 0 } : {}} className="mb-12"><SectionLabel>How We Build It</SectionLabel></motion.div>
+        <motion.div initial={isMobile ? false : { opacity: 0, y: 10 }} animate={inView ? { opacity: 1, y: 0 } : {}} className="mb-12"><SectionLabel>How We Build It</SectionLabel></motion.div>
         <div className="space-y-0">
           {process.map((s, i) => (
-            <motion.div key={s.step} initial={{ opacity: 0, x: -20 }} animate={inView ? { opacity: 1, x: 0 } : {}} transition={{ delay: i * 0.1 }}
+            <motion.div key={s.step} initial={isMobile ? false : { opacity: 0, x: -20 }} animate={inView ? { opacity: 1, x: 0 } : {}} transition={{ delay: i * 0.1 }}
               className="grid grid-cols-12 gap-8 py-10 group transition-colors duration-300"
               style={{ borderBottom: `1px solid ${ACC_08}`, borderLeft: "2px solid transparent" }}
               onMouseEnter={e => {
@@ -515,13 +522,14 @@ function ProcessSection({ process }: { process: WebsiteTypeProcess[] }) {
 function RelatedSection({ related }: { related: WebsiteTypeRelated[] }) {
   const ref = useRef(null);
   const inView = useInView(ref, { once: true, margin: "-5%" });
+  const isMobile = useIsMobile();
   return (
     <section className="py-24" style={{ borderBottom: `1px solid ${ACC_08}` }}>
       <div ref={ref} className="max-w-[1440px] mx-auto px-8 md:px-16">
-        <motion.div initial={{ opacity: 0, y: 10 }} animate={inView ? { opacity: 1, y: 0 } : {}} className="mb-10"><SectionLabel>Also Design With Us</SectionLabel></motion.div>
+        <motion.div initial={isMobile ? false : { opacity: 0, y: 10 }} animate={inView ? { opacity: 1, y: 0 } : {}} className="mb-10"><SectionLabel>Also Design With Us</SectionLabel></motion.div>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           {related.map((r, i) => (
-            <motion.div key={r.path} initial={{ opacity: 0, y: 24 }} animate={inView ? { opacity: 1, y: 0 } : {}} transition={{ delay: i * 0.08 }}>
+            <motion.div key={r.path} initial={isMobile ? false : { opacity: 0, y: 24 }} animate={inView ? { opacity: 1, y: 0 } : {}} transition={{ delay: i * 0.08 }}>
               <Link to={r.path} className="block p-8 h-full group transition-all duration-300" style={{ border: `1px solid ${ACC_10}` }}
                 onMouseEnter={e => { (e.currentTarget as HTMLElement).style.borderColor = ACC_35; (e.currentTarget as HTMLElement).style.backgroundColor = ACC_05; }}
                 onMouseLeave={e => { (e.currentTarget as HTMLElement).style.borderColor = ACC_10; (e.currentTarget as HTMLElement).style.backgroundColor = "transparent"; }}>
@@ -545,12 +553,13 @@ function RelatedSection({ related }: { related: WebsiteTypeRelated[] }) {
 function CtaSection({ title }: { title: string }) {
   const ref = useRef(null);
   const inView = useInView(ref, { once: true, margin: "-5%" });
+  const isMobile = useIsMobile();
   return (
     <section className="py-32">
       <div ref={ref} className="max-w-[1440px] mx-auto px-8 md:px-16 text-center">
-        <motion.p initial={{ opacity: 0, y: 10 }} animate={inView ? { opacity: 1, y: 0 } : {}} style={{ fontFamily: "'DM Mono', monospace", color: ACC }} className="text-[10px] tracking-[0.3em] uppercase mb-6">Ready to start?</motion.p>
-        <motion.h2 initial={{ opacity: 0, y: 30 }} animate={inView ? { opacity: 1, y: 0 } : {}} transition={{ delay: 0.1 }} style={{ fontFamily: "'Montserrat', sans-serif" }} className="text-white text-4xl md:text-6xl mb-10 max-w-3xl mx-auto font-light">{title}</motion.h2>
-        <motion.div initial={{ opacity: 0, y: 20 }} animate={inView ? { opacity: 1, y: 0 } : {}} transition={{ delay: 0.2 }} className="flex flex-wrap items-center justify-center gap-4">
+        <motion.p initial={isMobile ? false : { opacity: 0, y: 10 }} animate={inView ? { opacity: 1, y: 0 } : {}} style={{ fontFamily: "'DM Mono', monospace", color: ACC }} className="text-[10px] tracking-[0.3em] uppercase mb-6">Ready to start?</motion.p>
+        <motion.h2 initial={isMobile ? false : { opacity: 0, y: 30 }} animate={inView ? { opacity: 1, y: 0 } : {}} transition={{ delay: 0.1 }} style={{ fontFamily: "'Montserrat', sans-serif" }} className="text-white text-4xl md:text-6xl mb-10 max-w-3xl mx-auto font-light">{title}</motion.h2>
+        <motion.div initial={isMobile ? false : { opacity: 0, y: 20 }} animate={inView ? { opacity: 1, y: 0 } : {}} transition={{ delay: 0.2 }} className="flex flex-wrap items-center justify-center gap-4">
           <Link to="/web-design/start" className="inline-flex items-center gap-3 px-8 py-4 text-sm tracking-[0.25em] uppercase transition-all duration-300"
             onMouseEnter={e => { (e.currentTarget as HTMLElement).style.backgroundColor = "#7dd8e6"; }}
             onMouseLeave={e => { (e.currentTarget as HTMLElement).style.backgroundColor = ACC; }}>

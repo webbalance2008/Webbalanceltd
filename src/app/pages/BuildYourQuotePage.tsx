@@ -10,6 +10,7 @@ import {
 } from "lucide-react";
 import { SEOHead } from "../components/SEOHead";
 import { DepartmentHero } from "../components/DepartmentHero";
+import { useIsMobile } from "../hooks/useIsMobile";
 
 // ─── Department data ──────────────────────────────────────────────────────────
 const departments = [
@@ -26,6 +27,7 @@ const HERO_IMAGE =
 // ─── Page ─────────────────────────────────────────────────────────────────────
 export function BuildYourQuotePage() {
   const navigate = useNavigate();
+  const isMobile = useIsMobile();
 
   return (
     <>
@@ -58,7 +60,7 @@ export function BuildYourQuotePage() {
 
           <div className="relative z-10 w-full max-w-6xl mx-auto px-8 md:px-14 pt-20 pb-24">
             <motion.div
-              initial={{ opacity: 0, y: 24 }}
+              initial={isMobile ? false : { opacity: 0, y: 24 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.7, delay: 0.5 }}
             >

@@ -4,18 +4,65 @@ import { projectImages } from "../data/projectImages";
 import { motion, useInView } from "motion/react";
 import { ArrowUpRight, ChevronLeft, ChevronRight } from "lucide-react";
 import { useNavigate } from "react-router";
-import { useState, useRef, useCallback } from "react";
+import { useState, useRef, useCallback, useEffect } from "react";
+
+/** True on mobile viewports — evaluated once per component mount */
+function useIsMobile() {
+  const [v, setV] = useState(() => typeof window !== "undefined" && window.innerWidth < 768);
+  useEffect(() => {
+    const mq = window.matchMedia("(max-width: 767px)");
+    const h = (e: MediaQueryListEvent) => setV(e.matches);
+    mq.addEventListener("change", h);
+    return () => mq.removeEventListener("change", h);
+  }, []);
+  return v;
+}
 
 function ProjectCard({ project, index, className = "" }: { project: Project; index: number; className?: string }) {
   const [hovered, setHovered] = useState(false);
   const ref = useRef(null);
   const inView = useInView(ref, { once: true, margin: "-10%" });
+  const isMobile = useIsMobile();
   const navigate = useNavigate();
+
+  // On mobile: plain static card — no Motion, no hover state
+  if (isMobile) {
+    return (
+      <div
+        ref={ref}
+        className={`relative overflow-hidden group cursor-pointer ${className}`}
+        onClick={() => navigate(`/work/${project.slug}`)}
+      >
+        <div className="relative overflow-hidden aspect-[4/3]">
+          <img
+            src={projectImages[project.slug] ?? project.image}
+            alt={project.title}
+            className="w-full h-full object-cover"
+            loading="lazy"
+            decoding="async"
+          />
+          <div className="absolute inset-0" style={{ backgroundColor: project.color, opacity: 0.28 }} />
+          <div className="absolute inset-0 bg-gradient-to-t from-[#0a0a0a]/90 via-[#0a0a0a]/20 to-transparent" />
+          <div className="absolute bottom-0 left-0 right-0 p-6">
+            <p style={{ fontFamily: "'DM Mono', monospace" }} className="text-[#00A9A5] text-[10px] tracking-[0.3em] uppercase mb-1.5">
+              {project.category} — {project.year}
+            </p>
+            <h3 style={{ fontFamily: "'Montserrat', sans-serif" }} className="text-white text-2xl leading-tight font-light">
+              {project.title}
+            </h3>
+            <p style={{ fontFamily: "'Inter', sans-serif" }} className="text-white/50 text-sm tracking-widest uppercase mt-1">
+              {project.subtitle}
+            </p>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <motion.div
       ref={ref}
-      initial={{ opacity: 0, y: 50 }}
+      initial={isMobile ? false : { opacity: 0, y: 50 }}
       animate={inView ? { opacity: 1, y: 0 } : {}}
       transition={{ duration: 0.8, delay: index * 0.1, ease: [0.16, 1, 0.3, 1] }}
       className={`relative overflow-hidden group cursor-pointer ${className}`}
@@ -128,6 +175,7 @@ export function Projects() {
   const inView = useInView(ref, { once: true, margin: "-10%" });
   const navigate = useNavigate();
   const [mobileIndex, setMobileIndex] = useState(0);
+  const isMobile = useIsMobile();
 
   const displayed = projects.slice(0, 6);
 
@@ -157,7 +205,7 @@ export function Projects() {
         <div ref={ref} className="flex items-end justify-between mb-10 md:mb-16 flex-wrap gap-6">
           <div>
             <motion.p
-              initial={{ opacity: 0, y: 10 }}
+              initial={isMobile ? false : { opacity: 0, y: 10 }}
               animate={inView ? { opacity: 1, y: 0 } : {}}
               transition={{ duration: 0.6 }}
               style={{ fontFamily: "'DM Mono', monospace" }}
@@ -167,7 +215,7 @@ export function Projects() {
               Selected Work
             </motion.p>
             <motion.h2
-              initial={{ opacity: 0, y: 20 }}
+              initial={isMobile ? false : { opacity: 0, y: 20 }}
               animate={inView ? { opacity: 1, y: 0 } : {}}
               transition={{ duration: 0.8, delay: 0.1 }}
               style={{ fontFamily: "'Montserrat', sans-serif" }}
@@ -177,7 +225,7 @@ export function Projects() {
             </motion.h2>
           </div>
           <motion.p
-            initial={{ opacity: 0 }}
+            initial={isMobile ? false : { opacity: 0 }}
             animate={inView ? { opacity: 1 } : {}}
             transition={{ duration: 0.8, delay: 0.2 }}
             style={{ fontFamily: "'Inter', sans-serif" }}
@@ -258,7 +306,7 @@ export function Projects() {
 
         {/* Show More */}
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
+          initial={isMobile ? false : { opacity: 0, y: 20 }}
           animate={inView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.8, delay: 0.4 }}
           className="flex justify-center mt-10 md:mt-16"

@@ -5,6 +5,7 @@ import { ContactCards } from "../components/ContactCards";
 import { SEOHead } from "../components/SEOHead";
 import { DepartmentHero } from "../components/DepartmentHero";
 import { EnquiryForm } from "../components/ContactRouter";
+import { useIsMobile } from "../hooks/useIsMobile";
 
 const CYAN = "#00d4e8";
 
@@ -13,6 +14,7 @@ export function ContactPage() {
   const inView = useInView(contentRef, { once: true });
   const [sent, setSent] = useState(false);
   const [hasTypeSelected, setHasTypeSelected] = useState(false);
+  const isMobile = useIsMobile();
 
   return (
     <div className="min-h-screen" style={{ background: "#16212e" }}>
@@ -40,7 +42,7 @@ export function ContactPage() {
       <section className="py-12 border-b border-white/5" ref={contentRef}>
         <div className="max-w-[1440px] mx-auto px-8 md:px-16">
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
+            initial={isMobile ? false : { opacity: 0, y: 20 }}
             animate={inView ? { opacity: 1, y: 0 } : {}}
             transition={{ duration: 0.7, delay: 0.1 }}
           >
@@ -57,7 +59,7 @@ export function ContactPage() {
             {/* LEFT — Contact info */}
             <div className="lg:col-span-4">
               <motion.div
-                initial={{ opacity: 0, x: -20 }}
+                initial={isMobile ? false : { opacity: 0, x: -20 }}
                 animate={inView ? { opacity: 1, x: 0 } : {}}
                 transition={{ delay: 0.25 }}
               >
@@ -145,7 +147,7 @@ export function ContactPage() {
             {/* RIGHT — Enquiry form */}
             <div className="lg:col-span-8">
               <motion.div
-                initial={{ opacity: 0, x: 20 }}
+                initial={isMobile ? false : { opacity: 0, x: 20 }}
                 animate={inView ? { opacity: 1, x: 0 } : {}}
                 transition={{ delay: 0.35 }}
               >

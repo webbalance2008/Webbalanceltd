@@ -5,6 +5,7 @@ import { ArrowLeft, ArrowRight, Clock, Calendar } from "lucide-react";
 import { getArticleBySlug, articles, type ArticleSection } from "../data/articles";
 import { SEOHead } from "../components/SEOHead";
 import { ArticleSchema, BreadcrumbSchema } from "../components/StructuredData";
+import { useIsMobile } from "../hooks/useIsMobile";
 
 export function InsightArticlePage() {
   const { slug } = useParams<{ slug: string }>();
@@ -33,6 +34,8 @@ export function InsightArticlePage() {
   }
 
   const relatedArticles = articles.filter((a) => article.relatedSlugs.includes(a.slug)).slice(0, 3);
+
+  const isMobile = useIsMobile();
 
   return (
     <>
@@ -144,7 +147,7 @@ export function InsightArticlePage() {
         <article className="max-w-[900px] mx-auto px-8 md:px-12 py-16 md:py-24">
           {/* Stand-first / excerpt */}
           <motion.p
-            initial={{ opacity: 0, y: 20 }}
+            initial={isMobile ? false : { opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2 }}
             style={{ fontFamily: "'Inter', sans-serif" }}
@@ -230,8 +233,9 @@ export function InsightArticlePage() {
 function ArticleBlock({ section, index }: { section: ArticleSection; index: number }) {
   const ref = useRef(null);
   const inView = useInView(ref, { once: true, margin: "-5%" });
+  const isMobile = useIsMobile();
 
-  const base = { ref, initial: { opacity: 0, y: 16 }, animate: inView ? { opacity: 1, y: 0 } : {}, transition: { duration: 0.6, delay: 0.05 } };
+  const base = { ref, initial: isMobile ? (false as const) : { opacity: 0, y: 16 }, animate: inView ? { opacity: 1, y: 0 } : {}, transition: { duration: 0.6, delay: 0.05 } };
 
   switch (section.type) {
     case "heading":
@@ -350,13 +354,14 @@ function MetaPill({ icon, text }: { icon: React.ReactNode; text: string }) {
 function RelatedCard({ article, index }: { article: ReturnType<typeof getArticleBySlug> & object; index: number }) {
   const ref = useRef(null);
   const inView = useInView(ref, { once: true });
+  const isMobile = useIsMobile();
 
   if (!article) return null;
 
   return (
     <motion.div
       ref={ref}
-      initial={{ opacity: 0, y: 24 }}
+      initial={isMobile ? false : { opacity: 0, y: 24 }}
       animate={inView ? { opacity: 1, y: 0 } : {}}
       transition={{ delay: index * 0.1 }}
     >

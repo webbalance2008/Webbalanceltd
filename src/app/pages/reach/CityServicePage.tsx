@@ -6,12 +6,14 @@ import { useParams, Link } from "react-router";
 import { motion, useInView } from "motion/react";
 import { ArrowRight, Check, ChevronDown } from "lucide-react";
 import { cities, reachServices, WHY_US_POINTS } from "../../data/ourReach";
+import { useIsMobile } from "../../hooks/useIsMobile";
 
 export function CityServicePage() {
   const { city: citySlug, service: serviceSlug } = useParams<{ city: string; service: string }>();
 
   const city    = cities.find(c => c.slug === citySlug);
   const service = reachServices.find(s => s.slug === serviceSlug);
+  const isMobile = useIsMobile();
 
   const includesRef = useRef(null);
   const whyRef      = useRef(null);
@@ -159,7 +161,7 @@ export function CityServicePage() {
       <section className="py-24 border-b" style={{ borderColor: `rgba(${ACCENT_RGB},0.08)` }}>
         <div ref={includesRef} className="max-w-[1440px] mx-auto px-8 md:px-16">
           <motion.p
-            initial={{ opacity: 0 }}
+            initial={isMobile ? false : { opacity: 0 }}
             animate={includesInView ? { opacity: 1 } : {}}
             style={{ fontFamily: "'DM Mono', monospace", color: ACCENT }}
             className="text-[10px] tracking-[0.35em] uppercase flex items-center gap-3 mb-4"
@@ -167,7 +169,7 @@ export function CityServicePage() {
             <span className="w-6 h-px" style={{ backgroundColor: ACCENT }} /> What's Included
           </motion.p>
           <motion.h2
-            initial={{ opacity: 0, y: 20 }}
+            initial={isMobile ? false : { opacity: 0, y: 20 }}
             animate={includesInView ? { opacity: 1, y: 0 } : {}}
             transition={{ delay: 0.1 }}
             style={{ fontFamily: "'Montserrat', sans-serif" }}
@@ -180,7 +182,7 @@ export function CityServicePage() {
             {service.includes.map((item, i) => (
               <motion.div
                 key={item}
-                initial={{ opacity: 0, y: 16 }}
+                initial={isMobile ? false : { opacity: 0, y: 16 }}
                 animate={includesInView ? { opacity: 1, y: 0 } : {}}
                 transition={{ delay: i * 0.07 }}
                 className="flex items-start gap-4 p-7 group hover:bg-[#243245] transition-colors duration-200"
@@ -204,7 +206,7 @@ export function CityServicePage() {
           <div className="grid grid-cols-1 md:grid-cols-12 gap-12">
             <div className="md:col-span-5">
               <motion.p
-                initial={{ opacity: 0 }}
+                initial={isMobile ? false : { opacity: 0 }}
                 animate={whyInView ? { opacity: 1 } : {}}
                 style={{ fontFamily: "'DM Mono', monospace", color: ACCENT }}
                 className="text-[10px] tracking-[0.35em] uppercase flex items-center gap-3 mb-4"
@@ -212,7 +214,7 @@ export function CityServicePage() {
                 <span className="w-6 h-px" style={{ backgroundColor: ACCENT }} /> Why Web Balance
               </motion.p>
               <motion.h2
-                initial={{ opacity: 0, y: 20 }}
+                initial={isMobile ? false : { opacity: 0, y: 20 }}
                 animate={whyInView ? { opacity: 1, y: 0 } : {}}
                 transition={{ delay: 0.1 }}
                 style={{ fontFamily: "'Montserrat', sans-serif" }}
@@ -221,7 +223,7 @@ export function CityServicePage() {
                 Why Choose Web Balance for {service.name} in {city.name}?
               </motion.h2>
               <motion.p
-                initial={{ opacity: 0 }}
+                initial={isMobile ? false : { opacity: 0 }}
                 animate={whyInView ? { opacity: 1 } : {}}
                 transition={{ delay: 0.2 }}
                 style={{ fontFamily: "'Inter', sans-serif", color: "rgba(255,255,255,0.4)", fontSize: "13px", lineHeight: 1.7 }}
@@ -234,7 +236,7 @@ export function CityServicePage() {
                 {WHY_US_POINTS.map((point, i) => (
                   <motion.div
                     key={i}
-                    initial={{ opacity: 0, x: 20 }}
+                    initial={isMobile ? false : { opacity: 0, x: 20 }}
                     animate={whyInView ? { opacity: 1, x: 0 } : {}}
                     transition={{ delay: i * 0.07 }}
                     className="flex items-center gap-4 px-6 py-4 border-l-2 bg-[#1a2840] hover:bg-[#243245] transition-colors duration-200 group"
@@ -258,7 +260,7 @@ export function CityServicePage() {
           <div className="grid grid-cols-1 md:grid-cols-12 gap-12">
             <div className="md:col-span-4">
               <motion.p
-                initial={{ opacity: 0 }}
+                initial={isMobile ? false : { opacity: 0 }}
                 animate={faqInView ? { opacity: 1 } : {}}
                 style={{ fontFamily: "'DM Mono', monospace", color: ACCENT }}
                 className="text-[10px] tracking-[0.35em] uppercase flex items-center gap-3 mb-4"
@@ -266,7 +268,7 @@ export function CityServicePage() {
                 <span className="w-6 h-px" style={{ backgroundColor: ACCENT }} /> FAQs
               </motion.p>
               <motion.h2
-                initial={{ opacity: 0, y: 20 }}
+                initial={isMobile ? false : { opacity: 0, y: 20 }}
                 animate={faqInView ? { opacity: 1, y: 0 } : {}}
                 transition={{ delay: 0.1 }}
                 style={{ fontFamily: "'Montserrat', sans-serif" }}
@@ -372,12 +374,13 @@ function FaqAccordion({ faqs, inView, accent, accentRgb }: {
   accentRgb: string;
 }) {
   const [open, setOpen] = useState<number | null>(null);
+  const isMobile = useIsMobile();
   return (
     <div className="space-y-px" style={{ backgroundColor: `rgba(${accentRgb},0.04)` }}>
       {faqs.map((faq, i) => (
         <motion.div
           key={i}
-          initial={{ opacity: 0, y: 10 }}
+          initial={isMobile ? false : { opacity: 0, y: 10 }}
           animate={inView ? { opacity: 1, y: 0 } : {}}
           transition={{ delay: i * 0.08 }}
           className="bg-[#1a2840] overflow-hidden"

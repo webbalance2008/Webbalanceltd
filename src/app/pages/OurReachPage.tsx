@@ -6,6 +6,7 @@ import { cities, reachServices } from "../data/ourReach";
 import { getServiceColors } from "../utils/serviceColors";
 import { SEOHead } from "../components/SEOHead";
 import { DepartmentHero } from "../components/DepartmentHero";
+import { useIsMobile } from "../hooks/useIsMobile";
 
 const CYAN = "#00d4e8";
 const CYAN_RGB = "0, 212, 232";
@@ -36,6 +37,7 @@ export function OurReachPage() {
   const statsInView   = useInView(statsRef,    { once: true, margin: "-5%" });
   const citiesInView  = useInView(citiesRef,   { once: true, margin: "-5%" });
   const servicesInView = useInView(servicesRef, { once: true, margin: "-5%" });
+  const isMobile = useIsMobile();
 
   return (
     <>
@@ -67,7 +69,7 @@ export function OurReachPage() {
               {scotlandStats.map((s, i) => (
                 <motion.div
                   key={s.label}
-                  initial={{ opacity: 0, y: 20 }}
+                  initial={isMobile ? false : { opacity: 0, y: 20 }}
                   animate={statsInView ? { opacity: 1, y: 0 } : {}}
                   transition={{ delay: i * 0.08 }}
                   className="bg-[#1d2d3e] px-10 py-12"
@@ -88,7 +90,7 @@ export function OurReachPage() {
             <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-16">
               <div>
                 <motion.p
-                  initial={{ opacity: 0, y: 10 }}
+                  initial={isMobile ? false : { opacity: 0, y: 10 }}
                   animate={citiesInView ? { opacity: 1, y: 0 } : {}}
                   style={{ fontFamily: "'DM Mono', monospace", color: CYAN }}
                   className="text-[10px] tracking-[0.35em] uppercase flex items-center gap-3 mb-4"
@@ -96,7 +98,7 @@ export function OurReachPage() {
                   <span className="w-6 h-px" style={{ backgroundColor: CYAN }} /> Cities We Serve
                 </motion.p>
                 <motion.h2
-                  initial={{ opacity: 0, y: 20 }}
+                  initial={isMobile ? false : { opacity: 0, y: 20 }}
                   animate={citiesInView ? { opacity: 1, y: 0 } : {}}
                   transition={{ delay: 0.1 }}
                   style={{ fontFamily: "'Montserrat', sans-serif" }}
@@ -106,7 +108,7 @@ export function OurReachPage() {
                 </motion.h2>
               </div>
               <motion.p
-                initial={{ opacity: 0 }}
+                initial={isMobile ? false : { opacity: 0 }}
                 animate={citiesInView ? { opacity: 1 } : {}}
                 transition={{ delay: 0.2 }}
                 style={{ fontFamily: "'Inter', sans-serif", color: "rgba(255,255,255,0.4)" }}
@@ -123,7 +125,7 @@ export function OurReachPage() {
               ))}
               {/* Filler card linking to contact */}
               <motion.div
-                initial={{ opacity: 0 }}
+                initial={isMobile ? false : { opacity: 0 }}
                 animate={citiesInView ? { opacity: 1 } : {}}
                 transition={{ delay: cities.length * 0.05 }}
                 className="bg-[#1d2d3e]"
@@ -197,7 +199,7 @@ export function OurReachPage() {
         <section className="py-24 border-b border-white/5">
           <div ref={servicesRef} className="max-w-[1440px] mx-auto px-8 md:px-16">
             <motion.p
-              initial={{ opacity: 0 }}
+              initial={isMobile ? false : { opacity: 0 }}
               animate={servicesInView ? { opacity: 1 } : {}}
               style={{ fontFamily: "'DM Mono', monospace", color: CYAN }}
               className="text-[10px] tracking-[0.35em] uppercase flex items-center gap-3 mb-4"
@@ -205,7 +207,7 @@ export function OurReachPage() {
               <span className="w-6 h-px" style={{ backgroundColor: CYAN }} /> What We Offer
             </motion.p>
             <motion.h2
-              initial={{ opacity: 0, y: 20 }}
+              initial={isMobile ? false : { opacity: 0, y: 20 }}
               animate={servicesInView ? { opacity: 1, y: 0 } : {}}
               transition={{ delay: 0.1 }}
               style={{ fontFamily: "'Montserrat', sans-serif" }}
@@ -221,7 +223,7 @@ export function OurReachPage() {
                 return (
                   <motion.div
                     key={svc.slug}
-                    initial={{ opacity: 0, y: 20 }}
+                    initial={isMobile ? false : { opacity: 0, y: 20 }}
                     animate={servicesInView ? { opacity: 1, y: 0 } : {}}
                     transition={{ delay: i * 0.07 }}
                     className="bg-[#1d2d3e]"
@@ -282,9 +284,10 @@ export function OurReachPage() {
 
 function CityCard({ city, index, inView }: { city: typeof cities[0]; index: number; inView: boolean }) {
   const [hov, setHov] = useState(false);
+  const isMobile = useIsMobile();
   return (
     <motion.div
-      initial={{ opacity: 0 }}
+      initial={isMobile ? false : { opacity: 0 }}
       animate={inView ? { opacity: 1 } : {}}
       transition={{ delay: index * 0.05 }}
       className="bg-[#1d2d3e]"

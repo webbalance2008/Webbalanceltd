@@ -5,6 +5,7 @@ import { ArrowRight, X, Plus } from "lucide-react";
 import { Link } from "react-router";
 import type { LucideIcon } from "lucide-react";
 import { getServiceColors, type ServiceKey } from "../utils/serviceColors";
+import { useIsMobile } from "../hooks/useIsMobile";
 
 export interface FeatureModal {
   heading: string;
@@ -187,13 +188,14 @@ export function ServicePageLayout({
 function IntroSection({ text, colors }: { text: string; colors: ReturnType<typeof getServiceColors> }) {
   const ref = useRef(null);
   const inView = useInView(ref, { once: true, margin: "-5%" });
+  const isMobile = useIsMobile();
   return (
     <section className="py-24 border-b border-white/5">
       <div className="max-w-[1440px] mx-auto px-8 md:px-16 grid grid-cols-1 md:grid-cols-12 gap-12">
         <div className="md:col-span-4">
           <motion.p
             ref={ref}
-            initial={{ opacity: 0, y: 10 }}
+            initial={isMobile ? false : { opacity: 0, y: 10 }}
             animate={inView ? { opacity: 1, y: 0 } : {}}
             style={{ fontFamily: "'DM Mono', monospace", color: colors.primary }}
             className="text-[10px] tracking-[0.35em] uppercase flex items-center gap-3"
@@ -204,7 +206,7 @@ function IntroSection({ text, colors }: { text: string; colors: ReturnType<typeo
         </div>
         <div className="md:col-span-8">
           <motion.p
-            initial={{ opacity: 0, y: 20 }}
+            initial={isMobile ? false : { opacity: 0, y: 20 }}
             animate={inView ? { opacity: 1, y: 0 } : {}}
             transition={{ delay: 0.1 }}
             style={{ fontFamily: "'Montserrat', sans-serif" }}
@@ -222,7 +224,7 @@ function StatsSection({ stats, colors }: { stats: { value: string; label: string
   const ref = useRef(null);
   const inView = useInView(ref, { once: true, margin: "-5%" });
   const [activeStat, setActiveStat] = useState<typeof stats[0] | null>(null);
-
+  const isMobile = useIsMobile();
   useEffect(() => {
     if (activeStat) {
       document.body.style.overflow = "hidden";
@@ -241,7 +243,7 @@ function StatsSection({ stats, colors }: { stats: { value: string; label: string
             return (
               <motion.div
                 key={s.label}
-                initial={{ opacity: 0, y: 20 }}
+                initial={isMobile ? false : { opacity: 0, y: 20 }}
                 animate={inView ? { opacity: 1, y: 0 } : {}}
                 transition={{ delay: i * 0.1 }}
                 onClick={() => hasModal && setActiveStat(s)}
@@ -437,7 +439,7 @@ function FeaturesSection({ features, colors }: { features: Feature[]; colors: Re
   const ref = useRef(null);
   const inView = useInView(ref, { once: true, margin: "-5%" });
   const [activeFeature, setActiveFeature] = useState<Feature | null>(null);
-
+  const isMobile = useIsMobile();
   useEffect(() => {
     if (activeFeature) {
       document.body.style.overflow = "hidden";
@@ -453,7 +455,7 @@ function FeaturesSection({ features, colors }: { features: Feature[]; colors: Re
         <div className="max-w-[1440px] mx-auto px-8 md:px-16">
           <motion.p
             ref={ref}
-            initial={{ opacity: 0, y: 10 }}
+            initial={isMobile ? false : { opacity: 0, y: 10 }}
             animate={inView ? { opacity: 1, y: 0 } : {}}
             style={{ fontFamily: "'DM Mono', monospace", color: colors.primary }}
             className="text-[10px] tracking-[0.35em] uppercase flex items-center gap-3 mb-12"
@@ -468,7 +470,7 @@ function FeaturesSection({ features, colors }: { features: Feature[]; colors: Re
               return (
                 <motion.div
                    key={f.title}
-                   initial={{ opacity: 0, y: 30 }}
+                   initial={isMobile ? false : { opacity: 0, y: 30 }}
                    animate={inView ? { opacity: 1, y: 0 } : {}}
                    transition={{ delay: i * 0.08 }}
                    onClick={() => hasModal && setActiveFeature(f)}
@@ -699,7 +701,7 @@ function ProcessSection({ steps, colors }: { steps: { step: string; title: strin
   const ref = useRef(null);
   const inView = useInView(ref, { once: true, margin: "-5%" });
   const [activeStep, setActiveStep] = useState<typeof steps[0] | null>(null);
-
+  const isMobile = useIsMobile();
   useEffect(() => {
     if (activeStep) {
       document.body.style.overflow = "hidden";
@@ -715,7 +717,7 @@ function ProcessSection({ steps, colors }: { steps: { step: string; title: strin
         <div className="max-w-[1440px] mx-auto px-8 md:px-16">
           <motion.p
             ref={ref}
-            initial={{ opacity: 0, y: 10 }}
+            initial={isMobile ? false : { opacity: 0, y: 10 }}
             animate={inView ? { opacity: 1, y: 0 } : {}}
             style={{ fontFamily: "'DM Mono', monospace", color: colors.primary }}
             className="text-[10px] tracking-[0.35em] uppercase flex items-center gap-3 mb-12"
@@ -729,7 +731,7 @@ function ProcessSection({ steps, colors }: { steps: { step: string; title: strin
               return (
                 <motion.div
                   key={s.step}
-                  initial={{ opacity: 0, x: -20 }}
+                  initial={isMobile ? false : { opacity: 0, x: -20 }}
                   animate={inView ? { opacity: 1, x: 0 } : {}}
                   transition={{ delay: i * 0.1 }}
                   onClick={() => hasModal && setActiveStep(s)}
@@ -948,12 +950,13 @@ function ProcessModalOverlay({
 function PricingSection({ tiers, colors }: { tiers: PricingTier[]; colors: ReturnType<typeof getServiceColors> }) {
   const ref = useRef(null);
   const inView = useInView(ref, { once: true, margin: "-5%" });
+  const isMobile = useIsMobile();
   return (
     <section className="py-24 border-b border-white/5">
       <div className="max-w-[1440px] mx-auto px-8 md:px-16">
         <motion.p
           ref={ref}
-          initial={{ opacity: 0, y: 10 }}
+          initial={isMobile ? false : { opacity: 0, y: 10 }}
           animate={inView ? { opacity: 1, y: 0 } : {}}
           style={{ fontFamily: "'DM Mono', monospace", color: colors.primary }}
           className="text-[10px] tracking-[0.35em] uppercase flex items-center gap-3 mb-4"
@@ -962,7 +965,7 @@ function PricingSection({ tiers, colors }: { tiers: PricingTier[]; colors: Retur
           Packages & Pricing
         </motion.p>
         <motion.h2
-          initial={{ opacity: 0, y: 20 }}
+          initial={isMobile ? false : { opacity: 0, y: 20 }}
           animate={inView ? { opacity: 1, y: 0 } : {}}
           transition={{ delay: 0.1 }}
           style={{ fontFamily: "'Montserrat', sans-serif" }}
@@ -974,7 +977,7 @@ function PricingSection({ tiers, colors }: { tiers: PricingTier[]; colors: Retur
           {tiers.map((tier, i) => (
             <motion.div
               key={tier.name}
-              initial={{ opacity: 0, y: 30 }}
+              initial={isMobile ? false : { opacity: 0, y: 30 }}
               animate={inView ? { opacity: 1, y: 0 } : {}}
               transition={{ delay: i * 0.1 }}
               className="p-8 border relative"
@@ -1037,11 +1040,12 @@ function PricingSection({ tiers, colors }: { tiers: PricingTier[]; colors: Retur
 function CtaSection({ title, path, label, colors }: { title: string; path: string; label: string; colors: ReturnType<typeof getServiceColors> }) {
   const ref = useRef(null);
   const inView = useInView(ref, { once: true, margin: "-5%" });
+  const isMobile = useIsMobile();
   return (
     <section className="py-32">
       <div ref={ref} className="max-w-[1440px] mx-auto px-8 md:px-16 text-center">
         <motion.h2
-          initial={{ opacity: 0, y: 30 }}
+          initial={isMobile ? false : { opacity: 0, y: 30 }}
           animate={inView ? { opacity: 1, y: 0 } : {}}
           style={{ fontFamily: "'Montserrat', sans-serif" }}
           className="text-white text-3xl md:text-5xl mb-8 font-light"
@@ -1049,7 +1053,7 @@ function CtaSection({ title, path, label, colors }: { title: string; path: strin
           {title}
         </motion.h2>
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
+          initial={isMobile ? false : { opacity: 0, y: 20 }}
           animate={inView ? { opacity: 1, y: 0 } : {}}
           transition={{ delay: 0.15 }}
         >

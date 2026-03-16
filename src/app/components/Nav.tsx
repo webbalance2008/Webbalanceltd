@@ -4,6 +4,7 @@ import { Menu, X, ChevronDown } from "lucide-react";
 import { useNavigate, useLocation, Link } from "react-router";
 import { WebBalanceLogo } from "./WebBalanceLogo";
 import { getServiceColors, type ServiceKey } from "../utils/serviceColors";
+import { useIsMobile } from "../hooks/useIsMobile";
 
 // ─── Types ───────────────────────────────────────────────────────────────────
 interface NavChild {
@@ -105,6 +106,7 @@ export function Nav() {
   const navigate = useNavigate();
   const location = useLocation();
   const closeTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const isMobile = useIsMobile();
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 40);
@@ -134,7 +136,7 @@ export function Nav() {
   return (
     <>
       <motion.header
-        initial={{ y: -80, opacity: 0 }}
+        initial={isMobile ? false : { y: -80, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
         className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
@@ -166,7 +168,7 @@ export function Nav() {
                   onMouseLeave={handleMouseLeave}
                 >
                   <button
-                    className={`flex items-center gap-1.5 py-2 text-sm tracking-[0.15em] uppercase transition-all duration-300${isContact ? " rounded-xl px-5 py-2.5" : " px-3"}`}
+                    className={`flex items-center gap-1.5 py-2 text-xs tracking-[0.1em] uppercase transition-all duration-300${isContact ? " rounded-xl px-5 py-2.5" : " px-2.5"}`}
                     style={{
                       fontFamily: "'Inter', sans-serif",
                       ...(isContact ? {
@@ -262,7 +264,7 @@ export function Nav() {
                 <Link
                   key={item.label}
                   to={item.path!}
-                  className="relative px-3 py-2 text-white/60 hover:text-white text-sm tracking-[0.15em] uppercase transition-colors duration-200 group"
+                  className="relative px-3 py-2 text-white/60 hover:text-white text-xs tracking-[0.1em] uppercase transition-colors duration-200 group"
                   style={{ fontFamily: "'Inter', sans-serif" }}
                 >
                   {item.label}
@@ -645,7 +647,7 @@ function DropdownLink({
 }
 
 // ═══════════════════════════════════════════════════════════════════════════════
-// ─── Mobile dropdown renderer ──────────���──────────────────────────────────────
+// ─── Mobile dropdown renderer ────────────────────────────────────────────────
 // ═══════════════════════════════════════════════════════════════════════════════
 function renderMobileDropdownContent(
   item: NavItem,

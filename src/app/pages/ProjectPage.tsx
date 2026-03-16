@@ -1,6 +1,7 @@
 import { useEffect, useRef } from "react";
 import { useParams, useNavigate } from "react-router";
 import { motion, useInView } from "motion/react";
+import { useIsMobile } from "../hooks/useIsMobile";
 import { ArrowLeft, ArrowUpRight, ArrowRight } from "lucide-react";
 import { getProjectBySlug, projects } from "../data/projects";
 import { projectImages } from "../data/projectImages";
@@ -106,6 +107,8 @@ export function ProjectPage() {
       : project.slug === "romar-abrado"
       ? [romarGallery1, romarGallery2, romarGallery3, romarGallery4]
       : project.gallery;
+
+  const isMobile = useIsMobile();
 
   return (
     <>
@@ -481,10 +484,11 @@ export function ProjectPage() {
 function SectionLabel({ children }: { children: React.ReactNode }) {
   const ref = useRef(null);
   const inView = useInView(ref, { once: true, margin: "-5%" });
+  const isMobile = useIsMobile();
   return (
     <motion.p
       ref={ref}
-      initial={{ opacity: 0, y: 10 }}
+      initial={isMobile ? false : { opacity: 0, y: 10 }}
       animate={inView ? { opacity: 1, y: 0 } : {}}
       transition={{ duration: 0.6 }}
       style={{ fontFamily: "'DM Mono', monospace", color: CYAN }}
@@ -499,10 +503,11 @@ function SectionLabel({ children }: { children: React.ReactNode }) {
 function CaseBlock({ label, text, index }: { label: string; text: string; index: number }) {
   const ref = useRef(null);
   const inView = useInView(ref, { once: true, margin: "-5%" });
+  const isMobile = useIsMobile();
   return (
     <motion.div
       ref={ref}
-      initial={{ opacity: 0, y: 30 }}
+      initial={isMobile ? false : { opacity: 0, y: 30 }}
       animate={inView ? { opacity: 1, y: 0 } : {}}
       transition={{ duration: 0.7, delay: index * 0.15 }}
     >
@@ -536,10 +541,11 @@ function GalleryImage({
 }) {
   const ref = useRef(null);
   const inView = useInView(ref, { once: true, margin: "-5%" });
+  const isMobile = useIsMobile();
   return (
     <motion.div
       ref={ref}
-      initial={{ opacity: 0, y: 30 }}
+      initial={isMobile ? false : { opacity: 0, y: 30 }}
       animate={inView ? { opacity: 1, y: 0 } : {}}
       transition={{ duration: 0.7, delay: index * 0.1 }}
       className={`overflow-hidden ${isLarge ? "md:col-span-2 aspect-[16/9]" : "aspect-[4/3]"}`}
@@ -566,10 +572,11 @@ function UniformGalleryImage({
 }) {
   const ref = useRef(null);
   const inView = useInView(ref, { once: true, margin: "-5%" });
+  const isMobile = useIsMobile();
   return (
     <motion.div
       ref={ref}
-      initial={{ opacity: 0, y: 30 }}
+      initial={isMobile ? false : { opacity: 0, y: 30 }}
       animate={inView ? { opacity: 1, y: 0 } : {}}
       transition={{ duration: 0.7, delay: index * 0.1 }}
       className="overflow-hidden aspect-[4/3]"
@@ -594,10 +601,11 @@ function ResultCard({
 }) {
   const ref = useRef(null);
   const inView = useInView(ref, { once: true, margin: "-5%" });
+  const isMobile = useIsMobile();
   return (
     <motion.div
       ref={ref}
-      initial={{ opacity: 0, y: 20 }}
+      initial={isMobile ? false : { opacity: 0, y: 20 }}
       animate={inView ? { opacity: 1, y: 0 } : {}}
       transition={{ duration: 0.6, delay: index * 0.1 }}
       className="border border-white/5 p-6"

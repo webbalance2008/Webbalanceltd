@@ -1,10 +1,12 @@
 import { useRef } from "react";
 import { motion, useInView } from "motion/react";
+import { useIsMobile } from "../hooks/useIsMobile";
 import officeImg from "figma:asset/67a711565d0f28e25e06827e2e5f4c775d1b8654.png";
 
 export function About() {
   const ref = useRef(null);
   const inView = useInView(ref, { once: true, margin: "-10%" });
+  const isMobile = useIsMobile();
 
   const qualities = [
     "Design-led approach",
@@ -31,7 +33,7 @@ export function About() {
       <div className="relative z-10 max-w-[1440px] mx-auto px-8 md:px-16">
         <div ref={ref} className="max-w-2xl">
           <motion.p
-            initial={{ opacity: 0, y: 10 }}
+            initial={isMobile ? false : { opacity: 0, y: 10 }}
             animate={inView ? { opacity: 1, y: 0 } : {}}
             transition={{ duration: 0.6 }}
             style={{ fontFamily: "'DM Mono', monospace" }}
@@ -42,7 +44,7 @@ export function About() {
           </motion.p>
 
           <motion.h2
-            initial={{ opacity: 0, y: 30 }}
+            initial={isMobile ? false : { opacity: 0, y: 30 }}
             animate={inView ? { opacity: 1, y: 0 } : {}}
             style={{ fontFamily: "'Montserrat', sans-serif" }}
             className="text-white text-4xl md:text-5xl leading-[1.15] mb-8 font-light"
@@ -51,7 +53,7 @@ export function About() {
           </motion.h2>
 
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
+            initial={isMobile ? false : { opacity: 0, y: 20 }}
             animate={inView ? { opacity: 1, y: 0 } : {}}
             transition={{ duration: 0.8, delay: 0.2 }}
             className="space-y-5"
@@ -72,7 +74,7 @@ export function About() {
 
           {/* Qualities */}
           <motion.div
-            initial={{ opacity: 0 }}
+            initial={isMobile ? false : { opacity: 0 }}
             animate={inView ? { opacity: 1 } : {}}
             transition={{ duration: 0.8, delay: 0.4 }}
             className="grid grid-cols-2 gap-x-6 gap-y-4 mt-10"
@@ -80,7 +82,7 @@ export function About() {
             {qualities.map((q, i) => (
               <motion.div
                 key={q}
-                initial={{ opacity: 0, x: -10 }}
+                initial={isMobile ? false : { opacity: 0, x: -10 }}
                 animate={inView ? { opacity: 1, x: 0 } : {}}
                 transition={{ delay: 0.4 + i * 0.07 }}
                 className="flex items-center gap-3"

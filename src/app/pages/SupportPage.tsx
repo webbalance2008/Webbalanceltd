@@ -6,6 +6,7 @@ import { getServiceColors } from "../utils/serviceColors";
 import { SEOHead } from "../components/SEOHead";
 import { ServiceSchema, BreadcrumbSchema, FAQSchema } from "../components/StructuredData";
 import { DepartmentHero } from "../components/DepartmentHero";
+import { useIsMobile } from "../hooks/useIsMobile";
 
 const plans = [
   {
@@ -90,6 +91,7 @@ export function SupportPage() {
   const faqInView = useInView(faqRef, { once: true });
   
   const colors = getServiceColors("support");
+  const isMobile = useIsMobile();
 
   return (
     <>
@@ -125,7 +127,7 @@ export function SupportPage() {
         <section className="py-24 border-b border-white/5">
           <div ref={plansRef} className="max-w-[1440px] mx-auto px-8 md:px-16">
             <motion.p
-              initial={{ opacity: 0 }}
+              initial={isMobile ? false : { opacity: 0 }}
               animate={plansInView ? { opacity: 1 } : {}}
               style={{ fontFamily: "'DM Mono', monospace", color: colors.primary }}
               className="text-[10px] tracking-[0.35em] uppercase flex items-center gap-3 mb-4"
@@ -134,7 +136,7 @@ export function SupportPage() {
               Support Plans
             </motion.p>
             <motion.h2
-              initial={{ opacity: 0, y: 20 }}
+              initial={isMobile ? false : { opacity: 0, y: 20 }}
               animate={plansInView ? { opacity: 1, y: 0 } : {}}
               transition={{ delay: 0.1 }}
               style={{ fontFamily: "'Montserrat', sans-serif" }}
@@ -147,7 +149,7 @@ export function SupportPage() {
               {plans.map((plan, i) => (
                 <motion.div
                   key={plan.name}
-                  initial={{ opacity: 0, y: 30 }}
+                  initial={isMobile ? false : { opacity: 0, y: 30 }}
                   animate={plansInView ? { opacity: 1, y: 0 } : {}}
                   transition={{ delay: i * 0.1 }}
                   className="p-8 border relative"
@@ -235,7 +237,7 @@ export function SupportPage() {
           <div ref={faqRef} className="max-w-[1440px] mx-auto px-8 md:px-16 grid grid-cols-1 md:grid-cols-12 gap-16">
             <div className="md:col-span-4">
               <motion.p
-                initial={{ opacity: 0 }}
+                initial={isMobile ? false : { opacity: 0 }}
                 animate={faqInView ? { opacity: 1 } : {}}
                 style={{ fontFamily: "'DM Mono', monospace", color: colors.primary }}
                 className="text-[10px] tracking-[0.35em] uppercase flex items-center gap-3 mb-4"
@@ -244,7 +246,7 @@ export function SupportPage() {
                 FAQs
               </motion.p>
               <motion.h2
-                initial={{ opacity: 0, y: 20 }}
+                initial={isMobile ? false : { opacity: 0, y: 20 }}
                 animate={faqInView ? { opacity: 1, y: 0 } : {}}
                 transition={{ delay: 0.1 }}
                 style={{ fontFamily: "'Montserrat', sans-serif" }}
@@ -257,7 +259,7 @@ export function SupportPage() {
               {faqs.map((faq, i) => (
                 <motion.div
                   key={faq.q}
-                  initial={{ opacity: 0, y: 10 }}
+                  initial={isMobile ? false : { opacity: 0, y: 10 }}
                   animate={faqInView ? { opacity: 1, y: 0 } : {}}
                   transition={{ delay: i * 0.07 }}
                   className="border-b border-white/5"

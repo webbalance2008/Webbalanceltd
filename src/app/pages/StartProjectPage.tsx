@@ -6,6 +6,7 @@ import { getServiceFromPath, getServiceColors } from "../utils/serviceColors";
 import { sendEmail } from "../utils/sendEmail";
 import { DepartmentHero } from "../components/DepartmentHero";
 import { SEOHead } from "../components/SEOHead";
+import { useIsMobile } from "../hooks/useIsMobile";
 
 const services = [
   "Web App Development",
@@ -43,6 +44,7 @@ export function StartProjectPage() {
   const colors = getServiceColors(serviceKey);
   const accent = colors.primary;
   const accentRgb = colors.rgb;
+  const isMobile = useIsMobile();
 
   const [selectedServices, setSelectedServices] = useState<string[]>(
     isWebApp ? ["Web App Development"] : ["Web Design"]
@@ -116,7 +118,7 @@ export function StartProjectPage() {
         <div className="max-w-[900px] mx-auto px-8 md:px-16">
           {submitted ? (
             <motion.div
-              initial={{ opacity: 0, scale: 0.95 }}
+              initial={isMobile ? false : { opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
               className="text-center py-24"
             >
@@ -142,7 +144,7 @@ export function StartProjectPage() {
           ) : (
             <motion.form
               ref={formRef}
-              initial={{ opacity: 0, y: 30 }}
+              initial={isMobile ? false : { opacity: 0, y: 30 }}
               animate={formInView ? { opacity: 1, y: 0 } : {}}
               transition={{ duration: 0.7 }}
               onSubmit={handleSubmit}

@@ -7,6 +7,7 @@ import {
 } from "lucide-react";
 import { sendEmail } from "../utils/sendEmail";
 import { SEOHead } from "../components/SEOHead";
+import { useIsMobile } from "../hooks/useIsMobile";
 
 const ACCENT      = "#00d4e8";
 const ACCENT_RGB  = "0, 212, 232";
@@ -548,6 +549,7 @@ function InfraSection({ Icon, label, hint, children }: { Icon:LucideIcon; label:
 // ─── Main Component ───────────────────────────────────────────────────────────
 
 export function WebDesignStartPage() {
+  const isMobile = useIsMobile();
   const [step,      setStep]      = useState(1);
   const [direction, setDirection] = useState(1);
   const [data,      setData]      = useState<FormData>(initialData);
@@ -640,7 +642,7 @@ export function WebDesignStartPage() {
     return (
       <div className="min-h-screen flex items-center justify-center"
         style={{ background:"#16212e" }}>
-        <motion.div initial={{ opacity:0, scale:0.93 }} animate={{ opacity:1, scale:1 }}
+        <motion.div initial={isMobile ? false : { opacity:0, scale:0.93 }} animate={{ opacity:1, scale:1 }}
           transition={{ duration:0.6, ease:[0.16,1,0.3,1] }} className="text-center px-8 max-w-lg">
           <div className="w-20 h-20 border flex items-center justify-center mx-auto mb-10"
             style={{ borderColor:ACCENT, boxShadow:`0 0 32px rgba(${ACCENT_RGB},0.2)` }}>
@@ -2657,6 +2659,7 @@ function PageBuilder({ pages, onChange, typeId = "brochure", isSetupType = false
 function SortStandardBtn({ onClick }: { onClick: () => void }) {
   const [hov, setHov] = useState(false);
   const [sorted, setSorted] = useState(false);
+  const isMobile = useIsMobile();
 
   const handleClick = () => {
     onClick();
@@ -2670,7 +2673,7 @@ function SortStandardBtn({ onClick }: { onClick: () => void }) {
       onClick={handleClick}
       onMouseEnter={() => setHov(true)}
       onMouseLeave={() => setHov(false)}
-      initial={{ opacity: 0, y: 6 }}
+      initial={isMobile ? false : { opacity: 0, y: 6 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
       className="flex items-center gap-2.5 mt-4 px-4 py-2.5 border transition-all duration-200"

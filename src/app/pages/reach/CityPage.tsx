@@ -6,6 +6,7 @@ import { useParams, Link } from "react-router";
 import { motion, useInView } from "motion/react";
 import { ArrowRight, Check, ChevronDown, MapPin } from "lucide-react";
 import { cities, reachServices } from "../../data/ourReach";
+import { useIsMobile } from "../../hooks/useIsMobile";
 
 const CYAN     = "#00d4e8";
 const CYAN_RGB = "0, 212, 232";
@@ -13,6 +14,7 @@ const CYAN_RGB = "0, 212, 232";
 export function CityPage() {
   const { city: citySlug } = useParams<{ city: string }>();
   const city = cities.find(c => c.slug === citySlug);
+  const isMobile = useIsMobile();
 
   const servicesRef = useRef(null);
   const glanceRef   = useRef(null);
@@ -153,7 +155,7 @@ export function CityPage() {
       <section className="py-24 border-b border-white/5">
         <div ref={servicesRef} className="max-w-[1440px] mx-auto px-8 md:px-16">
           <motion.p
-            initial={{ opacity: 0 }}
+            initial={isMobile ? false : { opacity: 0 }}
             animate={servicesInView ? { opacity: 1 } : {}}
             style={{ fontFamily: "'DM Mono', monospace", color: CYAN }}
             className="text-[10px] tracking-[0.35em] uppercase flex items-center gap-3 mb-4"
@@ -161,7 +163,7 @@ export function CityPage() {
             <span className="w-6 h-px" style={{ backgroundColor: CYAN }} /> Digital Services
           </motion.p>
           <motion.h2
-            initial={{ opacity: 0, y: 20 }}
+            initial={isMobile ? false : { opacity: 0, y: 20 }}
             animate={servicesInView ? { opacity: 1, y: 0 } : {}}
             transition={{ delay: 0.1 }}
             style={{ fontFamily: "'Montserrat', sans-serif" }}
@@ -177,7 +179,7 @@ export function CityPage() {
               return (
                 <motion.div
                   key={svc.slug}
-                  initial={{ opacity: 0, y: 24 }}
+                  initial={isMobile ? false : { opacity: 0, y: 24 }}
                   animate={servicesInView ? { opacity: 1, y: 0 } : {}}
                   transition={{ delay: i * 0.07 }}
                   className="bg-[#1d2d3e]"
@@ -228,7 +230,7 @@ export function CityPage() {
           <div className="grid grid-cols-1 md:grid-cols-12 gap-12">
             <div className="md:col-span-5">
               <motion.p
-                initial={{ opacity: 0, y: 10 }}
+                initial={isMobile ? false : { opacity: 0, y: 10 }}
                 animate={glanceInView ? { opacity: 1, y: 0 } : {}}
                 style={{ fontFamily: "'DM Mono', monospace", color: CYAN }}
                 className="text-[10px] tracking-[0.35em] uppercase flex items-center gap-3 mb-4"
@@ -236,7 +238,7 @@ export function CityPage() {
                 <span className="w-6 h-px" style={{ backgroundColor: CYAN }} /> At a Glance
               </motion.p>
               <motion.h2
-                initial={{ opacity: 0, y: 20 }}
+                initial={isMobile ? false : { opacity: 0, y: 20 }}
                 animate={glanceInView ? { opacity: 1, y: 0 } : {}}
                 transition={{ delay: 0.1 }}
                 style={{ fontFamily: "'Montserrat', sans-serif" }}
@@ -250,7 +252,7 @@ export function CityPage() {
                 {city.glance.map((point, i) => (
                   <motion.div
                     key={i}
-                    initial={{ opacity: 0, x: 20 }}
+                    initial={isMobile ? false : { opacity: 0, x: 20 }}
                     animate={glanceInView ? { opacity: 1, x: 0 } : {}}
                     transition={{ delay: i * 0.08 }}
                     className="flex items-center gap-4 px-6 py-5 bg-[#1a2840] border-l-2 transition-all duration-300 group hover:bg-[#243245]"
@@ -274,7 +276,7 @@ export function CityPage() {
           <div className="grid grid-cols-1 md:grid-cols-12 gap-12">
             <div className="md:col-span-4">
               <motion.p
-                initial={{ opacity: 0 }}
+                initial={isMobile ? false : { opacity: 0 }}
                 animate={faqInView ? { opacity: 1 } : {}}
                 style={{ fontFamily: "'DM Mono', monospace", color: CYAN }}
                 className="text-[10px] tracking-[0.35em] uppercase flex items-center gap-3 mb-4"
@@ -282,7 +284,7 @@ export function CityPage() {
                 <span className="w-6 h-px" style={{ backgroundColor: CYAN }} /> FAQs
               </motion.p>
               <motion.h2
-                initial={{ opacity: 0, y: 20 }}
+                initial={isMobile ? false : { opacity: 0, y: 20 }}
                 animate={faqInView ? { opacity: 1, y: 0 } : {}}
                 transition={{ delay: 0.1 }}
                 style={{ fontFamily: "'Montserrat', sans-serif" }}
@@ -336,12 +338,13 @@ function FaqAccordion({ faqs, inView, accent, accentRgb }: {
   accentRgb: string;
 }) {
   const [open, setOpen] = useState<number | null>(null);
+  const isMobile = useIsMobile();
   return (
     <div className="space-y-px" style={{ backgroundColor: "rgba(255,255,255,0.04)" }}>
       {faqs.map((faq, i) => (
         <motion.div
           key={i}
-          initial={{ opacity: 0, y: 10 }}
+          initial={isMobile ? false : { opacity: 0, y: 10 }}
           animate={inView ? { opacity: 1, y: 0 } : {}}
           transition={{ delay: i * 0.08 }}
           className="bg-[#1a2840] overflow-hidden"

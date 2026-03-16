@@ -10,6 +10,7 @@ import {
 } from "lucide-react";
 import { sendEmail } from "../utils/sendEmail";
 import { SEOHead } from "../components/SEOHead";
+import { useIsMobile } from "../hooks/useIsMobile";
 
 const ACCENT      = "#b89fd4";
 const ACCENT_RGB  = "180, 150, 220";
@@ -729,6 +730,7 @@ function SubmitButton() {
 // ─── Main Component ───────────────────────────────────────────────────────────
 
 export function WebAppStartPage() {
+  const isMobile = useIsMobile();
   const [step,      setStep]      = useState(1);
   const [direction, setDirection] = useState(1);
   const [data,      setData]      = useState<WAFormData>(initialData);
@@ -821,7 +823,7 @@ export function WebAppStartPage() {
     return (
       <div className="min-h-screen flex items-center justify-center"
         style={{ background:"#16212e" }}>
-        <motion.div initial={{ opacity:0, scale:0.93 }} animate={{ opacity:1, scale:1 }}
+        <motion.div initial={isMobile ? false : { opacity:0, scale:0.93 }} animate={{ opacity:1, scale:1 }}
           transition={{ duration:0.6, ease:[0.16,1,0.3,1] }} className="text-center px-8 max-w-lg">
           <div className="w-20 h-20 border flex items-center justify-center mx-auto mb-10"
             style={{ borderColor:ACCENT, boxShadow:`0 0 32px rgba(${ACCENT_RGB},0.2)` }}>

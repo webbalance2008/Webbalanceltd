@@ -157,7 +157,10 @@ export function Hero() {
   const [meteorKey, setMeteorKey]             = useState(0);
   const [meteorActive, setMeteorActive]       = useState(false);
   const [meteorConfig, setMeteorConfig]       = useState<MeteorConfig>(METEOR_CONFIGS[1]);
-  const [isMobile, setIsMobile]               = useState(false);
+  // Initialise synchronously so mobile never flickers through desktop path
+  const [isMobile, setIsMobile]               = useState(
+    () => typeof window !== "undefined" && window.innerWidth < 768
+  );
   const [headlinePhase, setHeadlinePhase]     = useState(0);
   const [deviceCycleSignal, setDeviceCycleSignal] = useState(0);
   const meteorTimer     = useRef<ReturnType<typeof setInterval> | null>(null);
@@ -176,22 +179,22 @@ export function Hero() {
 
   // Cycle headline phases through all 7, advancing every 9s
   useEffect(() => {
-    if (!ready) return;
+    if (!ready) return; // cycle on both mobile and desktop
     phaseTimeoutRef.current = setTimeout(() => {
       let p = 1;
       setHeadlinePhase(p);
-      setDeviceCycleSignal((s) => s + 1);
+      if (!isMobile) setDeviceCycleSignal((s) => s + 1);
       phaseIntervalRef.current = setInterval(() => {
         p = (p + 1) % TOTAL_PHASES;
         setHeadlinePhase(p);
-        setDeviceCycleSignal((s) => s + 1);
+        if (!isMobile) setDeviceCycleSignal((s) => s + 1);
       }, 9000);
     }, 5500);
     return () => {
       if (phaseTimeoutRef.current)  clearTimeout(phaseTimeoutRef.current);
       if (phaseIntervalRef.current) clearInterval(phaseIntervalRef.current);
     };
-  }, [ready]);
+  }, [ready, isMobile]);
 
   // Large meteor every 5s — desktop only
   useEffect(() => {
@@ -214,7 +217,7 @@ export function Hero() {
   const currentColor = PHASES[headlinePhase].gradientColor ?? BRAND_CYAN;
 
   return (
-    <section className="relative flex flex-col justify-start pt-36 pb-24 md:pt-28 md:pb-36 overflow-hidden">
+    <section className="relative flex flex-col justify-start pt-48 pb-40 md:pt-44 md:pb-56 overflow-hidden">
       {/* Static Gradient Background */}
       <div className="absolute inset-0" style={{ background: "linear-gradient(160deg, #16212e 0%, #1d2d3e 60%, #16212e 100%)" }} />
 
@@ -271,6 +274,7 @@ export function Hero() {
       </div>
 
       {/* Large Meteor — desktop only */}
+      {!isMobile && (
       <MotionConfig reducedMotion="never">
         <AnimatePresence>
           {meteorActive && (
@@ -301,6 +305,7 @@ export function Hero() {
           )}
         </AnimatePresence>
       </MotionConfig>
+      )}
 
       {/* Scattered accent dots — desktop only, each with a fixed individual color */}
       <div className="hidden md:block">
@@ -370,6 +375,142 @@ export function Hero() {
 
           {/* ── Left: Text ── */}
           <div className="flex-1 lg:pr-8">
+            {isMobile ? (
+              /* ── MOBILE: CSS-only phase cycling, zero Motion overhead ── */
+              <div className="relative">
+                {/* Hidden spacer — keeps layout stable across all phases */}
+                <div aria-hidden style={{ visibility: "hidden", pointerEvents: "none" }}>
+                  <div style={{ height: "1.5rem", marginBottom: "1rem" }} />
+                  <div style={{ lineHeight: 1.15 }} className="text-[clamp(2.25rem,5.5vw,6rem)]">Digital</div>
+                  <div style={{ lineHeight: 1.15 }} className="text-[clamp(2.25rem,5.5vw,6rem)]">Experiences</div>
+                  <div style={{ lineHeight: 1.15, paddingBottom: "0.2em" }} className="text-[clamp(2.25rem,5.5vw,6rem)]">That Convert</div>
+                  <div style={{ marginTop: "2rem" }} className="text-sm leading-relaxed max-w-lg">
+                    For over 15 years, we have been providing professional, results-driven
+                    digital solutions — from web apps and websites to SEO, branding and
+                    strategy-led marketing.
+                  </div>
+                  <div style={{ marginTop: "3rem", height: "2.5rem" }} />
+                </div>
+
+                {/* All phases rendered, only the active one visible via CSS transition */}
+                {PHASES.map((phase, idx) => {
+                  const isActive = headlinePhase === idx;
+                  const gradColor = phase.gradientColor ?? BRAND_CYAN;
+
+                  return (
+                    <div
+                      key={idx}
+                      style={{
+                        position: "absolute",
+                        top: 0, left: 0, right: 0,
+                        opacity: isActive ? 1 : 0,
+                        transform: isActive ? "translateY(0)" : "translateY(12px)",
+                        transition: "opacity 0.8s ease, transform 0.8s ease",
+                        pointerEvents: isActive ? "auto" : "none",
+                      }}
+                    >
+                      {/* Department label */}
+                      <div style={{ height: "1.5rem", marginBottom: "1rem", display: "flex", alignItems: "center" }}>
+                        {phase.label && (
+                          <span
+                            style={{
+                              fontFamily: "'DM Mono', monospace",
+                              fontSize: "0.65rem",
+                              letterSpacing: "0.2em",
+                              textTransform: "uppercase",
+                              color: gradColor,
+                              border: `1px solid ${gradColor}55`,
+                              borderRadius: "999px",
+                              padding: "0.2em 0.75em",
+                            }}
+                          >
+                            {phase.label}
+                          </span>
+                        )}
+                      </div>
+
+                      {/* Line 1 */}
+                      <div style={{ lineHeight: 1.15 }}>
+                        <span style={{ fontFamily: "'Montserrat', sans-serif", display: "block", lineHeight: 1.15 }}
+                          className="text-white text-[clamp(2.25rem,5.5vw,6rem)] tracking-[-0.02em] font-light">
+                          {phase.line1}
+                        </span>
+                      </div>
+
+                      {/* Line 2 */}
+                      <div style={{ lineHeight: 1.15 }}>
+                        <span style={{ fontFamily: "'Montserrat', sans-serif", display: "block", lineHeight: 1.15 }}
+                          className="text-white text-[clamp(2.25rem,5.5vw,6rem)] tracking-[-0.02em] font-light">
+                          {phase.line2}
+                        </span>
+                      </div>
+
+                      {/* Line 3 — gradient */}
+                      <div style={{ lineHeight: 1.15, paddingBottom: "0.2em" }}>
+                        <h1 style={{ fontFamily: "'Montserrat', sans-serif", margin: 0, lineHeight: 1.15 }}
+                          className="text-[clamp(2.25rem,5.5vw,6rem)] tracking-[-0.02em] font-light">
+                          <GradientWord text={phase.line3} color={gradColor} />
+                        </h1>
+                      </div>
+
+                      {/* Body copy */}
+                      <p style={{ fontFamily: "'Inter', sans-serif", marginTop: "2rem" }}
+                        className="text-white/60 text-sm tracking-[0.3em] uppercase leading-relaxed max-w-lg">
+                        {phase.body}
+                      </p>
+
+                      {/* CTA */}
+                      <div style={{ marginTop: "3rem", display: "flex", alignItems: "center", gap: "1rem", flexWrap: "wrap" }}>
+                        <Link
+                          to={phase.cta.href}
+                          style={{
+                            fontFamily: "'DM Mono', monospace",
+                            fontSize: "0.7rem",
+                            letterSpacing: "0.18em",
+                            textTransform: "uppercase",
+                            display: "inline-flex",
+                            alignItems: "center",
+                            gap: "0.5rem",
+                            padding: "0.7em 1.4em",
+                            borderRadius: "999px",
+                            border: `1px solid ${gradColor}`,
+                            color: gradColor,
+                            background: `${gradColor}12`,
+                            textDecoration: "none",
+                          }}
+                        >
+                          {phase.cta.label}
+                          <ArrowRight size={11} />
+                        </Link>
+                        {"secondary" in phase.cta && phase.cta.secondary && (
+                          <Link
+                            to={phase.cta.secondary.href}
+                            style={{
+                              fontFamily: "'DM Mono', monospace",
+                              fontSize: "0.7rem",
+                              letterSpacing: "0.18em",
+                              textTransform: "uppercase",
+                              display: "inline-flex",
+                              alignItems: "center",
+                              gap: "0.5rem",
+                              padding: "0.7em 1.4em",
+                              borderRadius: "999px",
+                              border: "1px solid rgba(255,255,255,0.18)",
+                              color: "rgba(255,255,255,0.55)",
+                              background: "transparent",
+                              textDecoration: "none",
+                            }}
+                          >
+                            {phase.cta.secondary.label}
+                            <ArrowRight size={11} />
+                          </Link>
+                        )}
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            ) : (
             <MotionConfig reducedMotion="never">
               <div className="relative">
 
@@ -386,7 +527,7 @@ export function Hero() {
                     strategy-led marketing.
                   </div>
                   {/* CTA row spacer */}
-                  <div style={{ marginTop: "2.5rem", height: "2.5rem" }} />
+                  <div style={{ marginTop: "3rem", height: "2.5rem" }} />
                 </div>
 
                 {/* ── Phases rendered dynamically ── */}
@@ -518,14 +659,14 @@ export function Hero() {
                           {phase.body}
                         </motion.p>
                       ) : (
-                        <p style={{ fontFamily: "'Inter', sans-serif", marginTop: "2rem" }}
+                        <p style={{ fontFamily: "'Inter', sans-serif", marginTop: "2.5rem" }}
                           className="text-white/60 text-sm tracking-[0.3em] uppercase leading-relaxed max-w-lg">
                           {phase.body}
                         </p>
                       )}
 
                       {/* Call to action */}
-                      <div style={{ marginTop: "2.5rem", display: "flex", alignItems: "center", gap: "1rem", flexWrap: "wrap" }}>
+                      <div style={{ marginTop: "3rem", display: "flex", alignItems: "center", gap: "1rem", flexWrap: "wrap" }}>
                         {/* Primary CTA */}
                         <Link
                           to={phase.cta.href}
@@ -599,6 +740,7 @@ export function Hero() {
 
               </div>
             </MotionConfig>
+            )}
           </div>
 
           {/* ── Right: Devices ── */}

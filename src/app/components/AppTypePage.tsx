@@ -5,6 +5,7 @@ import { motion, useInView } from "motion/react";
 import { ArrowRight, Check } from "lucide-react";
 import { Link } from "react-router";
 import type { LucideIcon } from "lucide-react";
+import { useIsMobile } from "../hooks/useIsMobile";
 
 /* ── Purple palette constants ─────────────────────────────── */
 const ACC       = "#b89fd4";
@@ -153,15 +154,16 @@ function SectionLabel({ children }: { children: React.ReactNode }) {
 function OverviewSection({ overview, overviewDetail }: { overview: string; overviewDetail: string }) {
   const ref = useRef(null);
   const inView = useInView(ref, { once: true, margin: "-5%" });
+  const isMobile = useIsMobile();
   return (
     <section className="py-24" style={{ borderBottom: `1px solid ${ACC_08}` }}>
       <div ref={ref} className="max-w-[1440px] mx-auto px-8 md:px-16 grid grid-cols-1 md:grid-cols-12 gap-12 md:gap-20">
         <div className="md:col-span-5">
-          <motion.div initial={{ opacity: 0, y: 10 }} animate={inView ? { opacity: 1, y: 0 } : {}} className="mb-6">
+          <motion.div initial={isMobile ? false : { opacity: 0, y: 10 }} animate={inView ? { opacity: 1, y: 0 } : {}} className="mb-6">
             <SectionLabel>What It Is</SectionLabel>
           </motion.div>
           <motion.p
-            initial={{ opacity: 0, y: 20 }}
+            initial={isMobile ? false : { opacity: 0, y: 20 }}
             animate={inView ? { opacity: 1, y: 0 } : {}}
             transition={{ delay: 0.1 }}
             style={{ fontFamily: "'Montserrat', sans-serif" }}
@@ -172,7 +174,7 @@ function OverviewSection({ overview, overviewDetail }: { overview: string; overv
         </div>
         <div className="md:col-span-7 flex items-center">
           <motion.p
-            initial={{ opacity: 0, y: 20 }}
+            initial={isMobile ? false : { opacity: 0, y: 20 }}
             animate={inView ? { opacity: 1, y: 0 } : {}}
             transition={{ delay: 0.2 }}
             style={{ fontFamily: "'Inter', sans-serif" }}
@@ -469,14 +471,15 @@ function ScreenWireframe({ layout }: { layout: ScreenLayout }) {
 function ConceptsSection({ concepts }: { concepts: AppConcept[] }) {
   const ref = useRef(null);
   const inView = useInView(ref, { once: true, margin: "-5%" });
+  const isMobile = useIsMobile();
   return (
     <section className="py-24" style={{ borderBottom: `1px solid ${ACC_08}` }}>
       <div ref={ref} className="max-w-[1440px] mx-auto px-8 md:px-16">
-        <motion.div initial={{ opacity: 0, y: 10 }} animate={inView ? { opacity: 1, y: 0 } : {}} className="mb-4">
+        <motion.div initial={isMobile ? false : { opacity: 0, y: 10 }} animate={inView ? { opacity: 1, y: 0 } : {}} className="mb-4">
           <SectionLabel>What You Could Build</SectionLabel>
         </motion.div>
         <motion.h2
-          initial={{ opacity: 0, y: 20 }}
+          initial={isMobile ? false : { opacity: 0, y: 20 }}
           animate={inView ? { opacity: 1, y: 0 } : {}}
           transition={{ delay: 0.1 }}
           style={{ fontFamily: "'Montserrat', sans-serif" }}
@@ -488,7 +491,7 @@ function ConceptsSection({ concepts }: { concepts: AppConcept[] }) {
           {concepts.map((concept, i) => (
             <motion.div
               key={concept.title}
-              initial={{ opacity: 0, y: 30 }}
+              initial={isMobile ? false : { opacity: 0, y: 30 }}
               animate={inView ? { opacity: 1, y: 0 } : {}}
               transition={{ delay: 0.15 + i * 0.1 }}
               className="group"
@@ -528,10 +531,11 @@ function ConceptsSection({ concepts }: { concepts: AppConcept[] }) {
 function FeaturesSection({ features }: { features: AppTypeFeature[] }) {
   const ref = useRef(null);
   const inView = useInView(ref, { once: true, margin: "-5%" });
+  const isMobile = useIsMobile();
   return (
     <section className="py-24" style={{ borderBottom: `1px solid ${ACC_08}` }}>
       <div ref={ref} className="max-w-[1440px] mx-auto px-8 md:px-16">
-        <motion.div initial={{ opacity: 0, y: 10 }} animate={inView ? { opacity: 1, y: 0 } : {}} className="mb-12">
+        <motion.div initial={isMobile ? false : { opacity: 0, y: 10 }} animate={inView ? { opacity: 1, y: 0 } : {}} className="mb-12">
           <SectionLabel>Core Capabilities</SectionLabel>
         </motion.div>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
@@ -540,7 +544,7 @@ function FeaturesSection({ features }: { features: AppTypeFeature[] }) {
             return (
               <motion.div
                 key={f.title}
-                initial={{ opacity: 0, y: 30 }}
+                initial={isMobile ? false : { opacity: 0, y: 30 }}
                 animate={inView ? { opacity: 1, y: 0 } : {}}
                 transition={{ delay: i * 0.07 }}
                 className="group"
@@ -576,14 +580,15 @@ function FeaturesSection({ features }: { features: AppTypeFeature[] }) {
 function IndustriesSection({ industries }: { industries: AppTypeIndustry[] }) {
   const ref = useRef(null);
   const inView = useInView(ref, { once: true, margin: "-5%" });
+  const isMobile = useIsMobile();
   return (
     <section className="py-24" style={{ borderBottom: `1px solid ${ACC_08}` }}>
       <div ref={ref} className="max-w-[1440px] mx-auto px-8 md:px-16">
-        <motion.div initial={{ opacity: 0, y: 10 }} animate={inView ? { opacity: 1, y: 0 } : {}} className="mb-4">
+        <motion.div initial={isMobile ? false : { opacity: 0, y: 10 }} animate={inView ? { opacity: 1, y: 0 } : {}} className="mb-4">
           <SectionLabel>Who It's For</SectionLabel>
         </motion.div>
         <motion.h2
-          initial={{ opacity: 0, y: 20 }}
+          initial={isMobile ? false : { opacity: 0, y: 20 }}
           animate={inView ? { opacity: 1, y: 0 } : {}}
           transition={{ delay: 0.1 }}
           style={{ fontFamily: "'Montserrat', sans-serif" }}
@@ -595,7 +600,7 @@ function IndustriesSection({ industries }: { industries: AppTypeIndustry[] }) {
           {industries.map((ind, i) => (
             <motion.div
               key={ind.name}
-              initial={{ opacity: 0, y: 20 }}
+              initial={isMobile ? false : { opacity: 0, y: 20 }}
               animate={inView ? { opacity: 1, y: 0 } : {}}
               transition={{ delay: i * 0.06 }}
               className="p-8 group transition-colors duration-300"
@@ -630,17 +635,18 @@ function IndustriesSection({ industries }: { industries: AppTypeIndustry[] }) {
 function IncludedSection({ included }: { included: string[] }) {
   const ref = useRef(null);
   const inView = useInView(ref, { once: true, margin: "-5%" });
+  const isMobile = useIsMobile();
   const half = Math.ceil(included.length / 2);
   return (
     <section className="py-24" style={{ borderBottom: `1px solid ${ACC_08}` }}>
       <div ref={ref} className="max-w-[1440px] mx-auto px-8 md:px-16">
         <div className="grid grid-cols-1 md:grid-cols-12 gap-12">
           <div className="md:col-span-4">
-            <motion.div initial={{ opacity: 0, y: 10 }} animate={inView ? { opacity: 1, y: 0 } : {}} className="mb-4">
+            <motion.div initial={isMobile ? false : { opacity: 0, y: 10 }} animate={inView ? { opacity: 1, y: 0 } : {}} className="mb-4">
               <SectionLabel>Included As Standard</SectionLabel>
             </motion.div>
             <motion.h2
-              initial={{ opacity: 0, y: 20 }}
+              initial={isMobile ? false : { opacity: 0, y: 20 }}
               animate={inView ? { opacity: 1, y: 0 } : {}}
               transition={{ delay: 0.1 }}
               style={{ fontFamily: "'Montserrat', sans-serif" }}
@@ -656,7 +662,7 @@ function IncludedSection({ included }: { included: string[] }) {
                   {col.map((item, i) => (
                     <motion.li
                       key={item}
-                      initial={{ opacity: 0, x: -12 }}
+                      initial={isMobile ? false : { opacity: 0, x: -12 }}
                       animate={inView ? { opacity: 1, x: 0 } : {}}
                       transition={{ delay: (ci * half + i) * 0.05 }}
                       className="flex items-center gap-3 py-3.5"
@@ -683,17 +689,18 @@ function IncludedSection({ included }: { included: string[] }) {
 function ProcessSection({ process }: { process: AppTypeProcess[] }) {
   const ref = useRef(null);
   const inView = useInView(ref, { once: true, margin: "-5%" });
+  const isMobile = useIsMobile();
   return (
     <section className="py-24" style={{ borderBottom: `1px solid ${ACC_08}` }}>
       <div ref={ref} className="max-w-[1440px] mx-auto px-8 md:px-16">
-        <motion.div initial={{ opacity: 0, y: 10 }} animate={inView ? { opacity: 1, y: 0 } : {}} className="mb-12">
+        <motion.div initial={isMobile ? false : { opacity: 0, y: 10 }} animate={inView ? { opacity: 1, y: 0 } : {}} className="mb-12">
           <SectionLabel>How We Build It</SectionLabel>
         </motion.div>
         <div className="space-y-0">
           {process.map((s, i) => (
             <motion.div
               key={s.step}
-              initial={{ opacity: 0, x: -20 }}
+              initial={isMobile ? false : { opacity: 0, x: -20 }}
               animate={inView ? { opacity: 1, x: 0 } : {}}
               transition={{ delay: i * 0.1 }}
               className="grid grid-cols-12 gap-8 py-10 group transition-colors duration-300"
@@ -744,15 +751,16 @@ function ProcessSection({ process }: { process: AppTypeProcess[] }) {
 function RelatedSection({ related }: { related: AppTypeRelated[] }) {
   const ref = useRef(null);
   const inView = useInView(ref, { once: true, margin: "-5%" });
+  const isMobile = useIsMobile();
   return (
     <section className="py-24" style={{ borderBottom: `1px solid ${ACC_08}` }}>
       <div ref={ref} className="max-w-[1440px] mx-auto px-8 md:px-16">
-        <motion.div initial={{ opacity: 0, y: 10 }} animate={inView ? { opacity: 1, y: 0 } : {}} className="mb-10">
+        <motion.div initial={isMobile ? false : { opacity: 0, y: 10 }} animate={inView ? { opacity: 1, y: 0 } : {}} className="mb-10">
           <SectionLabel>Also Build With Us</SectionLabel>
         </motion.div>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           {related.map((r, i) => (
-            <motion.div key={r.path} initial={{ opacity: 0, y: 24 }} animate={inView ? { opacity: 1, y: 0 } : {}} transition={{ delay: i * 0.08 }}>
+            <motion.div key={r.path} initial={isMobile ? false : { opacity: 0, y: 24 }} animate={inView ? { opacity: 1, y: 0 } : {}} transition={{ delay: i * 0.08 }}>
               <Link
                 to={r.path}
                 className="block p-8 h-full group transition-all duration-300"
@@ -796,11 +804,12 @@ function RelatedSection({ related }: { related: AppTypeRelated[] }) {
 function CtaSection({ title }: { title: string }) {
   const ref = useRef(null);
   const inView = useInView(ref, { once: true, margin: "-5%" });
+  const isMobile = useIsMobile();
   return (
     <section className="py-32">
       <div ref={ref} className="max-w-[1440px] mx-auto px-8 md:px-16 text-center">
         <motion.p
-          initial={{ opacity: 0, y: 10 }}
+          initial={isMobile ? false : { opacity: 0, y: 10 }}
           animate={inView ? { opacity: 1, y: 0 } : {}}
           style={{ fontFamily: "'DM Mono', monospace", color: ACC }}
           className="text-[10px] tracking-[0.3em] uppercase mb-6"
@@ -808,7 +817,7 @@ function CtaSection({ title }: { title: string }) {
           Ready to start?
         </motion.p>
         <motion.h2
-          initial={{ opacity: 0, y: 30 }}
+          initial={isMobile ? false : { opacity: 0, y: 30 }}
           animate={inView ? { opacity: 1, y: 0 } : {}}
           transition={{ delay: 0.1 }}
           style={{ fontFamily: "'Montserrat', sans-serif" }}
@@ -817,7 +826,7 @@ function CtaSection({ title }: { title: string }) {
           {title}
         </motion.h2>
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
+          initial={isMobile ? false : { opacity: 0, y: 20 }}
           animate={inView ? { opacity: 1, y: 0 } : {}}
           transition={{ delay: 0.2 }}
           className="flex flex-wrap items-center justify-center gap-4"

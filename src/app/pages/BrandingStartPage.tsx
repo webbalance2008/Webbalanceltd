@@ -6,6 +6,7 @@ import {
   Clock, Zap, LucideIcon,
 } from "lucide-react";
 import { SEOHead } from "../components/SEOHead";
+import { useIsMobile } from "../hooks/useIsMobile";
 
 const ACCENT      = "#f472b6";
 const ACCENT_RGB  = "244, 114, 182";
@@ -244,6 +245,7 @@ function TimelineCard({ opt, isActive, onClick }: { opt: typeof timelines[0]; is
 // ─── Main Component ───────────────────────────────────────────────────────────
 
 export function BrandingStartPage() {
+  const isMobile = useIsMobile();
   const [step, setStep]   = useState(1);
   const [dir, setDir]     = useState(1);
   const [data, setData]   = useState<BrandingFormData>(initialData);
@@ -277,7 +279,7 @@ export function BrandingStartPage() {
   if (submitted) {
     return (
       <div className="min-h-screen flex items-center justify-center px-6" style={{ backgroundColor: DEPT_BG }}>
-        <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="text-center max-w-lg">
+        <motion.div initial={isMobile ? false : { opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="text-center max-w-lg">
           <div className="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-8" style={{ backgroundColor: `rgba(${ACCENT_RGB},0.15)`, border: `1px solid ${ACCENT}` }}>
             <Check size={28} style={{ color: ACCENT }} />
           </div>

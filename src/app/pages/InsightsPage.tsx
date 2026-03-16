@@ -5,6 +5,7 @@ import { Link } from "react-router";
 import { articles, type Article } from "../data/articles";
 import { SEOHead } from "../components/SEOHead";
 import { DepartmentHero } from "../components/DepartmentHero";
+import { useIsMobile } from "../hooks/useIsMobile";
 
 const CYAN     = "#00d4e8";
 const CYAN_RGB = "0, 212, 232";
@@ -16,6 +17,7 @@ export function InsightsPage() {
   const gridInView = useInView(gridRef, { once: true, margin: "-5%" });
   const [activeCategory, setActiveCategory] = useState("All");
   const [hovCat, setHovCat] = useState<string | null>(null);
+  const isMobile = useIsMobile();
 
   const featured  = articles[0];
   const rest      = articles.slice(1);
@@ -181,9 +183,10 @@ function FeaturedCard({ article }: { article: Article }) {
 // ── Article Card ──────────────────────────────────────────────────────────────
 
 function ArticleCard({ article, index, inView }: { article: Article; index: number; inView: boolean }) {
+  const isMobile = useIsMobile();
   return (
     <motion.div
-      initial={{ opacity: 0, y: 30 }}
+      initial={isMobile ? false : { opacity: 0, y: 30 }}
       animate={inView ? { opacity: 1, y: 0 } : {}}
       transition={{ delay: Math.min(index * 0.06, 0.5) }}
     >

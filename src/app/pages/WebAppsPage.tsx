@@ -7,6 +7,7 @@ import { getServiceColors } from "../utils/serviceColors";
 import { SEOHead } from "../components/SEOHead";
 import { ServiceSchema, BreadcrumbSchema } from "../components/StructuredData";
 import { DepartmentHero } from "../components/DepartmentHero";
+import { useIsMobile } from "../hooks/useIsMobile";
 
 const WA_PRIMARY   = "#b89fd4";
 const WA_PRIMARY_DIM = "rgba(180,150,220,0.55)";
@@ -300,6 +301,7 @@ const appTypes = [
 function AppTypesSection() {
   const ref = useRef(null);
   const inView = useInView(ref, { once: true, margin: "-5%" });
+  const isMobile = useIsMobile();
 
   return (
     <section className="py-24 border-b" style={{ borderColor: "rgba(180,150,220,0.08)" }}>
@@ -307,7 +309,7 @@ function AppTypesSection() {
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12">
           <div>
             <motion.p
-              initial={{ opacity: 0, y: 10 }}
+              initial={isMobile ? false : { opacity: 0, y: 10 }}
               animate={inView ? { opacity: 1, y: 0 } : {}}
               style={{ fontFamily: "'DM Mono', monospace", color: WA_PRIMARY }}
               className="text-[10px] tracking-[0.35em] uppercase flex items-center gap-3 mb-4"
@@ -316,7 +318,7 @@ function AppTypesSection() {
               What We Build
             </motion.p>
             <motion.h2
-              initial={{ opacity: 0, y: 20 }}
+              initial={isMobile ? false : { opacity: 0, y: 20 }}
               animate={inView ? { opacity: 1, y: 0 } : {}}
               transition={{ delay: 0.1 }}
               style={{ fontFamily: "'Montserrat', sans-serif" }}
@@ -326,7 +328,7 @@ function AppTypesSection() {
             </motion.h2>
           </div>
           <motion.div
-            initial={{ opacity: 0 }}
+            initial={isMobile ? false : { opacity: 0 }}
             animate={inView ? { opacity: 1 } : {}}
             transition={{ delay: 0.2 }}
           >
@@ -346,7 +348,7 @@ function AppTypesSection() {
             return (
               <motion.div
                 key={type.path}
-                initial={{ opacity: 0, y: 24 }}
+                initial={isMobile ? false : { opacity: 0, y: 24 }}
                 animate={inView ? { opacity: 1, y: 0 } : {}}
                 transition={{ delay: i * 0.07 }}
                 style={{ backgroundColor: "#1a2840" }}

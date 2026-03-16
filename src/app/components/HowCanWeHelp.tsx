@@ -1,6 +1,8 @@
 import { motion, AnimatePresence } from "motion/react";
 import { useState } from "react";
 import { useNavigate } from "react-router";
+import { sendEmail } from "../utils/sendEmail";
+import { useIsMobile } from "../hooks/useIsMobile";
 import {
   Rocket,
   MessageSquare,
@@ -25,7 +27,6 @@ import {
   Layers,
   Sparkles,
 } from "lucide-react";
-import { sendEmail } from "../utils/sendEmail";
 
 // ─── Types ──────────────────────────────────────────────────────────────────
 type Panel = "project" | "enquiry" | "packages" | null;
@@ -109,6 +110,7 @@ export function HowCanWeHelp() {
   const [sent, setSent] = useState(false);
   const [mobileExpanded, setMobileExpanded] = useState<MobileExpanded>(null);
   const navigate = useNavigate();
+  const isMobile = useIsMobile();
 
   const toggle = (id: Panel) => {
     // "Packages" navigates directly to the packages page
@@ -135,7 +137,7 @@ export function HowCanWeHelp() {
 
   const handleCardClick = (card: typeof CARDS[number]) => {
     // Check if we're on mobile
-    if (window.matchMedia("(max-width: 767px)").matches) {
+    if (isMobile) {
       toggleMobile(card.id);
     } else {
       toggle(card.id);
@@ -162,8 +164,8 @@ export function HowCanWeHelp() {
 
         {/* ── Departments strip ──────────────────────────────────────── */}
         <motion.div
-          initial={{ opacity: 0, y: 16 }}
-          whileInView={{ opacity: 1, y: 0 }}
+          initial={isMobile ? false : { opacity: 0, y: 16 }}
+          whileInView={isMobile ? undefined : { opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.6 }}
           className="mb-14"
@@ -189,8 +191,8 @@ export function HowCanWeHelp() {
                 <motion.a
                   key={dept.key}
                   href={`/${dept.key}`}
-                  initial={{ opacity: 0, y: 10 }}
-                  whileInView={{ opacity: 1, y: 0 }}
+                  initial={isMobile ? false : { opacity: 0, y: 10 }}
+                  whileInView={isMobile ? undefined : { opacity: 1, y: 0 }}
                   viewport={{ once: true }}
                   transition={{ duration: 0.4, delay: 0.1 + i * 0.06 }}
                   className="group flex items-center gap-2.5 px-5 py-3 border transition-all duration-500 cursor-pointer"

@@ -3,6 +3,7 @@ import { testimonials } from "../data/testimonials";
 import { useRef } from "react";
 import { SEOHead } from "../components/SEOHead";
 import { DepartmentHero } from "../components/DepartmentHero";
+import { useIsMobile } from "../hooks/useIsMobile";
 
 const CYAN = "#00d4e8";
 
@@ -17,6 +18,7 @@ const CARD_ACCENTS = [
 ];
 
 export default function TestimonialsPage() {
+  const isMobile = useIsMobile();
   return (
     <>
       <SEOHead
@@ -44,7 +46,7 @@ export default function TestimonialsPage() {
         <section className="py-20">
           <div className="max-w-[1440px] mx-auto px-8 md:px-16">
             <motion.p
-              initial={{ opacity: 0 }}
+              initial={isMobile ? false : { opacity: 0 }}
               whileInView={{ opacity: 1 }}
               viewport={{ once: true }}
               style={{ fontFamily: "'DM Mono', monospace", color: CYAN }}
@@ -72,7 +74,7 @@ export default function TestimonialsPage() {
         <section className="py-24 border-t border-white/5">
           <div className="max-w-[1440px] mx-auto px-8 md:px-16 text-center">
             <motion.div
-              initial={{ opacity: 0, y: 20 }}
+              initial={isMobile ? false : { opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.7 }}
@@ -135,12 +137,13 @@ function TestimonialCard({
 }) {
   const ref = useRef(null);
   const inView = useInView(ref, { once: true });
+  const isMobile = useIsMobile();
   const numStr = String(cardNumber).padStart(2, "0");
 
   return (
     <motion.div
       ref={ref}
-      initial={{ opacity: 0, y: 30 }}
+      initial={isMobile ? false : { opacity: 0, y: 30 }}
       animate={inView ? { opacity: 1, y: 0 } : {}}
       transition={{ duration: 0.6, delay: Math.min(index * 0.08, 0.4) }}
       className="group relative overflow-hidden h-full"
