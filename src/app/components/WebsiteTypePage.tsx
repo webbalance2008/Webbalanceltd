@@ -21,8 +21,8 @@ const ACC_05    = "rgba(94,196,212,0.05)";
 const BG_PAGE   = "#16212e";
 const BG_CARD   = "#1a2840";
 
-export interface WebsiteTypeIndustry { name: string; description: string }
-export interface WebsiteTypeFeature  { icon: LucideIcon; title: string; body: string }
+export interface WebsiteTypeIndustry { name: string; description: string; detail?: string }
+export interface WebsiteTypeFeature  { icon: LucideIcon; title: string; body: string; detail?: string }
 export interface WebsiteTypeProcess  { step: string; title: string; description: string }
 export interface WebsiteTypeRelated  { label: string; title: string; description: string; path: string }
 export interface WebsiteConcept      { title: string; description: string; layout: ScreenLayout }
@@ -116,16 +116,16 @@ function OverviewSection({ overview, overviewDetail }: { overview: string; overv
 /* ── Concept Screens ──────────────────────────────────────── */
 function ScreenWireframe({ layout }: { layout: ScreenLayout }) {
   const w = 280, h = 180;
-  const accent = ACC, accLow = ACC_20, accVLow = ACC_08, line = ACC_10;
+  const accent = ACC, accLow = ACC_35, accVLow = ACC_20, line = ACC_25;
   const chrome = (
     <>
       <rect x="0" y="0" width={w} height={h} rx="6" fill="#0d1926" stroke={line} strokeWidth="1" />
       <rect x="0" y="0" width={w} height="20" rx="6" fill="#111e2e" />
       <rect x="0" y="14" width={w} height="6" fill="#111e2e" />
-      <circle cx="12" cy="10" r="3" fill="rgba(255,255,255,0.08)" />
-      <circle cx="22" cy="10" r="3" fill="rgba(255,255,255,0.08)" />
-      <circle cx="32" cy="10" r="3" fill="rgba(255,255,255,0.08)" />
-      <rect x="80" y="6" width="120" height="8" rx="4" fill="rgba(255,255,255,0.04)" />
+      <circle cx="12" cy="10" r="3" fill="rgba(94,196,212,0.35)" />
+      <circle cx="22" cy="10" r="3" fill="rgba(94,196,212,0.2)" />
+      <circle cx="32" cy="10" r="3" fill="rgba(94,196,212,0.12)" />
+      <rect x="80" y="6" width="120" height="8" rx="4" fill="rgba(255,255,255,0.08)" />
     </>
   );
 
@@ -135,23 +135,23 @@ function ScreenWireframe({ layout }: { layout: ScreenLayout }) {
         {chrome}
         {/* Nav bar */}
         <rect x="10" y="26" width={w-20} height="10" fill="#111e2e" />
-        {[0,1,2,3].map(i => <rect key={i} x={16 + i*50} y="29" width="30" height="4" rx="2" fill={i===0 ? ACC_25 : "rgba(255,255,255,0.06)"} />)}
+        {[0,1,2,3].map(i => <rect key={i} x={16 + i*50} y="29" width="30" height="4" rx="2" fill={i===0 ? ACC_25 : "rgba(255,255,255,0.08)"} />)}
         {/* Hero section */}
         <rect x="10" y="42" width={w-20} height="50" rx="3" fill="#111e2e" stroke={line} strokeWidth="0.5" />
-        <rect x="24" y="52" width="100" height="6" rx="2" fill="rgba(255,255,255,0.12)" />
-        <rect x="24" y="62" width="140" height="4" rx="2" fill="rgba(255,255,255,0.05)" />
-        <rect x="24" y="70" width="60" height="10" rx="3" fill={accent} opacity="0.2" />
-        <rect x="34" y="73" width="40" height="4" rx="2" fill={accent} opacity="0.5" />
+        <rect x="24" y="52" width="100" height="6" rx="2" fill="rgba(255,255,255,0.15)" />
+        <rect x="24" y="62" width="140" height="4" rx="2" fill="rgba(255,255,255,0.08)" />
+        <rect x="24" y="70" width="60" height="10" rx="3" fill={accent} opacity="0.25" />
+        <rect x="34" y="73" width="40" height="4" rx="2" fill={accent} opacity="0.6" />
         <rect x="190" y="48" width="70" height="38" rx="3" fill="#152030" />
         {/* Content cards */}
         {[0,1,2].map(i => (
           <g key={i}>
             <rect x={10 + i*88} y="100" width="82" height="72" rx="3" fill="#111e2e" stroke={line} strokeWidth="0.5" />
             <rect x={13 + i*88} y="103" width="76" height="30" rx="2" fill="#0d1926" />
-            <rect x={16 + i*88} y="138" width="40" height="4" rx="2" fill="rgba(255,255,255,0.08)" />
-            <rect x={16 + i*88} y="146" width="60" height="3" rx="1.5" fill="rgba(255,255,255,0.04)" />
-            <rect x={16 + i*88} y="153" width="50" height="3" rx="1.5" fill="rgba(255,255,255,0.04)" />
-            <rect x={16 + i*88} y="162" width="28" height="5" rx="2.5" fill={ACC_08} />
+            <rect x={16 + i*88} y="138" width="40" height="4" rx="2" fill="rgba(255,255,255,0.12)" />
+            <rect x={16 + i*88} y="146" width="60" height="3" rx="1.5" fill="rgba(255,255,255,0.07)" />
+            <rect x={16 + i*88} y="153" width="50" height="3" rx="1.5" fill="rgba(255,255,255,0.07)" />
+            <rect x={16 + i*88} y="162" width="28" height="5" rx="2.5" fill={accLow} opacity="0.4" />
           </g>
         ))}
       </>
@@ -166,7 +166,7 @@ function ScreenWireframe({ layout }: { layout: ScreenLayout }) {
         {[0,1,2].map(r => [0,1,2,3].map(c => (
           <g key={`${r}-${c}`}>
             <rect x={10 + c*66} y={42 + r*44} width="62" height="40" rx="3" fill="#111e2e" stroke={line} strokeWidth="0.5" />
-            <rect x={12 + c*66} y={44 + r*44} width="58" height="24" rx="2" fill={`rgba(94,196,212,${0.03 + (r*4+c)*0.008})`} />
+            <rect x={12 + c*66} y={44 + r*44} width="58" height="24" rx="2" fill={`rgba(94,196,212,${0.1 + (r*4+c)*0.018})`} />
             <rect x={14 + c*66} y={72 + r*44} width="30" height="3" rx="1.5" fill="rgba(255,255,255,0.06)" />
             <rect x={14 + c*66} y={77 + r*44} width="20" height="2" rx="1" fill="rgba(255,255,255,0.03)" />
           </g>
@@ -178,22 +178,22 @@ function ScreenWireframe({ layout }: { layout: ScreenLayout }) {
         {chrome}
         {/* Two-col layout: form + image */}
         <rect x="10" y="28" width="140" height="146" rx="4" fill="#111e2e" stroke={line} strokeWidth="0.5" />
-        <rect x="20" y="38" width="80" height="6" rx="2" fill="rgba(255,255,255,0.12)" />
-        <rect x="20" y="48" width="50" height="3" rx="1.5" fill="rgba(255,255,255,0.06)" />
+        <rect x="20" y="38" width="80" height="6" rx="2" fill="rgba(255,255,255,0.15)" />
+        <rect x="20" y="48" width="50" height="3" rx="1.5" fill="rgba(255,255,255,0.08)" />
         {[0,1,2,3].map(i => (
           <g key={i}>
-            <rect x="20" y={60 + i*24} width="30" height="3" rx="1.5" fill={ACC_25} />
+            <rect x="20" y={60 + i*24} width="30" height="3" rx="1.5" fill={ACC_35} />
             <rect x="20" y={68 + i*24} width="120" height="12" rx="3" fill="#0d1926" stroke={line} strokeWidth="0.5" />
           </g>
         ))}
-        <rect x="90" y="152" width="50" height="12" rx="3" fill={accent} opacity="0.2" />
-        <rect x="100" y="155" width="30" height="5" rx="2" fill={accent} opacity="0.5" />
+        <rect x="90" y="152" width="50" height="12" rx="3" fill={accent} opacity="0.25" />
+        <rect x="100" y="155" width="30" height="5" rx="2" fill={accent} opacity="0.6" />
         {/* Right image */}
         <rect x="158" y="28" width="112" height="146" rx="4" fill="#111e2e" stroke={line} strokeWidth="0.5" />
         <rect x="162" y="32" width="104" height="90" rx="3" fill="#0d1926" />
-        <rect x="162" y="128" width="60" height="4" rx="2" fill="rgba(255,255,255,0.08)" />
-        <rect x="162" y="136" width="90" height="3" rx="1.5" fill="rgba(255,255,255,0.04)" />
-        <rect x="162" y="143" width="70" height="3" rx="1.5" fill="rgba(255,255,255,0.04)" />
+        <rect x="162" y="128" width="60" height="4" rx="2" fill="rgba(255,255,255,0.12)" />
+        <rect x="162" y="136" width="90" height="3" rx="1.5" fill="rgba(255,255,255,0.07)" />
+        <rect x="162" y="143" width="70" height="3" rx="1.5" fill="rgba(255,255,255,0.07)" />
       </>
     ),
     list: (
@@ -206,13 +206,13 @@ function ScreenWireframe({ layout }: { layout: ScreenLayout }) {
           <g key={r}>
             <rect x="10" y={42 + r*33} width={w-20} height="30" rx="3" fill="#111e2e" stroke={line} strokeWidth="0.5" />
             {/* Thumbnail */}
-            <rect x="14" y={45 + r*33} width="36" height="24" rx="2" fill="#0d1926" />
+            <rect x="14" y={45 + r*33} width="36" height="24" rx="2" fill={`rgba(94,196,212,${0.08 + r*0.025})`} />
             {/* Title + excerpt */}
-            <rect x="56" y={47 + r*33} width="90" height="5" rx="2" fill="rgba(255,255,255,0.1)" />
-            <rect x="56" y={55 + r*33} width="150" height="3" rx="1.5" fill="rgba(255,255,255,0.04)" />
-            <rect x="56" y={61 + r*33} width="120" height="3" rx="1.5" fill="rgba(255,255,255,0.03)" />
+            <rect x="56" y={47 + r*33} width="90" height="5" rx="2" fill="rgba(255,255,255,0.14)" />
+            <rect x="56" y={55 + r*33} width="150" height="3" rx="1.5" fill="rgba(255,255,255,0.07)" />
+            <rect x="56" y={61 + r*33} width="120" height="3" rx="1.5" fill="rgba(255,255,255,0.05)" />
             {/* Date */}
-            <rect x={w-55} y={48 + r*33} width="35" height="3" rx="1.5" fill={ACC_10} />
+            <rect x={w-55} y={48 + r*33} width="35" height="3" rx="1.5" fill={ACC_25} />
           </g>
         ))}
       </>
@@ -222,15 +222,15 @@ function ScreenWireframe({ layout }: { layout: ScreenLayout }) {
         {chrome}
         {/* Nav */}
         <rect x="10" y="26" width={w-20} height="10" fill="#111e2e" />
-        {[0,1,2,3].map(i => <rect key={i} x={16 + i*60} y="29" width="35" height="4" rx="2" fill={i===0? ACC_25:"rgba(255,255,255,0.06)"} />)}
+        {[0,1,2,3].map(i => <rect key={i} x={16 + i*60} y="29" width="35" height="4" rx="2" fill={i===0? ACC_35:"rgba(255,255,255,0.08)"} />)}
         {/* Product grid */}
         {[0,1,2].map(r => [0,1,2].map(c => (
           <g key={`${r}-${c}`}>
             <rect x={10 + c*90} y={42 + r*44} width="82" height="40" rx="3" fill="#111e2e" stroke={line} strokeWidth="0.5" />
-            <rect x={13 + c*90} y={45 + r*44} width="76" height="18" rx="2" fill="#0d1926" />
-            <rect x={13 + c*90} y={66 + r*44} width="30" height="3" rx="1.5" fill="rgba(255,255,255,0.08)" />
-            <rect x={13 + c*90} y={72 + r*44} width="18" height="3" rx="1.5" fill={accent} opacity="0.4" />
-            <rect x={65 + c*90} y={70 + r*44} width="20" height="7" rx="2" fill={ACC_10} />
+            <rect x={13 + c*90} y={45 + r*44} width="76" height="18" rx="2" fill={`rgba(94,196,212,${0.06 + (r*3+c)*0.015})`} />
+            <rect x={13 + c*90} y={66 + r*44} width="30" height="3" rx="1.5" fill="rgba(255,255,255,0.12)" />
+            <rect x={13 + c*90} y={72 + r*44} width="18" height="3" rx="1.5" fill={accent} opacity="0.5" />
+            <rect x={65 + c*90} y={70 + r*44} width="20" height="7" rx="2" fill={ACC_20} />
           </g>
         )))}
       </>
@@ -240,18 +240,18 @@ function ScreenWireframe({ layout }: { layout: ScreenLayout }) {
         {chrome}
         {/* Sidebar */}
         <rect x="0" y="20" width="60" height={h-20} fill="#111e2e" />
-        <circle cx="30" cy="38" r="10" fill={ACC_08} stroke={ACC_20} strokeWidth="0.5" />
-        <rect x="14" y="54" width="32" height="3" rx="1.5" fill="rgba(255,255,255,0.08)" />
-        {[66,78,90,102,114].map(y => <rect key={y} x="10" y={y} width="40" height="3" rx="1.5" fill="rgba(255,255,255,0.05)" />)}
-        <rect x="10" y="78" width="40" height="3" rx="1.5" fill={ACC_25} />
+        <circle cx="30" cy="38" r="10" fill={ACC_20} stroke={ACC_35} strokeWidth="0.5" />
+        <rect x="14" y="54" width="32" height="3" rx="1.5" fill="rgba(255,255,255,0.12)" />
+        {[66,78,90,102,114].map(y => <rect key={y} x="10" y={y} width="40" height="3" rx="1.5" fill="rgba(255,255,255,0.08)" />)}
+        <rect x="10" y="78" width="40" height="3" rx="1.5" fill={ACC_35} />
         {/* Content */}
-        {[0,1,2].map(i => <rect key={i} x={70 + i*50} y="28" width="40" height="8" rx="4" fill={i===0? ACC_10:"transparent"} />)}
+        {[0,1,2].map(i => <rect key={i} x={70 + i*50} y="28" width="40" height="8" rx="4" fill={i===0? ACC_20:"rgba(255,255,255,0.04)"} />)}
         {[0,1].map(r => [0,1].map(c => (
           <g key={`${r}-${c}`}>
             <rect x={70 + c*100} y={44 + r*60} width="92" height="52" rx="3" fill="#152030" stroke={line} strokeWidth="0.5" />
-            <rect x={78 + c*100} y={52 + r*60} width="40" height="4" rx="2" fill="rgba(255,255,255,0.1)" />
-            <rect x={78 + c*100} y={60 + r*60} width="70" height="3" rx="1.5" fill="rgba(255,255,255,0.05)" />
-            <rect x={78 + c*100} y={80 + r*60} width="30" height="6" rx="3" fill={ACC_08} />
+            <rect x={78 + c*100} y={52 + r*60} width="40" height="4" rx="2" fill="rgba(255,255,255,0.14)" />
+            <rect x={78 + c*100} y={60 + r*60} width="70" height="3" rx="1.5" fill="rgba(255,255,255,0.08)" />
+            <rect x={78 + c*100} y={80 + r*60} width="30" height="6" rx="3" fill={accLow} opacity="0.4" />
           </g>
         )))}
       </>
@@ -261,7 +261,7 @@ function ScreenWireframe({ layout }: { layout: ScreenLayout }) {
         {chrome}
         {/* Split layout: left brand + right form */}
         <rect x="0" y="20" width="120" height={h-20} fill="#111e2e" />
-        <rect x="30" y="60" width="60" height="8" rx="3" fill={accent} opacity="0.15" />
+        <rect x="30" y="60" width="60" height="8" rx="3" fill={accent} opacity="0.4" />
         <rect x="20" y="75" width="80" height="4" rx="2" fill="rgba(255,255,255,0.08)" />
         <rect x="25" y="83" width="70" height="3" rx="1.5" fill="rgba(255,255,255,0.04)" />
         <rect x="30" y="95" width="60" height="3" rx="1.5" fill="rgba(255,255,255,0.03)" />
@@ -280,19 +280,19 @@ function ScreenWireframe({ layout }: { layout: ScreenLayout }) {
         {/* Nav */}
         <rect x="10" y="26" width={w-20} height="10" fill="#111e2e" />
         {/* Hero with large heading */}
-        <rect x="10" y="42" width={w-20} height="70" rx="3" fill={`rgba(94,196,212,0.04)`} />
-        <rect x="30" y="55" width="120" height="8" rx="3" fill="rgba(255,255,255,0.12)" />
-        <rect x="40" y="68" width="100" height="4" rx="2" fill="rgba(255,255,255,0.05)" />
-        <rect x="85" y="80" width="110" height="12" rx="6" fill={accent} opacity="0.15" />
-        <rect x="105" y="83" width="70" height="5" rx="2" fill={accent} opacity="0.4" />
+        <rect x="10" y="42" width={w-20} height="70" rx="3" fill={`rgba(94,196,212,0.15)`} />
+        <rect x="30" y="55" width="120" height="8" rx="3" fill="rgba(255,255,255,0.16)" />
+        <rect x="40" y="68" width="100" height="4" rx="2" fill="rgba(255,255,255,0.09)" />
+        <rect x="85" y="80" width="110" height="12" rx="6" fill={accent} opacity="0.45" />
+        <rect x="105" y="83" width="70" height="5" rx="2" fill={accent} opacity="0.55" />
         {/* Features row */}
         {[0,1,2,3].map(i => (
           <g key={i}>
             <rect x={10 + i*67} y="120" width="62" height="52" rx="3" fill="#111e2e" stroke={line} strokeWidth="0.5" />
-            <circle cx={41 + i*67} cy="135" r="6" fill={ACC_08} stroke={ACC_10} strokeWidth="0.5" />
-            <rect x={22 + i*67} y="146" width="38" height="4" rx="2" fill="rgba(255,255,255,0.08)" />
-            <rect x={18 + i*67} y="154" width="46" height="3" rx="1.5" fill="rgba(255,255,255,0.04)" />
-            <rect x={20 + i*67} y="160" width="42" height="3" rx="1.5" fill="rgba(255,255,255,0.03)" />
+            <circle cx={41 + i*67} cy="135" r="6" fill={ACC_20} stroke={ACC_35} strokeWidth="0.5" />
+            <rect x={22 + i*67} y="146" width="38" height="4" rx="2" fill="rgba(255,255,255,0.12)" />
+            <rect x={18 + i*67} y="154" width="46" height="3" rx="1.5" fill="rgba(255,255,255,0.07)" />
+            <rect x={20 + i*67} y="160" width="42" height="3" rx="1.5" fill="rgba(255,255,255,0.05)" />
           </g>
         ))}
       </>
@@ -304,14 +304,18 @@ function ScreenWireframe({ layout }: { layout: ScreenLayout }) {
         <rect x="10" y="26" width={w-20} height="10" fill="#111e2e" />
         {/* Full-width hero image */}
         <rect x="10" y="42" width={w-20} height="55" rx="3" fill="#111e2e" />
-        <rect x="10" y="42" width={w-20} height="55" rx="3" fill={`rgba(94,196,212,0.05)`} />
+        <rect x="10" y="42" width={w-20} height="55" rx="3" fill={`rgba(94,196,212,0.12)`} />
+        <rect x="20" y="52" width="100" height="7" rx="2" fill="rgba(255,255,255,0.14)" />
+        <rect x="20" y="64" width="140" height="4" rx="2" fill="rgba(255,255,255,0.07)" />
+        <rect x="20" y="74" width="60" height="12" rx="3" fill={accent} opacity="0.25" />
+        <rect x="30" y="77" width="40" height="5" rx="2" fill={accent} opacity="0.55" />
         {/* Menu items */}
         {[0,1,2].map(r => (
           <g key={r}>
             <rect x="10" y={105 + r*24} width={w-20} height="20" rx="3" fill="#111e2e" stroke={line} strokeWidth="0.5" />
-            <rect x="18" y={109 + r*24} width="50" height="4" rx="2" fill="rgba(255,255,255,0.1)" />
-            <rect x="18" y={116 + r*24} width="120" height="3" rx="1.5" fill="rgba(255,255,255,0.04)" />
-            <rect x={w-55} y={110 + r*24} width="30" height="4" rx="2" fill={accent} opacity="0.35" />
+            <rect x="18" y={109 + r*24} width="50" height="4" rx="2" fill="rgba(255,255,255,0.13)" />
+            <rect x="18" y={116 + r*24} width="120" height="3" rx="1.5" fill="rgba(255,255,255,0.07)" />
+            <rect x={w-55} y={110 + r*24} width="30" height="4" rx="2" fill={accent} opacity="0.45" />
           </g>
         ))}
       </>
@@ -321,22 +325,22 @@ function ScreenWireframe({ layout }: { layout: ScreenLayout }) {
         {chrome}
         {/* Two-col: text left, image right */}
         <rect x="10" y="30" width="130" height="140" rx="3" fill="transparent" />
-        <rect x="16" y="40" width="80" height="6" rx="2" fill="rgba(255,255,255,0.12)" />
-        <rect x="16" y="52" width="110" height="4" rx="2" fill="rgba(255,255,255,0.06)" />
-        <rect x="16" y="60" width="100" height="3" rx="1.5" fill="rgba(255,255,255,0.04)" />
-        <rect x="16" y="67" width="90" height="3" rx="1.5" fill="rgba(255,255,255,0.04)" />
-        <rect x="16" y="74" width="105" height="3" rx="1.5" fill="rgba(255,255,255,0.04)" />
-        <rect x="16" y="86" width="50" height="10" rx="3" fill={accent} opacity="0.2" />
-        <rect x="22" y="89" width="38" height="4" rx="2" fill={accent} opacity="0.5" />
+        <rect x="16" y="40" width="80" height="6" rx="2" fill="rgba(255,255,255,0.16)" />
+        <rect x="16" y="52" width="110" height="4" rx="2" fill="rgba(255,255,255,0.09)" />
+        <rect x="16" y="60" width="100" height="3" rx="1.5" fill="rgba(255,255,255,0.07)" />
+        <rect x="16" y="67" width="90" height="3" rx="1.5" fill="rgba(255,255,255,0.07)" />
+        <rect x="16" y="74" width="105" height="3" rx="1.5" fill="rgba(255,255,255,0.07)" />
+        <rect x="16" y="86" width="50" height="10" rx="3" fill={accent} opacity="0.25" />
+        <rect x="22" y="89" width="38" height="4" rx="2" fill={accent} opacity="0.6" />
         {/* Testimonial */}
         <rect x="16" y="108" width="118" height="50" rx="3" fill="#111e2e" stroke={line} strokeWidth="0.5" />
-        <rect x="24" y="116" width="100" height="3" rx="1.5" fill="rgba(255,255,255,0.05)" />
-        <rect x="24" y="123" width="80" height="3" rx="1.5" fill="rgba(255,255,255,0.04)" />
-        <circle cx="32" cy="143" r="6" fill={ACC_08} />
-        <rect x="42" y="141" width="40" height="3" rx="1.5" fill="rgba(255,255,255,0.06)" />
+        <rect x="24" y="116" width="100" height="3" rx="1.5" fill="rgba(255,255,255,0.09)" />
+        <rect x="24" y="123" width="80" height="3" rx="1.5" fill="rgba(255,255,255,0.07)" />
+        <circle cx="32" cy="143" r="6" fill={ACC_20} />
+        <rect x="42" y="141" width="40" height="3" rx="1.5" fill="rgba(255,255,255,0.10)" />
         {/* Right image */}
         <rect x="148" y="30" width="122" height="140" rx="4" fill="#111e2e" stroke={line} strokeWidth="0.5" />
-        <rect x="152" y="34" width="114" height="132" rx="3" fill="#0d1926" />
+        <rect x="152" y="34" width="114" height="132" rx="3" fill={`rgba(94,196,212,0.08)`} />
       </>
     ),
   };
@@ -402,7 +406,7 @@ function FeatureModal({ feature, onClose }: { feature: WebsiteTypeFeature; onClo
               <Icon size={20} strokeWidth={1.25} style={{ color: ACC }} />
             </div>
             <h3 style={{ fontFamily: "'Montserrat', sans-serif" }} className="text-white text-2xl mb-4 font-light">{feature.title}</h3>
-            <p style={{ fontFamily: "'Inter', sans-serif" }} className="text-white/55 text-sm leading-[1.85]">{feature.body}</p>
+            <p style={{ fontFamily: "'Inter', sans-serif" }} className="text-white/55 text-sm leading-[1.85]">{feature.detail || feature.body}</p>
           </div>
         </motion.div>
       </motion.div>
@@ -431,7 +435,7 @@ function IndustryModal({ industry, onClose }: { industry: WebsiteTypeIndustry; o
             </button>
             <span style={{ color: ACC }} className="text-[10px] tracking-[0.3em] uppercase font-mono mb-4 block">✦ Industry</span>
             <h3 style={{ fontFamily: "'Montserrat', sans-serif" }} className="text-white text-2xl mb-4 font-light">{industry.name}</h3>
-            <p style={{ fontFamily: "'Inter', sans-serif" }} className="text-white/55 text-sm leading-[1.85]">{industry.description}</p>
+            <p style={{ fontFamily: "'Inter', sans-serif" }} className="text-white/55 text-sm leading-[1.85]">{industry.detail || industry.description}</p>
           </div>
         </motion.div>
       </motion.div>
@@ -459,18 +463,18 @@ function FeaturesSection({ features }: { features: WebsiteTypeFeature[] }) {
             const Icon = f.icon;
             return (
               <motion.div key={f.title} initial={isMobile ? false : { opacity: 0, y: 30 }} animate={inView ? { opacity: 1, y: 0 } : {}} transition={{ delay: i * 0.07 }}
-                className="group cursor-pointer relative p-6 transition-colors duration-300" style={{ border: `1px solid ${ACC_10}` }}
+                className="group cursor-pointer relative p-6 transition-colors duration-300" style={{ border: `1px solid ${ACC_25}`, backgroundColor: ACC_05 }}
                 onClick={() => setActive(f)}
-                onMouseEnter={e => { (e.currentTarget as HTMLElement).style.borderColor = ACC_35; (e.currentTarget as HTMLElement).style.backgroundColor = ACC_05; }}
-                onMouseLeave={e => { (e.currentTarget as HTMLElement).style.borderColor = ACC_10; (e.currentTarget as HTMLElement).style.backgroundColor = "transparent"; }}>
-                <div className="absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                onMouseEnter={e => { (e.currentTarget as HTMLElement).style.borderColor = ACC_50; (e.currentTarget as HTMLElement).style.backgroundColor = ACC_10; }}
+                onMouseLeave={e => { (e.currentTarget as HTMLElement).style.borderColor = ACC_25; (e.currentTarget as HTMLElement).style.backgroundColor = ACC_05; }}>
+                <div className="absolute top-4 right-4 opacity-60 group-hover:opacity-100 transition-opacity duration-300">
                   <Plus size={12} style={{ color: ACC }} />
                 </div>
-                <div className="mb-5 inline-flex items-center justify-center w-11 h-11 border" style={{ borderColor: ACC_20 }}>
-                  <Icon size={18} strokeWidth={1.25} style={{ color: ACC }} className="opacity-70 group-hover:opacity-100 transition-opacity duration-300" />
+                <div className="mb-5 inline-flex items-center justify-center w-11 h-11 border" style={{ borderColor: ACC_35 }}>
+                  <Icon size={18} strokeWidth={1.25} style={{ color: ACC }} className="opacity-90 group-hover:opacity-100 transition-opacity duration-300" />
                 </div>
                 <h3 style={{ fontFamily: "'Montserrat', sans-serif", color: "white", transition: "color 0.3s" }} className="text-xl mb-3 group-hover:!text-[#5ec4d4] transition-colors">{f.title}</h3>
-                <p style={{ fontFamily: "'Inter', sans-serif" }} className="text-white/40 text-sm leading-relaxed line-clamp-3">{f.body}</p>
+                <p style={{ fontFamily: "'Inter', sans-serif" }} className="text-white/55 text-sm leading-relaxed line-clamp-3">{f.body}</p>
               </motion.div>
             );
           })}
@@ -503,18 +507,18 @@ function IndustriesSection({ industries }: { industries: WebsiteTypeIndustry[] }
         <div className="grid grid-cols-1 md:grid-cols-2 gap-px" style={{ backgroundColor: ACC_08 }}>
           {industries.map((ind, i) => (
             <motion.div key={ind.name} initial={isMobile ? false : { opacity: 0, y: 20 }} animate={inView ? { opacity: 1, y: 0 } : {}} transition={{ delay: i * 0.06 }}
-              className="p-8 group transition-colors duration-300 cursor-pointer relative" style={{ backgroundColor: BG_CARD }}
+              className="p-8 group transition-colors duration-300 cursor-pointer relative" style={{ backgroundColor: "#1c2f48" }}
               onClick={() => setActive(ind)}
-              onMouseEnter={e => { (e.currentTarget as HTMLElement).style.backgroundColor = "#1e3248"; }}
-              onMouseLeave={e => { (e.currentTarget as HTMLElement).style.backgroundColor = BG_CARD; }}>
-              <div className="absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+              onMouseEnter={e => { (e.currentTarget as HTMLElement).style.backgroundColor = "#223557"; }}
+              onMouseLeave={e => { (e.currentTarget as HTMLElement).style.backgroundColor = "#1c2f48"; }}>
+              <div className="absolute top-4 right-4 opacity-60 group-hover:opacity-100 transition-opacity duration-300">
                 <Plus size={12} style={{ color: ACC }} />
               </div>
               <div className="flex items-start gap-4">
                 <span className="text-[10px] mt-1 flex-shrink-0" style={{ color: ACC }}>✦</span>
                 <div>
                   <h3 style={{ fontFamily: "'Montserrat', sans-serif", color: "white", transition: "color 0.3s" }} className="text-xl mb-2 group-hover:!text-[#5ec4d4] transition-colors">{ind.name}</h3>
-                  <p style={{ fontFamily: "'Inter', sans-serif" }} className="text-white/35 text-sm leading-relaxed">{ind.description}</p>
+                  <p style={{ fontFamily: "'Inter', sans-serif" }} className="text-white/55 text-sm leading-relaxed">{ind.description}</p>
                 </div>
               </div>
             </motion.div>
