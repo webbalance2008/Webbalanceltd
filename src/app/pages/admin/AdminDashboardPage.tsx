@@ -38,6 +38,7 @@ interface SeoRow {
   page_path: string;
   title: string;
   description: string;
+  focus_keyword?: string;
   keywords: string;
   og_image: string;
   no_index: boolean;
@@ -397,9 +398,9 @@ function AnalyticsTab() {
 // ─── SEO score engine ─────────────────────────────────────────────────────────
 function scoreSeoRow(row: SeoRow): { score: number; color: string; label: string; checks: SeoCheck[] } {
   const checks: SeoCheck[] = [];
-  const kws        = (row.keywords    || "").split(",").map(k => k.trim().toLowerCase()).filter(Boolean);
-  const titleLower = (row.title       || "").toLowerCase();
-  const descLower  = (row.description || "").toLowerCase();
+  const focusKw    = (row.focus_keyword || "").trim().toLowerCase();
+  const titleLower = (row.title         || "").toLowerCase();
+  const descLower  = (row.description   || "").toLowerCase();
 
   // Title length
   const tLen = (row.title || "").length;
@@ -410,19 +411,19 @@ function scoreSeoRow(row: SeoRow): { score: number; color: string; label: string
 
   // Description length
   const dLen = (row.description || "").length;
-  if      (dLen === 0)               checks.push({ label: "Description",        status: "fail", message: "Description is missing" });
+  if      (dLen === 0)                 checks.push({ label: "Description",        status: "fail", message: "Description is missing" });
   else if (dLen >= 140 && dLen <= 160) checks.push({ label: "Description length", status: "pass", message: `${dLen} chars — perfect (140–160)` });
-  else if (dLen >= 100 && dLen < 180)  checks.push({ label: "Description length", status: "warn", message: `${dLen} chars — aim for 140–160` });
-  else                                 checks.push({ label: "Description length", status: "fail", message: `${dLen} chars — ${dLen < 100 ? "too short" : "too long"}` });
+  else if (dLen > 160 && dLen <= 180)  checks.push({ label: "Description length", status: "warn", message: `${dLen} chars — slightly long, aim for 140–160` });
+  else                                 checks.push({ label: "Description length", status: "fail", message: `${dLen} chars — ${dLen < 140 ? "must reach 140 chars" : "too long"}` });
 
-  // Keyword analysis
-  if (kws.length === 0) {
-    checks.push({ label: "Keywords", status: "fail", message: "No focus keywords set" });
+  // Focus keyword scoring
+  if (!focusKw) {
+    checks.push({ label: "Focus keyword", status: "fail", message: "No focus keyword set" });
   } else {
-    const kwInTitle = kws.some(k => titleLower.includes(k));
-    const kwInDesc  = kws.some(k => descLower.includes(k));
-    checks.push({ label: "Keyword in title",       status: kwInTitle ? "pass" : "fail", message: kwInTitle ? "Focus keyword found in title"       : "Add focus keyword to title" });
-    checks.push({ label: "Keyword in description", status: kwInDesc  ? "pass" : "warn", message: kwInDesc  ? "Focus keyword found in description" : "Consider adding keyword to description" });
+    const kwInTitle = titleLower.includes(focusKw);
+    const kwInDesc  = descLower.includes(focusKw);
+    checks.push({ label: "Focus keyword in title",       status: kwInTitle ? "pass" : "fail", message: kwInTitle ? "Focus keyword found in title"       : "Add focus keyword to title" });
+    checks.push({ label: "Focus keyword in description", status: kwInDesc  ? "pass" : "fail", message: kwInDesc  ? "Focus keyword found in description" : "Focus keyword must appear in description" });
   }
 
   // No-index warning
@@ -452,7 +453,7 @@ function SeoEditModal({ row, onClose, onSave }: {
   onClose: () => void;
   onSave: (updated: SeoRow) => void;
 }) {
-  const [draft, setDraft]             = useState<SeoRow>({ ...row });
+  const [draft, setDraft]             = useState<SeoRow>({ focus_keyword: "", ...row });
   const [aiLoading, setAiLoading]     = useState(false);
   const [aiError, setAiError]         = useState<string | null>(null);
   const [aiProvider, setAiProvider]   = useState<"claude" | "openai">(() =>
@@ -600,9 +601,17 @@ Respond with ONLY a raw JSON object, no markdown, no explanation:
               onFocus={focusIn} onBlur={focusOut} />
           </div>
 
-          {/* Keywords */}
+          {/* Focus Keyword */}
           <div>
-            <label style={{ fontFamily: MONO, color: "rgba(255,255,255,0.4)", fontSize: "0.5rem", letterSpacing: "0.2em", textTransform: "uppercase", display: "block", marginBottom: "6px" }}>Focus Keywords</label>
+            <label style={{ fontFamily: MONO, color: "rgba(255,255,255,0.4)", fontSize: "0.5rem", letterSpacing: "0.2em", textTransform: "uppercase", display: "block", marginBottom: "6px" }}>Focus Keyword</label>
+            <input value={draft.focus_keyword} onChange={e => set("focus_keyword", e.target.value)}
+              placeholder="Primary keyword — used for scoring (must appear in title & description)" style={inputBase}
+              onFocus={focusIn} onBlur={focusOut} />
+          </div>
+
+          {/* Meta Keywords */}
+          <div>
+            <label style={{ fontFamily: MONO, color: "rgba(255,255,255,0.4)", fontSize: "0.5rem", letterSpacing: "0.2em", textTransform: "uppercase", display: "block", marginBottom: "6px" }}>Keywords</label>
             <input value={draft.keywords} onChange={e => set("keywords", e.target.value)}
               placeholder="keyword one, keyword two, keyword three" style={inputBase}
               onFocus={focusIn} onBlur={focusOut} />
@@ -770,7 +779,7 @@ function SeoTab() {
 
   const addRow = () => {
     const newIdx = rows.length;
-    setRows(prev => [...prev, { page_path: "/new-page", title: "", description: "", keywords: "", og_image: "", no_index: false, isNew: true, isDirty: true }]);
+    setRows(prev => [...prev, { page_path: "/new-page", title: "", description: "", focus_keyword: "", keywords: "", og_image: "", no_index: false, isNew: true, isDirty: true }]);
     setEditingIdx(newIdx);
   };
 
