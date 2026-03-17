@@ -484,12 +484,15 @@ Optimise the SEO meta tags for this page:
 - Page path: ${draft.page_path}
 - Current title: ${draft.title || "(none)"}
 - Current description: ${draft.description || "(none)"}
+- Focus keyword: ${draft.focus_keyword || "(none)"}
 - Current keywords: ${draft.keywords || "(none)"}
 
-Rules:
-1. Title: 50–60 characters. Include the primary keyword naturally. End with "| Web Balance" only if within character limit.
-2. Description: 140–160 characters. Include the primary keyword. End with a compelling call-to-action.
-3. Keywords: 4–6 comma-separated terms, ordered by importance.
+STRICT character limits — count every character including spaces before writing:
+1. Title: MINIMUM 50 characters, MAXIMUM 60 characters. Include the focus keyword. End with "| Web Balance" only if it fits within 60 chars.
+2. Description: MINIMUM 140 characters, MAXIMUM 160 characters. Must include the focus keyword. End with a call-to-action (e.g. "Get a free quote today."). Count carefully — 140 is the floor, 160 is the ceiling.
+3. Keywords: 4–6 comma-separated terms, ordered by importance. Do NOT include the focus keyword here (it is stored separately).
+
+Before responding, verify: title.length >= 50 && title.length <= 60, description.length >= 140 && description.length <= 160.
 
 Respond with ONLY a raw JSON object, no markdown, no explanation:
 {"title":"...","description":"...","keywords":"..."}`;
@@ -529,8 +532,17 @@ Respond with ONLY a raw JSON object, no markdown, no explanation:
         text = (json.choices?.[0]?.message?.content || "").trim();
       }
       const parsed = JSON.parse(text) as { title?: string; description?: string; keywords?: string };
-      if (parsed.title)       setDraft(d => ({ ...d, title:       parsed.title! }));
-      if (parsed.description) setDraft(d => ({ ...d, description: parsed.description! }));
+
+      // Enforce hard character limits — trim at word boundary if AI overshoots
+      const trimToWords = (str: string, max: number) => {
+        if (str.length <= max) return str;
+        const trimmed = str.slice(0, max);
+        const lastSpace = trimmed.lastIndexOf(" ");
+        return (lastSpace > max * 0.75 ? trimmed.slice(0, lastSpace) : trimmed).trimEnd();
+      };
+
+      if (parsed.title)       setDraft(d => ({ ...d, title:       trimToWords(parsed.title!, 60) }));
+      if (parsed.description) setDraft(d => ({ ...d, description: trimToWords(parsed.description!, 160) }));
       if (parsed.keywords)    setDraft(d => ({ ...d, keywords:    parsed.keywords! }));
     } catch (e) {
       setAiError((e as Error).message || "Failed to get AI suggestion");
