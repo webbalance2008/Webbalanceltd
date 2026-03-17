@@ -1,1 +1,47 @@
+# ── Portfolio / Work pages (old slugs → new /work/ structure) ────────────────
+/web-design-projects/early-bird-vending/        /work/early-bird-vending        301
+/web-design-projects/waverley-cutting-tools/    /work/waverley-cutting-tools    301
+/web-design-projects/romar/                     /work/romar-abrado              301
+/web-design-projects/gt-diagnostics/            /work/gt-diagnostics            301
+/drumaber/                                      /work/drumaber                  301
+/granite-elite/                                 /work/granite-elite             301
+/gt-diagnostics/1000                            /work/gt-diagnostics            301
+/gt-diagnostics//1000                           /work/gt-diagnostics            301
+/gt-diagnostics//1000/                          /work/gt-diagnostics            301
+/early-bird-vending/                            /work/early-bird-vending        301
+/custom-tuning/                                 /work/custom-tuning             301
+/puls8/                                         /work/puls8-piping-solutions    301
+/aberdeen-northern-hotel/                       /work/aberdeen-northern-hotel   301
+/waverley-cutting-tools/                        /work/waverley-cutting-tools    301
+/tac-healthcare-group/                          /work/tac-healthcare            301
+/romar-abrado/                                  /work/romar-abrado              301
+/banks-o-dee/                                   /work/banks-o-dee-fitness       301
+
+# ── Services (old /digital-services/ paths) ──────────────────────────────────
+/digital-services/web-design-aberdeen/          /web-design                     301
+/digital-services/seo-specialists-aberdeen/     /seo                            301
+/digital-services/website-hosting-security-aberdeen/  /hosting                 301
+
+# ── Portfolio listing ─────────────────────────────────────────────────────────
+/our-work-web-graphic-design-portfolio-aberdeen/  /web-design/portfolio         301
+
+# ── Contact ───────────────────────────────────────────────────────────────────
+/contact/                                       /contact                        301
+/contact-web-designers-aberdeen/                /contact                        301
+
+# ── Misc old WordPress pages ──────────────────────────────────────────────────
+/index.php                                      /                               301
+/start-your-project/                            /build-your-quote               301
+/about-web-balance-aberdeen/testimonials/       /testimonials                   301
+/about-web-balance-aberdeen/                    /                               301
+/about/                                         /                               301
+/cookie-policy/                                 /                               301
+/terms-of-use/                                  /                               301
+/privacy-policy/                                /                               301
+/page/2/                                        /                               301
+/page/4/                                        /                               301
+/page/6/                                        /                               301
+/page/7/                                        /                               301
+
+# ── SPA fallback (must be last) ───────────────────────────────────────────────
 /*    /index.html   200
