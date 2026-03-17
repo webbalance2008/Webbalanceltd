@@ -452,19 +452,31 @@ function SeoEditModal({ row, onClose, onSave }: {
   onClose: () => void;
   onSave: (updated: SeoRow) => void;
 }) {
-  const [draft, setDraft]           = useState<SeoRow>({ ...row });
-  const [aiLoading, setAiLoading]   = useState(false);
-  const [aiError, setAiError]       = useState<string | null>(null);
-  const [apiKey, setApiKey]         = useState(() => sessionStorage.getItem("wb_claude_key") || "");
-  const [showKey, setShowKey]       = useState(false);
+  const [draft, setDraft]             = useState<SeoRow>({ ...row });
+  const [aiLoading, setAiLoading]     = useState(false);
+  const [aiError, setAiError]         = useState<string | null>(null);
+  const [aiProvider, setAiProvider]   = useState<"claude" | "openai">(() =>
+    (sessionStorage.getItem("wb_ai_provider") as "claude" | "openai") || "claude"
+  );
+  const [apiKey, setApiKey]           = useState(() =>
+    sessionStorage.getItem(aiProvider === "claude" ? "wb_claude_key" : "wb_openai_key") || ""
+  );
+  const [showKey, setShowKey]         = useState(false);
   const scoreData = scoreSeoRow(draft);
   const set = (field: keyof SeoRow, val: string | boolean) => setDraft(d => ({ ...d, [field]: val }));
 
+  const switchProvider = (p: "claude" | "openai") => {
+    setAiProvider(p);
+    sessionStorage.setItem("wb_ai_provider", p);
+    setApiKey(sessionStorage.getItem(p === "claude" ? "wb_claude_key" : "wb_openai_key") || "");
+    setAiError(null);
+  };
+
   const handleAutoOptimise = async () => {
-    if (!apiKey) { setAiError("Enter your Claude API key to use AI optimisation."); return; }
+    if (!apiKey) { setAiError(`Enter your ${aiProvider === "claude" ? "Claude" : "OpenAI"} API key to use AI optimisation.`); return; }
     setAiLoading(true);
     setAiError(null);
-    sessionStorage.setItem("wb_claude_key", apiKey);
+    sessionStorage.setItem(aiProvider === "claude" ? "wb_claude_key" : "wb_openai_key", apiKey);
     const prompt = `You are an expert SEO copywriter for "Web Balance", a UK digital agency specialising in web design, web apps, SEO, hosting, and branding.
 
 Optimise the SEO meta tags for this page:
@@ -481,22 +493,40 @@ Rules:
 Respond with ONLY a raw JSON object, no markdown, no explanation:
 {"title":"...","description":"...","keywords":"..."}`;
     try {
-      const res = await fetch("https://api.anthropic.com/v1/messages", {
-        method: "POST",
-        headers: {
-          "x-api-key": apiKey,
-          "anthropic-version": "2023-06-01",
-          "content-type": "application/json",
-          "anthropic-dangerous-direct-browser-access": "true",
-        },
-        body: JSON.stringify({ model: "claude-sonnet-4-6", max_tokens: 512, messages: [{ role: "user", content: prompt }] }),
-      });
-      if (!res.ok) {
-        const err = await res.json().catch(() => ({})) as { error?: { message?: string } };
-        throw new Error(err?.error?.message || `HTTP ${res.status}`);
+      let text = "";
+      if (aiProvider === "claude") {
+        const res = await fetch("https://api.anthropic.com/v1/messages", {
+          method: "POST",
+          headers: {
+            "x-api-key": apiKey,
+            "anthropic-version": "2023-06-01",
+            "content-type": "application/json",
+            "anthropic-dangerous-direct-browser-access": "true",
+          },
+          body: JSON.stringify({ model: "claude-sonnet-4-6", max_tokens: 512, messages: [{ role: "user", content: prompt }] }),
+        });
+        if (!res.ok) {
+          const err = await res.json().catch(() => ({})) as { error?: { message?: string } };
+          throw new Error(err?.error?.message || `HTTP ${res.status}`);
+        }
+        const json = await res.json() as { content: { text: string }[] };
+        text = (json.content?.[0]?.text || "").trim();
+      } else {
+        const res = await fetch("https://api.openai.com/v1/chat/completions", {
+          method: "POST",
+          headers: {
+            "Authorization": `Bearer ${apiKey}`,
+            "content-type": "application/json",
+          },
+          body: JSON.stringify({ model: "gpt-4o-mini", max_tokens: 512, messages: [{ role: "user", content: prompt }] }),
+        });
+        if (!res.ok) {
+          const err = await res.json().catch(() => ({})) as { error?: { message?: string } };
+          throw new Error(err?.error?.message || `HTTP ${res.status}`);
+        }
+        const json = await res.json() as { choices: { message: { content: string } }[] };
+        text = (json.choices?.[0]?.message?.content || "").trim();
       }
-      const json  = await res.json() as { content: { text: string }[] };
-      const text  = (json.content?.[0]?.text || "").trim();
       const parsed = JSON.parse(text) as { title?: string; description?: string; keywords?: string };
       if (parsed.title)       setDraft(d => ({ ...d, title:       parsed.title! }));
       if (parsed.description) setDraft(d => ({ ...d, description: parsed.description! }));
@@ -616,17 +646,34 @@ Respond with ONLY a raw JSON object, no markdown, no explanation:
             </div>
           </div>
 
-          {/* Claude AI optimiser */}
+          {/* AI optimiser */}
           <div style={{ border: `1px solid rgba(0,212,232,0.2)`, background: "rgba(0,212,232,0.03)", padding: "16px" }}>
-            <p style={{ fontFamily: MONO, color: TEAL, fontSize: "0.5rem", letterSpacing: "0.2em", textTransform: "uppercase", marginBottom: "12px" }}>
-              Auto-Optimise with Claude AI
-            </p>
+            <div className="flex items-center justify-between mb-3">
+              <p style={{ fontFamily: MONO, color: TEAL, fontSize: "0.5rem", letterSpacing: "0.2em", textTransform: "uppercase" }}>
+                Auto-Optimise with AI
+              </p>
+              {/* Provider toggle */}
+              <div className="flex" style={{ border: `1px solid ${BORDER}` }}>
+                {(["claude", "openai"] as const).map(p => (
+                  <button
+                    key={p}
+                    onClick={() => switchProvider(p)}
+                    style={{
+                      fontFamily: MONO, fontSize: "0.5rem", letterSpacing: "0.15em", textTransform: "uppercase",
+                      padding: "5px 10px", background: aiProvider === p ? TEAL : "transparent",
+                      color: aiProvider === p ? "#0e1822" : "rgba(255,255,255,0.4)",
+                      border: "none", cursor: "pointer",
+                    }}
+                  >{p === "claude" ? "Claude" : "ChatGPT"}</button>
+                ))}
+              </div>
+            </div>
             <div className="flex gap-2 mb-2">
               <input
                 type={showKey ? "text" : "password"}
                 value={apiKey}
                 onChange={e => setApiKey(e.target.value)}
-                placeholder="sk-ant-api03-..."
+                placeholder={aiProvider === "claude" ? "sk-ant-api03-..." : "sk-..."}
                 style={{ flex: 1, background: CARD, border: `1px solid ${BORDER}`, color: "#fff", fontFamily: MONO, fontSize: "0.75rem", padding: "8px 12px", outline: "none" }}
                 onFocus={e => { e.currentTarget.style.borderColor = "rgba(0,212,232,0.4)"; }}
                 onBlur={e  => { e.currentTarget.style.borderColor = BORDER; }}
@@ -648,7 +695,10 @@ Respond with ONLY a raw JSON object, no markdown, no explanation:
             </div>
             {aiError && <p style={{ fontFamily: BODY, color: "#f87171", fontSize: "0.8125rem", marginBottom: "8px" }}>{aiError}</p>}
             <p style={{ fontFamily: BODY, color: "rgba(255,255,255,0.3)", fontSize: "0.75rem" }}>
-              Claude suggests an optimised title, description, and keywords applied to the fields above for review. API key is saved to session storage only.
+              {aiProvider === "claude"
+                ? "Uses Claude Sonnet. Suggests an optimised title, description & keywords — applied above for review."
+                : "Uses GPT-4o Mini. Suggests an optimised title, description & keywords — applied above for review."}
+              {" "}API key saved to session storage only.
             </p>
           </div>
         </div>
