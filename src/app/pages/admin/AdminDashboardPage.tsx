@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useMemo } from "react";
 import {
   LineChart, Line, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip,
   ResponsiveContainer, Legend
@@ -7,11 +7,16 @@ import * as Tabs from "@radix-ui/react-tabs";
 import {
   BarChart2, Globe, DollarSign, LogOut, RefreshCw, Check, X,
   Plus, Trash2, Save, Eye, EyeOff, TrendingUp, Users, FileText, MousePointer, Zap, Sliders,
+  ChevronDown, ChevronRight, Settings, Key,
 } from "lucide-react";
 import { supabase } from "../../utils/supabaseClient";
 import { ProtectedRoute } from "../../components/admin/ProtectedRoute";
 import { departmentPackages } from "../../data/packages";
 import { RATE_DEFAULTS } from "../../hooks/usePricingRates";
+import { computeSeoScore, classifyPage } from "./seoScoring";
+import type { SeoScoreResult } from "./types";
+import type { ContentBlock } from "../../hooks/useContentBlocks";
+import { PAGE_BLOCK_DEFAULTS } from "../../data/pageBlocks";
 
 // ─── Style constants ─────────────────────────────────────────────────────────
 const MONO  = "'DM Mono', monospace";
@@ -44,12 +49,6 @@ interface SeoRow {
   no_index: boolean;
   isNew?: boolean;
   isDirty?: boolean;
-}
-
-interface SeoCheck {
-  label: string;
-  status: "pass" | "warn" | "fail";
-  message: string;
 }
 
 interface PricingRow {
@@ -134,6 +133,21 @@ const DEPT_COLORS: Record<string, string> = {
   "hosting":    "#f59e6a",
   "branding":   "#f472b6",
 };
+
+// ─── ContentBlock helpers ─────────────────────────────────────────────────────
+function flattenBlocks(blocks: ContentBlock[]): string {
+  return blocks
+    .filter(b => b.type !== "img")
+    .map(b => b.text ?? "")
+    .filter(Boolean)
+    .join("\n\n");
+}
+
+function blockKeywordStatus(block: ContentBlock, kw: string): "hit" | "none" | "na" {
+  if (!kw) return "na";
+  if (block.type === "img") return block.alt?.toLowerCase().includes(kw) ? "hit" : "none";
+  return block.text?.toLowerCase().includes(kw) ? "hit" : "none";
+}
 
 // ─── Metric card ──────────────────────────────────────────────────────────────
 function MetricCard({
@@ -395,47 +409,6 @@ function AnalyticsTab() {
   );
 }
 
-// ─── SEO score engine ─────────────────────────────────────────────────────────
-function scoreSeoRow(row: SeoRow): { score: number; color: string; label: string; checks: SeoCheck[] } {
-  const checks: SeoCheck[] = [];
-  const focusKw    = (row.focus_keyword || "").trim().toLowerCase();
-  const titleLower = (row.title         || "").toLowerCase();
-  const descLower  = (row.description   || "").toLowerCase();
-
-  // Title length
-  const tLen = (row.title || "").length;
-  if      (tLen === 0)             checks.push({ label: "Title",        status: "fail", message: "Title is missing" });
-  else if (tLen >= 50 && tLen <= 60) checks.push({ label: "Title length",  status: "pass", message: `${tLen} chars — perfect (50–60)` });
-  else if (tLen >= 35 && tLen < 70)  checks.push({ label: "Title length",  status: "warn", message: `${tLen} chars — aim for 50–60` });
-  else                               checks.push({ label: "Title length",  status: "fail", message: `${tLen} chars — ${tLen < 35 ? "too short" : "too long"}` });
-
-  // Description length
-  const dLen = (row.description || "").length;
-  if      (dLen === 0)                 checks.push({ label: "Description",        status: "fail", message: "Description is missing" });
-  else if (dLen >= 140 && dLen <= 160) checks.push({ label: "Description length", status: "pass", message: `${dLen} chars — perfect (140–160)` });
-  else if (dLen > 160 && dLen <= 180)  checks.push({ label: "Description length", status: "warn", message: `${dLen} chars — slightly long, aim for 140–160` });
-  else                                 checks.push({ label: "Description length", status: "fail", message: `${dLen} chars — ${dLen < 140 ? "must reach 140 chars" : "too long"}` });
-
-  // Focus keyword scoring
-  if (!focusKw) {
-    checks.push({ label: "Focus keyword", status: "fail", message: "No focus keyword set" });
-  } else {
-    const kwInTitle = titleLower.includes(focusKw);
-    const kwInDesc  = descLower.includes(focusKw);
-    checks.push({ label: "Focus keyword in title",       status: kwInTitle ? "pass" : "fail", message: kwInTitle ? "Focus keyword found in title"       : "Add focus keyword to title" });
-    checks.push({ label: "Focus keyword in description", status: kwInDesc  ? "pass" : "fail", message: kwInDesc  ? "Focus keyword found in description" : "Focus keyword must appear in description" });
-  }
-
-  // No-index warning
-  if (row.no_index) checks.push({ label: "Indexing", status: "warn", message: "Page excluded from search engines" });
-
-  const passing = checks.filter(c => c.status === "pass").length;
-  const score   = checks.length > 0 ? Math.round((passing / checks.length) * 100) : 0;
-  const color   = score >= 75 ? "#3dd68c" : score >= 45 ? "#f59e6a" : "#f87171";
-  const label   = score >= 75 ? "Good"    : score >= 45 ? "Needs work" : "Poor";
-  return { score, color, label, checks };
-}
-
 // ─── Char counter ─────────────────────────────────────────────────────────────
 function CharCounter({ value, min, max }: { value: string; min: number; max: number }) {
   const len   = (value || "").length;
@@ -453,18 +426,145 @@ function SeoEditModal({ row, onClose, onSave }: {
   onClose: () => void;
   onSave: (updated: SeoRow) => void;
 }) {
-  const [draft, setDraft]             = useState<SeoRow>({ focus_keyword: "", ...row });
-  const [aiLoading, setAiLoading]     = useState(false);
-  const [aiError, setAiError]         = useState<string | null>(null);
-  const [aiProvider, setAiProvider]   = useState<"claude" | "openai">(() =>
+  const [draft, setDraft]           = useState<SeoRow>({ focus_keyword: "", ...row });
+  const [activeTab, setActiveTab]   = useState<"analysis" | "seo" | "content">("analysis");
+  const [blocks, setBlocks]         = useState<ContentBlock[]>([]);
+  const [contentLoading, setContentLoading] = useState(false);
+  const [extracting, setExtracting] = useState(false);
+  const [dbUpdatedAt, setDbUpdatedAt] = useState<string | null>(null);
+  const [contentDirty, setContentDirty] = useState(false);
+  const [saving, setSaving]         = useState(false);
+  const [showGoodSignals, setShowGoodSignals] = useState(false);
+  const [aiLoading, setAiLoading]   = useState(false);
+  const [aiError, setAiError]       = useState<string | null>(null);
+  const [aiSteer, setAiSteer]       = useState("");
+  const [aiProvider, setAiProvider] = useState<"claude" | "openai">(() =>
     (sessionStorage.getItem("wb_ai_provider") as "claude" | "openai") || "claude"
   );
-  const [apiKey, setApiKey]           = useState(() =>
+  const [apiKey, setApiKey]         = useState(() =>
     sessionStorage.getItem(aiProvider === "claude" ? "wb_claude_key" : "wb_openai_key") || ""
   );
-  const [showKey, setShowKey]         = useState(false);
-  const scoreData = scoreSeoRow(draft);
+  const [showKey, setShowKey]       = useState(false);
+
+  const bodyContent = useMemo(() => flattenBlocks(blocks), [blocks]);
   const set = (field: keyof SeoRow, val: string | boolean) => setDraft(d => ({ ...d, [field]: val }));
+  const kw = (draft.focus_keyword ?? "").toLowerCase();
+
+  const scoreData = useMemo(() => computeSeoScore({
+    page_path: draft.page_path,
+    title: draft.title,
+    description: draft.description,
+    focus_keyword: draft.focus_keyword,
+    keywords: draft.keywords,
+    og_image: draft.og_image,
+    no_index: draft.no_index,
+    body_content: bodyContent,
+  }), [draft, bodyContent]);
+
+  const loadPageContent = useCallback(async (_fromDb = false) => {
+    setContentLoading(true);
+    const { data } = await supabase
+      .from("pages")
+      .select("content_blocks, updated_at")
+      .eq("page_path", row.page_path)
+      .maybeSingle();
+
+    const defaults = PAGE_BLOCK_DEFAULTS[row.page_path] ?? [];
+    const saved: ContentBlock[] = (data?.content_blocks && Array.isArray(data.content_blocks))
+      ? (data.content_blocks as ContentBlock[])
+      : [];
+
+    if (defaults.length > 0) {
+      // Merge: show all canonical blocks, apply any saved overrides
+      const savedMap = new Map(saved.map(b => [b.id, b]));
+      const merged = defaults.map(def => savedMap.has(def.id) ? { ...def, ...savedMap.get(def.id) } : def);
+      // Append any user-added blocks that aren't in the canonical set
+      const extra = saved.filter(b => !defaults.some(d => d.id === b.id));
+      setBlocks([...merged, ...extra]);
+    } else {
+      setBlocks(saved);
+    }
+
+    if (data?.updated_at) setDbUpdatedAt(data.updated_at);
+    setContentLoading(false);
+    setContentDirty(false);
+  }, [row.page_path]);
+
+  useEffect(() => { loadPageContent(); }, [loadPageContent]);
+
+  const extractFromPage = useCallback(async () => {
+    setExtracting(true);
+    try {
+      await new Promise<void>((resolve, reject) => {
+        const iframe = document.createElement("iframe");
+        iframe.style.cssText = "position:fixed;top:-9999px;left:-9999px;width:1px;height:1px;opacity:0;pointer-events:none;";
+        iframe.src = row.page_path;
+        iframe.onload = () => {
+          setTimeout(() => {
+            try {
+              const doc = iframe.contentDocument;
+              const main = doc?.querySelector("main") ?? doc?.body;
+              if (!main) { reject(new Error("No main element")); return; }
+              // Remove nav/footer/header/button elements from clone
+              const clone = main.cloneNode(true) as Element;
+              clone.querySelectorAll("nav,footer,header,button,script,style,[aria-hidden='true']").forEach(el => el.remove());
+              const extracted: ContentBlock[] = [];
+              const seen = new Set<string>();
+              let h1c = 0, h2c = 0, h3c = 0, pc = 0, imgc = 0;
+              clone.querySelectorAll("h1,h2,h3,p,img").forEach(el => {
+                if (extracted.length >= 80) return;
+                const tag = el.tagName.toLowerCase() as ContentBlock["type"];
+                if (tag === "img") {
+                  const src = (el as HTMLImageElement).src;
+                  const alt = (el as HTMLImageElement).alt ?? "";
+                  if (!src) return;
+                  const id = `img_${imgc++}`;
+                  extracted.push({ id, type: "img", src, alt });
+                } else {
+                  const text = el.textContent?.replace(/\s+/g, " ").trim() ?? "";
+                  if (!text || text.length < 3) return;
+                  const dedupKey = `${tag}:${text}`;
+                  if (seen.has(dedupKey)) return;
+                  seen.add(dedupKey);
+                  let id: string;
+                  if (tag === "h1") id = `h1_${h1c++}`;
+                  else if (tag === "h2") id = `h2_${h2c++}`;
+                  else if (tag === "h3") id = `h3_${h3c++}`;
+                  else id = `p_${pc++}`;
+                  extracted.push({ id, type: tag, text });
+                }
+              });
+              setBlocks(extracted);
+              setContentDirty(true);
+              document.body.removeChild(iframe);
+              resolve();
+            } catch (err) {
+              document.body.removeChild(iframe);
+              reject(err);
+            }
+          }, 800);
+        };
+        iframe.onerror = () => { document.body.removeChild(iframe); reject(new Error("Failed to load page")); };
+        document.body.appendChild(iframe);
+      });
+    } catch (e) {
+      console.error("Extract failed:", e);
+    }
+    setExtracting(false);
+  }, [row.page_path]);
+
+  const updateBlock = (idx: number, patch: Partial<ContentBlock>) => {
+    setBlocks(prev => prev.map((b, i) => i === idx ? { ...b, ...patch } : b));
+    setContentDirty(true);
+  };
+  const deleteBlock = (idx: number) => { setBlocks(prev => prev.filter((_, i) => i !== idx)); setContentDirty(true); };
+  const addBlock = (type: ContentBlock["type"]) => {
+    const counts: Record<string, number> = {};
+    blocks.forEach(b => { counts[b.type] = (counts[b.type] ?? 0) + 1; });
+    const id = `${type}_${counts[type] ?? 0}`;
+    setBlocks(prev => [...prev, { id, type }]);
+    setContentDirty(true);
+  };
 
   const switchProvider = (p: "claude" | "openai") => {
     setAiProvider(p);
@@ -474,76 +574,55 @@ function SeoEditModal({ row, onClose, onSave }: {
   };
 
   const handleAutoOptimise = async () => {
-    if (!apiKey) { setAiError(`Enter your ${aiProvider === "claude" ? "Claude" : "OpenAI"} API key to use AI optimisation.`); return; }
-    setAiLoading(true);
-    setAiError(null);
+    if (!apiKey) { setAiError(`Enter your ${aiProvider === "claude" ? "Claude" : "OpenAI"} API key.`); return; }
+    setAiLoading(true); setAiError(null);
     sessionStorage.setItem(aiProvider === "claude" ? "wb_claude_key" : "wb_openai_key", apiKey);
-    const prompt = `You are an expert SEO copywriter for "Web Balance", a UK digital agency specialising in web design, web apps, SEO, hosting, and branding.
-
+    const prompt = `You are an expert SEO copywriter for "Web Balance", a UK digital agency.
 Optimise the SEO meta tags for this page:
 - Page path: ${draft.page_path}
 - Current title: ${draft.title || "(none)"}
 - Current description: ${draft.description || "(none)"}
 - Focus keyword: ${draft.focus_keyword || "(none)"}
 - Current keywords: ${draft.keywords || "(none)"}
+${aiSteer ? `- Context: ${aiSteer}` : ""}
 
-STRICT character limits — count every character including spaces before writing:
-1. Title: MINIMUM 50 characters, MAXIMUM 60 characters. Include the focus keyword. End with "| Web Balance" only if it fits within 60 chars.
-2. Description: MINIMUM 140 characters, MAXIMUM 160 characters. Must include the focus keyword. End with a call-to-action (e.g. "Get a free quote today."). Count carefully — 140 is the floor, 160 is the ceiling.
-3. Keywords: 4–6 comma-separated terms, ordered by importance. Do NOT include the focus keyword here (it is stored separately).
+STRICT character limits:
+1. Title: MINIMUM 50, MAXIMUM 60 characters. Include focus keyword.
+2. Description: MINIMUM 140, MAXIMUM 160 characters. Include focus keyword. End with a CTA.
+3. Keywords: 4–6 comma-separated terms, do NOT include the focus keyword.
 
-Before responding, verify: title.length >= 50 && title.length <= 60, description.length >= 140 && description.length <= 160.
-
-Respond with ONLY a raw JSON object, no markdown, no explanation:
-{"title":"...","description":"...","keywords":"..."}`;
+Respond with ONLY raw JSON, no markdown: {"title":"...","description":"...","keywords":"..."}`;
     try {
       let text = "";
       if (aiProvider === "claude") {
         const res = await fetch("https://api.anthropic.com/v1/messages", {
           method: "POST",
-          headers: {
-            "x-api-key": apiKey,
-            "anthropic-version": "2023-06-01",
-            "content-type": "application/json",
-            "anthropic-dangerous-direct-browser-access": "true",
-          },
+          headers: { "x-api-key": apiKey, "anthropic-version": "2023-06-01", "content-type": "application/json", "anthropic-dangerous-direct-browser-access": "true" },
           body: JSON.stringify({ model: "claude-sonnet-4-6", max_tokens: 512, messages: [{ role: "user", content: prompt }] }),
         });
-        if (!res.ok) {
-          const err = await res.json().catch(() => ({})) as { error?: { message?: string } };
-          throw new Error(err?.error?.message || `HTTP ${res.status}`);
-        }
+        if (!res.ok) { const err = await res.json().catch(() => ({})) as { error?: { message?: string } }; throw new Error(err?.error?.message || `HTTP ${res.status}`); }
         const json = await res.json() as { content: { text: string }[] };
         text = (json.content?.[0]?.text || "").trim();
       } else {
         const res = await fetch("https://api.openai.com/v1/chat/completions", {
           method: "POST",
-          headers: {
-            "Authorization": `Bearer ${apiKey}`,
-            "content-type": "application/json",
-          },
+          headers: { "Authorization": `Bearer ${apiKey}`, "content-type": "application/json" },
           body: JSON.stringify({ model: "gpt-4o-mini", max_tokens: 512, messages: [{ role: "user", content: prompt }] }),
         });
-        if (!res.ok) {
-          const err = await res.json().catch(() => ({})) as { error?: { message?: string } };
-          throw new Error(err?.error?.message || `HTTP ${res.status}`);
-        }
+        if (!res.ok) { const err = await res.json().catch(() => ({})) as { error?: { message?: string } }; throw new Error(err?.error?.message || `HTTP ${res.status}`); }
         const json = await res.json() as { choices: { message: { content: string } }[] };
         text = (json.choices?.[0]?.message?.content || "").trim();
       }
       const parsed = JSON.parse(text) as { title?: string; description?: string; keywords?: string };
-
-      // Enforce hard character limits — trim at word boundary if AI overshoots
       const trimToWords = (str: string, max: number) => {
         if (str.length <= max) return str;
         const trimmed = str.slice(0, max);
         const lastSpace = trimmed.lastIndexOf(" ");
         return (lastSpace > max * 0.75 ? trimmed.slice(0, lastSpace) : trimmed).trimEnd();
       };
-
       if (parsed.title)       setDraft(d => ({ ...d, title:       trimToWords(parsed.title!, 60) }));
       if (parsed.description) setDraft(d => ({ ...d, description: trimToWords(parsed.description!, 160) }));
-      if (parsed.keywords)    setDraft(d => ({ ...d, keywords:    parsed.keywords! }));
+      if (parsed.keywords)    setDraft(d => ({ ...d, keywords: parsed.keywords! }));
     } catch (e) {
       setAiError((e as Error).message || "Failed to get AI suggestion");
     } finally {
@@ -551,12 +630,35 @@ Respond with ONLY a raw JSON object, no markdown, no explanation:
     }
   };
 
+  const handleSave = async () => {
+    setSaving(true);
+    const upsertData = {
+      page_path: draft.page_path,
+      title: draft.title,
+      description: draft.description,
+      focus_keyword: draft.focus_keyword,
+      keywords: draft.keywords,
+      og_image: draft.og_image,
+      no_index: draft.no_index,
+      body_content: bodyContent,
+      ...(contentDirty ? { content_blocks: blocks } : {}),
+      updated_at: new Date().toISOString(),
+    };
+    await supabase.from("pages").upsert(upsertData, { onConflict: "page_path" });
+    setSaving(false);
+    setContentDirty(false);
+    onSave(draft);
+  };
+
   const inputBase = {
     width: "100%", background: CARD, border: `1px solid ${BORDER}`, color: "#fff",
-    fontFamily: BODY, fontSize: "0.9375rem", padding: "10px 14px", outline: "none",
+    fontFamily: BODY, fontSize: "15px", padding: "10px 14px", outline: "none",
   } as const;
+  const labelStyle = { fontFamily: MONO, color: "rgba(255,255,255,0.4)", fontSize: "11px", letterSpacing: "0.18em", textTransform: "uppercase" as const, display: "block", marginBottom: "6px" };
   const focusIn  = (e: React.FocusEvent<HTMLInputElement | HTMLTextAreaElement>) => { e.currentTarget.style.borderColor = "rgba(0,212,232,0.5)"; };
   const focusOut = (e: React.FocusEvent<HTMLInputElement | HTMLTextAreaElement>) => { e.currentTarget.style.borderColor = BORDER; };
+
+  const wordCount = bodyContent.trim().split(/\s+/).filter(Boolean).length;
 
   return (
     <div
@@ -564,24 +666,22 @@ Respond with ONLY a raw JSON object, no markdown, no explanation:
       style={{ background: "rgba(0,0,0,0.82)", backdropFilter: "blur(6px)" }}
       onClick={e => { if (e.target === e.currentTarget) onClose(); }}
     >
-      <div className="w-full max-w-2xl" style={{ background: BG, border: `1px solid ${BORDER}` }}>
+      <div className="w-full max-w-3xl" style={{ background: BG, border: `1px solid ${BORDER}` }}>
 
-        {/* Header */}
+        {/* ── Header ── */}
         <div className="flex items-center justify-between px-6 py-4" style={{ borderBottom: `1px solid ${BORDER}` }}>
           <div>
-            <p style={{ fontFamily: MONO, color: TEAL, fontSize: "0.5rem", letterSpacing: "0.25em", textTransform: "uppercase" }}>SEO Editor</p>
-            <p style={{ fontFamily: MONO, color: "#fff", fontSize: "0.875rem", marginTop: "3px" }}>{draft.page_path}</p>
+            <p style={{ fontFamily: MONO, color: TEAL, fontSize: "10px", letterSpacing: "0.25em", textTransform: "uppercase" }}>Page Editor</p>
+            <p style={{ fontFamily: MONO, color: "#fff", fontSize: "15px", marginTop: "3px" }}>{draft.page_path}</p>
           </div>
           <div className="flex items-center gap-3">
             <div className="flex items-center gap-2 px-3 py-1.5" style={{ border: `1px solid ${scoreData.color}50`, background: `${scoreData.color}10` }}>
               <div className="w-2 h-2 rounded-full" style={{ background: scoreData.color }} />
-              <span style={{ fontFamily: MONO, color: scoreData.color, fontSize: "0.625rem", letterSpacing: "0.1em" }}>
-                {scoreData.label} · {scoreData.score}%
+              <span style={{ fontFamily: MONO, color: scoreData.color, fontSize: "11px", letterSpacing: "0.1em" }}>
+                {scoreData.label} · {scoreData.total_score}
               </span>
             </div>
-            <button
-              onClick={onClose}
-              className="w-8 h-8 flex items-center justify-center"
+            <button onClick={onClose} className="w-8 h-8 flex items-center justify-center"
               style={{ border: `1px solid ${BORDER}`, color: "rgba(255,255,255,0.5)", background: "transparent" }}
               onMouseEnter={e => { e.currentTarget.style.color = "#fff"; }}
               onMouseLeave={e => { e.currentTarget.style.color = "rgba(255,255,255,0.5)"; }}
@@ -589,155 +689,367 @@ Respond with ONLY a raw JSON object, no markdown, no explanation:
           </div>
         </div>
 
-        <div className="px-6 py-5 space-y-5">
-          {/* Title */}
-          <div>
-            <div className="flex items-center justify-between mb-1.5">
-              <label style={{ fontFamily: MONO, color: "rgba(255,255,255,0.4)", fontSize: "0.5rem", letterSpacing: "0.2em", textTransform: "uppercase" }}>Title</label>
-              <CharCounter value={draft.title} min={50} max={60} />
-            </div>
-            <input value={draft.title} onChange={e => set("title", e.target.value)}
-              placeholder="Page title — aim for 50–60 characters" style={inputBase}
-              onFocus={focusIn} onBlur={focusOut} />
-          </div>
+        {/* ── Tab bar ── */}
+        <div className="flex" style={{ borderBottom: `1px solid ${BORDER}`, background: CARD }}>
+          {([
+            { key: "analysis", label: "Analysis" },
+            { key: "seo",      label: "SEO" },
+            { key: "content",  label: `Content${contentDirty ? " ●" : ""}` },
+          ] as const).map(t => (
+            <button
+              key={t.key}
+              onClick={() => setActiveTab(t.key)}
+              style={{
+                fontFamily: MONO, fontSize: "10px", letterSpacing: "0.18em", textTransform: "uppercase",
+                padding: "12px 20px", background: "transparent", border: "none", cursor: "pointer",
+                borderBottom: activeTab === t.key ? `2px solid ${TEAL}` : "2px solid transparent",
+                color: activeTab === t.key ? TEAL : "rgba(255,255,255,0.45)",
+                marginBottom: "-1px",
+              }}
+            >{t.label}</button>
+          ))}
+        </div>
 
-          {/* Description */}
-          <div>
-            <div className="flex items-center justify-between mb-1.5">
-              <label style={{ fontFamily: MONO, color: "rgba(255,255,255,0.4)", fontSize: "0.5rem", letterSpacing: "0.2em", textTransform: "uppercase" }}>Description</label>
-              <CharCounter value={draft.description} min={140} max={160} />
-            </div>
-            <textarea value={draft.description} onChange={e => set("description", e.target.value)}
-              placeholder="Meta description — aim for 140–160 characters" rows={3}
-              style={{ ...inputBase, resize: "vertical" }}
-              onFocus={focusIn} onBlur={focusOut} />
-          </div>
+        {/* ── Analysis tab ── */}
+        {activeTab === "analysis" && (
+          <div className="px-6 py-5 space-y-6">
 
-          {/* Focus Keyword */}
-          <div>
-            <label style={{ fontFamily: MONO, color: "rgba(255,255,255,0.4)", fontSize: "0.5rem", letterSpacing: "0.2em", textTransform: "uppercase", display: "block", marginBottom: "6px" }}>Focus Keyword</label>
-            <input value={draft.focus_keyword} onChange={e => set("focus_keyword", e.target.value)}
-              placeholder="Primary keyword — used for scoring (must appear in title & description)" style={inputBase}
-              onFocus={focusIn} onBlur={focusOut} />
-          </div>
-
-          {/* Meta Keywords */}
-          <div>
-            <label style={{ fontFamily: MONO, color: "rgba(255,255,255,0.4)", fontSize: "0.5rem", letterSpacing: "0.2em", textTransform: "uppercase", display: "block", marginBottom: "6px" }}>Keywords</label>
-            <input value={draft.keywords} onChange={e => set("keywords", e.target.value)}
-              placeholder="keyword one, keyword two, keyword three" style={inputBase}
-              onFocus={focusIn} onBlur={focusOut} />
-          </div>
-
-          {/* OG Image */}
-          <div>
-            <label style={{ fontFamily: MONO, color: "rgba(255,255,255,0.4)", fontSize: "0.5rem", letterSpacing: "0.2em", textTransform: "uppercase", display: "block", marginBottom: "6px" }}>OG Image URL</label>
-            <input value={draft.og_image} onChange={e => set("og_image", e.target.value)}
-              placeholder="https://..." style={inputBase}
-              onFocus={focusIn} onBlur={focusOut} />
-          </div>
-
-          {/* No-index */}
-          <button
-            onClick={() => set("no_index", !draft.no_index)}
-            className="flex items-center gap-2.5 px-3 py-2 transition-all"
-            style={{ border: `1px solid ${draft.no_index ? "#f87171" : BORDER}`, background: draft.no_index ? "rgba(248,113,113,0.1)" : "transparent" }}
-          >
-            {draft.no_index ? <EyeOff size={13} style={{ color: "#f87171" }} /> : <Eye size={13} style={{ color: "rgba(255,255,255,0.4)" }} />}
-            <span style={{ fontFamily: MONO, fontSize: "0.5625rem", letterSpacing: "0.15em", textTransform: "uppercase", color: draft.no_index ? "#f87171" : "rgba(255,255,255,0.4)" }}>
-              {draft.no_index ? "No-Index: On — hidden from Google" : "No-Index: Off — visible to Google"}
-            </span>
-          </button>
-
-          {/* SEO analysis panel */}
-          <div style={{ border: `1px solid ${BORDER}`, background: CARD, padding: "16px" }}>
-            <p style={{ fontFamily: MONO, color: "rgba(255,255,255,0.35)", fontSize: "0.5rem", letterSpacing: "0.2em", textTransform: "uppercase", marginBottom: "14px" }}>SEO Analysis</p>
-            <div className="space-y-2.5">
-              {scoreData.checks.map((c, i) => (
-                <div key={i} className="flex items-start gap-3">
-                  <div className="mt-1 flex-shrink-0">
-                    <div className="w-3 h-3 rounded-full" style={{ background: c.status === "pass" ? "#3dd68c" : c.status === "warn" ? "#f59e6a" : "#f87171" }} />
-                  </div>
-                  <div>
-                    <span style={{ fontFamily: MONO, fontSize: "0.5625rem", letterSpacing: "0.1em", color: "rgba(255,255,255,0.45)", textTransform: "uppercase" }}>{c.label}: </span>
-                    <span style={{ fontFamily: BODY, fontSize: "0.8125rem", color: "rgba(255,255,255,0.8)" }}>{c.message}</span>
-                  </div>
+            {/* Score bars */}
+            <div style={{ border: `1px solid ${BORDER}`, background: CARD }}>
+              <div className="px-4 pt-4 pb-3" style={{ borderBottom: `1px solid ${BORDER}` }}>
+                <p style={{ fontFamily: MONO, color: "rgba(255,255,255,0.35)", fontSize: "10px", letterSpacing: "0.2em", textTransform: "uppercase", marginBottom: "12px" }}>SEO Analysis</p>
+                <div className="grid grid-cols-3 gap-3">
+                  {([
+                    { label: "Basics",      earned: scoreData.basics_score,      possible: scoreData.basics_possible },
+                    { label: "Content",     earned: scoreData.content_score,      possible: scoreData.content_possible },
+                    { label: "Readability", earned: scoreData.readability_score,  possible: scoreData.readability_possible },
+                  ] as const).map(cat => {
+                    const pct = cat.possible > 0 ? Math.round((cat.earned / cat.possible) * 100) : 0;
+                    const catColor = pct >= 80 ? "#3dd68c" : pct >= 55 ? "#f59e6a" : cat.possible === 0 ? "rgba(255,255,255,0.15)" : "#f87171";
+                    return (
+                      <div key={cat.label}>
+                        <div className="flex items-center justify-between mb-1">
+                          <span style={{ fontFamily: MONO, color: "rgba(255,255,255,0.4)", fontSize: "10px", letterSpacing: "0.1em", textTransform: "uppercase" }}>{cat.label}</span>
+                          <span style={{ fontFamily: MONO, color: catColor, fontSize: "11px" }}>{cat.possible === 0 ? "—" : `${cat.earned}/${cat.possible}`}</span>
+                        </div>
+                        <div style={{ height: "3px", background: "rgba(255,255,255,0.08)", borderRadius: "2px" }}>
+                          {cat.possible > 0 && <div style={{ height: "100%", width: `${pct}%`, background: catColor, borderRadius: "2px", transition: "width 0.3s" }} />}
+                        </div>
+                      </div>
+                    );
+                  })}
                 </div>
-              ))}
-            </div>
-          </div>
-
-          {/* AI optimiser */}
-          <div style={{ border: `1px solid rgba(0,212,232,0.2)`, background: "rgba(0,212,232,0.03)", padding: "16px" }}>
-            <div className="flex items-center justify-between mb-3">
-              <p style={{ fontFamily: MONO, color: TEAL, fontSize: "0.5rem", letterSpacing: "0.2em", textTransform: "uppercase" }}>
-                Auto-Optimise with AI
-              </p>
-              {/* Provider toggle */}
-              <div className="flex" style={{ border: `1px solid ${BORDER}` }}>
-                {(["claude", "openai"] as const).map(p => (
-                  <button
-                    key={p}
-                    onClick={() => switchProvider(p)}
-                    style={{
-                      fontFamily: MONO, fontSize: "0.5rem", letterSpacing: "0.15em", textTransform: "uppercase",
-                      padding: "5px 10px", background: aiProvider === p ? TEAL : "transparent",
-                      color: aiProvider === p ? "#0e1822" : "rgba(255,255,255,0.4)",
-                      border: "none", cursor: "pointer",
-                    }}
-                  >{p === "claude" ? "Claude" : "ChatGPT"}</button>
-                ))}
+              </div>
+              <div className="p-4 space-y-4">
+                {scoreData.priority_fixes.length > 0 && (
+                  <div>
+                    <p style={{ fontFamily: MONO, color: "#f87171", fontSize: "10px", letterSpacing: "0.15em", textTransform: "uppercase", marginBottom: "8px" }}>Priority Fixes ({scoreData.priority_fixes.length})</p>
+                    <div className="space-y-2">
+                      {scoreData.priority_fixes.map((c, i) => (
+                        <div key={i} className="flex items-start gap-3 p-2.5" style={{ background: "rgba(248,113,113,0.06)", border: "1px solid rgba(248,113,113,0.15)" }}>
+                          <div className="w-2 h-2 rounded-full mt-1.5 flex-shrink-0" style={{ background: "#f87171" }} />
+                          <div className="min-w-0">
+                            <span style={{ fontFamily: MONO, fontSize: "10px", color: "rgba(255,255,255,0.4)", textTransform: "uppercase", letterSpacing: "0.08em" }}>{c.label} </span>
+                            <span style={{ fontFamily: BODY, fontSize: "14px", color: "rgba(255,255,255,0.85)" }}>{c.message}</span>
+                          </div>
+                          <span style={{ fontFamily: MONO, fontSize: "10px", color: "#f87171", flexShrink: 0, marginLeft: "auto" }}>−{c.points_possible}pts</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+                {scoreData.improvements.length > 0 && (
+                  <div>
+                    <p style={{ fontFamily: MONO, color: "#f59e6a", fontSize: "10px", letterSpacing: "0.15em", textTransform: "uppercase", marginBottom: "8px" }}>Improvements ({scoreData.improvements.length})</p>
+                    <div className="space-y-2">
+                      {scoreData.improvements.map((c, i) => (
+                        <div key={i} className="flex items-start gap-3 p-2.5" style={{ background: "rgba(245,158,106,0.05)", border: "1px solid rgba(245,158,106,0.15)" }}>
+                          <div className="w-2 h-2 rounded-full mt-1.5 flex-shrink-0" style={{ background: "#f59e6a" }} />
+                          <div className="min-w-0">
+                            <span style={{ fontFamily: MONO, fontSize: "10px", color: "rgba(255,255,255,0.4)", textTransform: "uppercase", letterSpacing: "0.08em" }}>{c.label} </span>
+                            <span style={{ fontFamily: BODY, fontSize: "14px", color: "rgba(255,255,255,0.8)" }}>{c.message}</span>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+                {scoreData.good_signals.length > 0 && (
+                  <div>
+                    <button
+                      onClick={() => setShowGoodSignals(s => !s)}
+                      className="flex items-center gap-2"
+                      style={{ fontFamily: MONO, color: "#3dd68c", fontSize: "10px", letterSpacing: "0.15em", textTransform: "uppercase", background: "transparent", border: "none", cursor: "pointer", padding: 0 }}
+                    >
+                      {showGoodSignals ? <ChevronDown size={11} /> : <ChevronRight size={11} />}
+                      Good Signals ({scoreData.good_signals.length})
+                    </button>
+                    {showGoodSignals && (
+                      <div className="space-y-1.5 mt-2">
+                        {scoreData.good_signals.map((c, i) => (
+                          <div key={i} className="flex items-start gap-3 p-2" style={{ border: "1px solid rgba(61,214,140,0.1)" }}>
+                            <div className="w-2 h-2 rounded-full mt-1.5 flex-shrink-0" style={{ background: "#3dd68c" }} />
+                            <span style={{ fontFamily: BODY, fontSize: "14px", color: "rgba(255,255,255,0.6)" }}>{c.message}</span>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                )}
+                {scoreData.checks.length === 0 && (
+                  <p style={{ fontFamily: BODY, color: "rgba(255,255,255,0.25)", fontSize: "14px" }}>Set a focus keyword to start analysis.</p>
+                )}
               </div>
             </div>
-            <div className="flex gap-2 mb-2">
-              <input
-                type={showKey ? "text" : "password"}
-                value={apiKey}
-                onChange={e => setApiKey(e.target.value)}
-                placeholder={aiProvider === "claude" ? "sk-ant-api03-..." : "sk-..."}
-                style={{ flex: 1, background: CARD, border: `1px solid ${BORDER}`, color: "#fff", fontFamily: MONO, fontSize: "0.75rem", padding: "8px 12px", outline: "none" }}
+
+            {/* AI Auto-Optimise */}
+            <div style={{ border: `1px solid rgba(0,212,232,0.2)`, background: "rgba(0,212,232,0.03)", padding: "16px" }}>
+              <div className="flex items-center justify-between mb-3">
+                <p style={{ fontFamily: MONO, color: TEAL, fontSize: "10px", letterSpacing: "0.2em", textTransform: "uppercase" }}>Auto-Optimise with AI</p>
+                <div className="flex" style={{ border: `1px solid ${BORDER}` }}>
+                  {(["claude", "openai"] as const).map(p => (
+                    <button key={p} onClick={() => switchProvider(p)}
+                      style={{ fontFamily: MONO, fontSize: "10px", letterSpacing: "0.15em", textTransform: "uppercase", padding: "5px 10px", background: aiProvider === p ? TEAL : "transparent", color: aiProvider === p ? "#0e1822" : "rgba(255,255,255,0.4)", border: "none", cursor: "pointer" }}
+                    >{p === "claude" ? "Claude" : "ChatGPT"}</button>
+                  ))}
+                </div>
+              </div>
+              <textarea value={aiSteer} onChange={e => setAiSteer(e.target.value)}
+                placeholder="Optional context: what this page is about, target audience, key messages…"
+                rows={2}
+                style={{ width: "100%", background: CARD, border: `1px solid ${BORDER}`, color: "rgba(255,255,255,0.75)", fontFamily: BODY, fontSize: "14px", padding: "8px 12px", outline: "none", resize: "vertical", marginBottom: "8px" }}
                 onFocus={e => { e.currentTarget.style.borderColor = "rgba(0,212,232,0.4)"; }}
                 onBlur={e  => { e.currentTarget.style.borderColor = BORDER; }}
               />
+              <div className="flex gap-2 mb-2">
+                <input type={showKey ? "text" : "password"} value={apiKey} onChange={e => setApiKey(e.target.value)}
+                  placeholder={aiProvider === "claude" ? "sk-ant-api03-…" : "sk-…"}
+                  style={{ flex: 1, background: CARD, border: `1px solid ${BORDER}`, color: "#fff", fontFamily: MONO, fontSize: "13px", padding: "8px 12px", outline: "none" }}
+                  onFocus={e => { e.currentTarget.style.borderColor = "rgba(0,212,232,0.4)"; }}
+                  onBlur={e  => { e.currentTarget.style.borderColor = BORDER; }}
+                />
+                <button onClick={() => setShowKey(s => !s)} className="w-9 flex items-center justify-center"
+                  style={{ border: `1px solid ${BORDER}`, background: "transparent", color: "rgba(255,255,255,0.4)" }}
+                >{showKey ? <EyeOff size={13} /> : <Eye size={13} />}</button>
+                <button onClick={handleAutoOptimise} disabled={aiLoading}
+                  className="flex items-center gap-2 px-4 py-2 transition-all"
+                  style={{ background: aiLoading ? "rgba(0,212,232,0.35)" : TEAL, color: "#0e1822", fontFamily: MONO, fontSize: "11px", letterSpacing: "0.15em", textTransform: "uppercase", cursor: aiLoading ? "wait" : "pointer", whiteSpace: "nowrap" }}
+                >
+                  {aiLoading ? <RefreshCw size={12} className="animate-spin" /> : <Zap size={12} />}
+                  {aiLoading ? "Optimising…" : "Auto-Optimise"}
+                </button>
+              </div>
+              {aiError && <p style={{ fontFamily: BODY, color: "#f87171", fontSize: "14px", marginBottom: "8px" }}>{aiError}</p>}
+              <p style={{ fontFamily: BODY, color: "rgba(255,255,255,0.3)", fontSize: "13px" }}>
+                Fixes failing checks only. Review changes before saving. API key stored in session only.
+              </p>
+            </div>
+          </div>
+        )}
+
+        {/* ── SEO tab ── */}
+        {activeTab === "seo" && (
+          <div className="px-6 py-5 space-y-6">
+            <div className="space-y-4">
+              <p style={{ fontFamily: MONO, color: "rgba(255,255,255,0.35)", fontSize: "10px", letterSpacing: "0.2em", textTransform: "uppercase" }}>SEO Meta</p>
+              <div>
+                <div className="flex items-center justify-between mb-1.5">
+                  <label style={labelStyle}>Meta Title</label>
+                  <CharCounter value={draft.title} min={50} max={60} />
+                </div>
+                <input value={draft.title} onChange={e => set("title", e.target.value)}
+                  placeholder="50–60 characters — include your focus keyword" style={inputBase}
+                  onFocus={focusIn} onBlur={focusOut} />
+              </div>
+              <div>
+                <div className="flex items-center justify-between mb-1.5">
+                  <label style={labelStyle}>Meta Description</label>
+                  <CharCounter value={draft.description} min={140} max={160} />
+                </div>
+                <textarea value={draft.description} onChange={e => set("description", e.target.value)}
+                  placeholder="140–160 characters — include keyword and end with a CTA" rows={3}
+                  style={{ ...inputBase, resize: "vertical" }} onFocus={focusIn} onBlur={focusOut} />
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label style={labelStyle}>Focus Keyword</label>
+                  <input value={draft.focus_keyword} onChange={e => set("focus_keyword", e.target.value)}
+                    placeholder="Primary keyword" style={inputBase} onFocus={focusIn} onBlur={focusOut} />
+                </div>
+                <div>
+                  <label style={labelStyle}>Additional Keywords</label>
+                  <input value={draft.keywords} onChange={e => set("keywords", e.target.value)}
+                    placeholder="kw one, kw two, kw three" style={inputBase} onFocus={focusIn} onBlur={focusOut} />
+                </div>
+              </div>
+              <div>
+                <label style={labelStyle}>OG Image URL</label>
+                <input value={draft.og_image} onChange={e => set("og_image", e.target.value)}
+                  placeholder="https://..." style={inputBase} onFocus={focusIn} onBlur={focusOut} />
+              </div>
               <button
-                onClick={() => setShowKey(s => !s)}
-                className="w-9 flex items-center justify-center"
-                style={{ border: `1px solid ${BORDER}`, background: "transparent", color: "rgba(255,255,255,0.4)" }}
-              >{showKey ? <EyeOff size={13} /> : <Eye size={13} />}</button>
-              <button
-                onClick={handleAutoOptimise}
-                disabled={aiLoading}
-                className="flex items-center gap-2 px-4 py-2 transition-all"
-                style={{ background: aiLoading ? "rgba(0,212,232,0.35)" : TEAL, color: "#0e1822", fontFamily: MONO, fontSize: "0.5625rem", letterSpacing: "0.15em", textTransform: "uppercase", cursor: aiLoading ? "wait" : "pointer", whiteSpace: "nowrap" }}
+                onClick={() => set("no_index", !draft.no_index)}
+                className="flex items-center gap-2.5 px-3 py-2 transition-all"
+                style={{ border: `1px solid ${draft.no_index ? "#f87171" : BORDER}`, background: draft.no_index ? "rgba(248,113,113,0.1)" : "transparent" }}
               >
-                {aiLoading ? <RefreshCw size={12} className="animate-spin" /> : <Zap size={12} />}
-                {aiLoading ? "Optimising…" : "Auto-Optimise"}
+                {draft.no_index ? <EyeOff size={13} style={{ color: "#f87171" }} /> : <Eye size={13} style={{ color: "rgba(255,255,255,0.4)" }} />}
+                <span style={{ fontFamily: MONO, fontSize: "11px", letterSpacing: "0.12em", textTransform: "uppercase", color: draft.no_index ? "#f87171" : "rgba(255,255,255,0.4)" }}>
+                  {draft.no_index ? "No-Index: On — hidden from Google" : "No-Index: Off — visible to Google"}
+                </span>
               </button>
             </div>
-            {aiError && <p style={{ fontFamily: BODY, color: "#f87171", fontSize: "0.8125rem", marginBottom: "8px" }}>{aiError}</p>}
-            <p style={{ fontFamily: BODY, color: "rgba(255,255,255,0.3)", fontSize: "0.75rem" }}>
-              {aiProvider === "claude"
-                ? "Uses Claude Sonnet. Suggests an optimised title, description & keywords — applied above for review."
-                : "Uses GPT-4o Mini. Suggests an optimised title, description & keywords — applied above for review."}
-              {" "}API key saved to session storage only.
-            </p>
           </div>
-        </div>
+        )}
 
-        {/* Footer */}
+        {/* ── Content tab ── */}
+        {activeTab === "content" && (
+          <div className="px-6 py-5">
+            <div className="flex items-center justify-between mb-5">
+              <div className="flex items-center gap-3">
+                <p style={{ fontFamily: MONO, color: "rgba(255,255,255,0.4)", fontSize: "10px", letterSpacing: "0.18em", textTransform: "uppercase" }}>
+                  {wordCount > 0 ? `${wordCount} words · ${blocks.length} blocks` : "No content yet"}
+                </p>
+                {dbUpdatedAt && (
+                  <p style={{ fontFamily: MONO, color: "rgba(255,255,255,0.2)", fontSize: "10px" }}>
+                    · saved {new Date(dbUpdatedAt).toLocaleDateString("en-GB", { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" })}
+                  </p>
+                )}
+              </div>
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={() => loadPageContent(true)}
+                  disabled={extracting}
+                  className="flex items-center gap-1.5 px-3 py-1.5"
+                  style={{ fontFamily: MONO, fontSize: "10px", letterSpacing: "0.1em", textTransform: "uppercase", color: "rgba(255,255,255,0.5)", border: `1px solid ${BORDER}`, background: "transparent", cursor: "pointer" }}
+                  onMouseEnter={e => { e.currentTarget.style.color = "#fff"; }}
+                  onMouseLeave={e => { e.currentTarget.style.color = "rgba(255,255,255,0.5)"; }}
+                ><RefreshCw size={10} /> Reload Saved</button>
+                <button
+                  onClick={extractFromPage}
+                  disabled={extracting}
+                  className="flex items-center gap-1.5 px-3 py-1.5"
+                  style={{ fontFamily: MONO, fontSize: "10px", letterSpacing: "0.1em", textTransform: "uppercase", color: extracting ? "rgba(0,212,232,0.5)" : TEAL, border: `1px solid ${extracting ? "rgba(0,212,232,0.2)" : "rgba(0,212,232,0.4)"}`, background: "rgba(0,212,232,0.04)", cursor: extracting ? "wait" : "pointer" }}
+                >
+                  {extracting ? <RefreshCw size={10} className="animate-spin" /> : <RefreshCw size={10} />}
+                  {extracting ? "Extracting…" : "Extract from Live Page"}
+                </button>
+              </div>
+            </div>
+
+            {contentLoading ? (
+              <p style={{ fontFamily: BODY, color: "rgba(255,255,255,0.3)", fontSize: "14px" }}>Loading…</p>
+            ) : blocks.length === 0 ? (
+              <div className="py-12 text-center" style={{ border: `1px dashed ${BORDER}` }}>
+                <p style={{ fontFamily: MONO, color: "rgba(255,255,255,0.3)", fontSize: "11px", letterSpacing: "0.15em", textTransform: "uppercase" }}>No content blocks</p>
+                <p style={{ fontFamily: BODY, color: "rgba(255,255,255,0.2)", fontSize: "13px", marginTop: "6px" }}>Click "Extract from Live Page" to auto-populate, or add blocks manually.</p>
+                <button onClick={extractFromPage} className="flex items-center gap-2 px-4 py-2 mx-auto mt-4"
+                  style={{ fontFamily: MONO, fontSize: "10px", letterSpacing: "0.1em", textTransform: "uppercase", color: TEAL, border: `1px solid rgba(0,212,232,0.4)`, background: "rgba(0,212,232,0.04)", cursor: "pointer" }}
+                ><RefreshCw size={11} /> Extract from Live Page</button>
+              </div>
+            ) : (
+              <div>
+                {blocks.map((block, idx) => {
+                  const kwStatus = blockKeywordStatus(block, kw);
+                  const kwDot = kwStatus === "hit" ? TEAL : "rgba(255,255,255,0.12)";
+
+                  // ── Per-type visual config ──────────────────────────────
+                  const cfg: Record<string, { indent: number; fontSize: string; fontWeight: number; color: string; rows?: number; borderLeft?: string }> = {
+                    h1: { indent: 0,  fontSize: "22px", fontWeight: 600, color: "#ffffff",               borderLeft: `3px solid ${TEAL}` },
+                    h2: { indent: 16, fontSize: "17px", fontWeight: 500, color: "rgba(255,255,255,0.9)", borderLeft: "3px solid rgba(0,212,232,0.4)" },
+                    h3: { indent: 32, fontSize: "14px", fontWeight: 500, color: "rgba(255,255,255,0.8)", borderLeft: "3px solid rgba(255,255,255,0.15)" },
+                    p:  { indent: 32, fontSize: "14px", fontWeight: 400, color: "rgba(255,255,255,0.65)", rows: 2 },
+                    img:{ indent: 0,  fontSize: "13px", fontWeight: 400, color: "rgba(255,255,255,0.65)" },
+                  };
+                  const c = cfg[block.type] ?? cfg.p;
+                  const typeLabel = block.type.toUpperCase();
+
+                  return (
+                    <div
+                      key={block.id}
+                      className="group flex items-start gap-2"
+                      style={{ marginLeft: `${c.indent}px`, marginBottom: block.type === "h1" ? "16px" : block.type === "h2" ? "12px" : "6px" }}
+                    >
+                      {/* Left accent + keyword dot */}
+                      <div className="flex-shrink-0 flex flex-col items-center gap-1 pt-2" style={{ width: "20px" }}>
+                        <span style={{ fontFamily: MONO, fontSize: "8px", letterSpacing: "0.1em", color: "rgba(255,255,255,0.2)", textTransform: "uppercase" }}>{typeLabel}</span>
+                        {kwStatus !== "na" && <div className="w-1.5 h-1.5 rounded-full" style={{ background: kwDot }} title={kwStatus === "hit" ? "Keyword found" : "Keyword not found"} />}
+                      </div>
+
+                      {/* Input field */}
+                      <div className="flex-1 min-w-0" style={{ borderLeft: c.borderLeft, paddingLeft: c.borderLeft ? "10px" : 0 }}>
+                        {block.type === "img" ? (
+                          <div className="flex items-center gap-3 py-1">
+                            {block.src && (
+                              <img src={block.src} alt={block.alt} className="flex-shrink-0 object-cover"
+                                style={{ width: "80px", height: "50px", border: `1px solid ${BORDER}`, opacity: 0.85 }} />
+                            )}
+                            <div className="flex-1 min-w-0">
+                              <p style={{ fontFamily: MONO, fontSize: "9px", color: "rgba(255,255,255,0.25)", letterSpacing: "0.1em", textTransform: "uppercase", marginBottom: "4px" }}>ALT TEXT</p>
+                              <input value={block.alt ?? ""} onChange={e => updateBlock(idx, { alt: e.target.value })}
+                                placeholder="Describe this image for SEO & accessibility"
+                                style={{ width: "100%", background: "transparent", border: "none", borderBottom: `1px solid ${BORDER}`, color: c.color, fontFamily: BODY, fontSize: c.fontSize, padding: "4px 0", outline: "none" }}
+                                onFocus={e => { e.currentTarget.style.borderBottomColor = "rgba(0,212,232,0.5)"; }}
+                                onBlur={e  => { e.currentTarget.style.borderBottomColor = BORDER; }}
+                              />
+                            </div>
+                          </div>
+                        ) : block.type === "p" ? (
+                          <textarea value={block.text ?? ""} onChange={e => updateBlock(idx, { text: e.target.value })}
+                            placeholder="Paragraph…"
+                            rows={c.rows ?? 2}
+                            style={{ width: "100%", background: "transparent", border: "none", borderBottom: `1px solid ${BORDER}`, color: c.color, fontFamily: BODY, fontSize: c.fontSize, fontWeight: c.fontWeight, padding: "4px 0", outline: "none", resize: "none", lineHeight: "1.65" }}
+                            onFocus={e => { e.currentTarget.style.borderBottomColor = "rgba(0,212,232,0.4)"; }}
+                            onBlur={e  => { e.currentTarget.style.borderBottomColor = BORDER; }}
+                          />
+                        ) : (
+                          <input value={block.text ?? ""} onChange={e => updateBlock(idx, { text: e.target.value })}
+                            placeholder={`${typeLabel}…`}
+                            style={{ width: "100%", background: "transparent", border: "none", borderBottom: "1px solid transparent", color: c.color, fontFamily: SANS, fontSize: c.fontSize, fontWeight: c.fontWeight, padding: "4px 0", outline: "none" }}
+                            onFocus={e => { e.currentTarget.style.borderBottomColor = "rgba(0,212,232,0.4)"; }}
+                            onBlur={e  => { e.currentTarget.style.borderBottomColor = "transparent"; }}
+                          />
+                        )}
+                      </div>
+
+                      {/* Delete — only visible on hover */}
+                      <button onClick={() => deleteBlock(idx)}
+                        className="flex-shrink-0 w-5 h-5 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
+                        style={{ background: "transparent", border: "none", color: "rgba(255,255,255,0.25)", cursor: "pointer", marginTop: "6px" }}
+                        onMouseEnter={e => { e.currentTarget.style.color = "#f87171"; }}
+                        onMouseLeave={e => { e.currentTarget.style.color = "rgba(255,255,255,0.25)"; }}
+                      ><Trash2 size={11} /></button>
+                    </div>
+                  );
+                })}
+                <div className="flex items-center gap-2 pt-2">
+                  <span style={{ fontFamily: MONO, color: "rgba(255,255,255,0.3)", fontSize: "10px", letterSpacing: "0.12em", textTransform: "uppercase" }}>Add:</span>
+                  {(["h1","h2","h3","p","img"] as const).map(t => (
+                    <button key={t} onClick={() => addBlock(t)} className="px-2 py-1"
+                      style={{ fontFamily: MONO, fontSize: "10px", letterSpacing: "0.1em", textTransform: "uppercase", color: "rgba(255,255,255,0.45)", border: `1px solid ${BORDER}`, background: "transparent", cursor: "pointer" }}
+                      onMouseEnter={e => { e.currentTarget.style.color = TEAL; e.currentTarget.style.borderColor = "rgba(0,212,232,0.4)"; }}
+                      onMouseLeave={e => { e.currentTarget.style.color = "rgba(255,255,255,0.45)"; e.currentTarget.style.borderColor = BORDER; }}
+                    >{t.toUpperCase()}</button>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* ── Footer ── */}
         <div className="flex items-center justify-end gap-3 px-6 py-4" style={{ borderTop: `1px solid ${BORDER}` }}>
-          <button
-            onClick={onClose}
-            className="px-5 py-2.5 transition-all"
-            style={{ fontFamily: MONO, fontSize: "0.5625rem", letterSpacing: "0.15em", textTransform: "uppercase", color: "rgba(255,255,255,0.5)", border: `1px solid ${BORDER}`, background: "transparent" }}
+          <button onClick={onClose} className="px-5 py-2.5 transition-all"
+            style={{ fontFamily: MONO, fontSize: "11px", letterSpacing: "0.15em", textTransform: "uppercase", color: "rgba(255,255,255,0.5)", border: `1px solid ${BORDER}`, background: "transparent" }}
             onMouseEnter={e => { e.currentTarget.style.color = "#fff"; }}
             onMouseLeave={e => { e.currentTarget.style.color = "rgba(255,255,255,0.5)"; }}
           >Cancel</button>
-          <button
-            onClick={() => onSave(draft)}
+          <button onClick={handleSave} disabled={saving}
             className="flex items-center gap-2 px-5 py-2.5"
-            style={{ fontFamily: MONO, fontSize: "0.5625rem", letterSpacing: "0.15em", textTransform: "uppercase", background: TEAL, color: "#0e1822" }}
-          ><Save size={12} /> Save & Close</button>
+            style={{ fontFamily: MONO, fontSize: "11px", letterSpacing: "0.15em", textTransform: "uppercase", background: saving ? "rgba(0,212,232,0.4)" : TEAL, color: "#0e1822", cursor: saving ? "wait" : "pointer" }}
+          >
+            {saving ? <RefreshCw size={12} className="animate-spin" /> : <Save size={12} />}
+            {saving ? "Saving…" : "Publish"}
+          </button>
         </div>
       </div>
     </div>
@@ -845,7 +1157,7 @@ function SeoTab() {
           </thead>
           <tbody>
             {sortedRows.map(({ row, idx, isServiceRoot, depth }) => {
-              const score = scoreSeoRow(row);
+              const score = computeSeoScore({ page_path: row.page_path, title: row.title, description: row.description, focus_keyword: row.focus_keyword ?? "", keywords: row.keywords, og_image: row.og_image, no_index: row.no_index });
               return (
                 <tr
                   key={idx}
@@ -888,9 +1200,9 @@ function SeoTab() {
                   <td className="py-2.5 pr-3" style={{ minWidth: "100px" }}>
                     <div className="flex items-center gap-2">
                       <div className="flex gap-1">
-                        <div className="w-2.5 h-2.5 rounded-full" style={{ background: score.score > 0  ? score.color : "rgba(255,255,255,0.1)" }} />
-                        <div className="w-2.5 h-2.5 rounded-full" style={{ background: score.score >= 45 ? score.color : "rgba(255,255,255,0.1)" }} />
-                        <div className="w-2.5 h-2.5 rounded-full" style={{ background: score.score >= 75 ? score.color : "rgba(255,255,255,0.1)" }} />
+                        <div className="w-2.5 h-2.5 rounded-full" style={{ background: score.total_score > 0  ? score.color : "rgba(255,255,255,0.1)" }} />
+                        <div className="w-2.5 h-2.5 rounded-full" style={{ background: score.total_score >= 45 ? score.color : "rgba(255,255,255,0.1)" }} />
+                        <div className="w-2.5 h-2.5 rounded-full" style={{ background: score.total_score >= 75 ? score.color : "rgba(255,255,255,0.1)" }} />
                       </div>
                       <span style={{ fontFamily: MONO, fontSize: "0.5625rem", color: score.color }}>{score.label}</span>
                     </div>
@@ -918,6 +1230,75 @@ function SeoTab() {
           No SEO overrides yet. Click "Add Page" to get started.
         </p>
       )}
+    </div>
+  );
+}
+
+// ─── Performance tab ─────────────────────────────────────────────────────────
+function PerformanceTab() {
+  const [rows, setRows] = useState<SeoRow[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    (async () => {
+      const { data } = await supabase.from("pages").select("*");
+      const dbMap = new Map((data ?? []).map((r: SeoRow) => [r.page_path, r]));
+      const merged = SITE_SEO_DEFAULTS.map(def => ({ ...def, ...(dbMap.get(def.page_path) ?? {}) }));
+      setRows(merged);
+      setLoading(false);
+    })();
+  }, []);
+
+  if (loading) return <Spinner />;
+
+  const scored = rows.map(r => {
+    const s = computeSeoScore({ page_path: r.page_path, title: r.title, description: r.description, focus_keyword: r.focus_keyword ?? "", keywords: r.keywords, og_image: r.og_image, no_index: r.no_index });
+    return { row: r, score: s.total_score, color: s.color, label: s.label };
+  }).sort((a, b) => b.score - a.score);
+
+  const BANDS = [
+    { key: "Good",              color: "#3dd68c", desc: "Score ≥ 85" },
+    { key: "Needs Improvement", color: "#f59e6a", desc: "Score 60–84" },
+    { key: "Poor",              color: "#f87171", desc: "Score < 60" },
+    { key: "Incomplete",        color: "rgba(255,255,255,0.4)", desc: "Missing keyword/content" },
+  ];
+
+  return (
+    <div className="space-y-8">
+      {/* Summary band cards */}
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+        {BANDS.map(band => {
+          const count = scored.filter(s => s.label === band.key).length;
+          return (
+            <div key={band.key} className="p-5" style={{ background: CARD, border: `1px solid ${band.color}30` }}>
+              <div className="w-3 h-3 rounded-full mb-3" style={{ background: band.color }} />
+              <p style={{ fontFamily: MONO, color: band.color, fontSize: "10px", letterSpacing: "0.15em", textTransform: "uppercase" }}>{band.key}</p>
+              <p style={{ fontFamily: SANS, color: "#fff", fontWeight: 300, fontSize: "2rem", lineHeight: 1 }} className="mt-1">{count}</p>
+              <p style={{ fontFamily: BODY, color: "rgba(255,255,255,0.35)", fontSize: "12px" }} className="mt-1">{band.desc}</p>
+            </div>
+          );
+        })}
+      </div>
+
+      {/* Page list */}
+      <div style={{ border: `1px solid ${BORDER}`, background: CARD }}>
+        <div className="px-5 py-3" style={{ borderBottom: `1px solid ${BORDER}` }}>
+          <p style={{ fontFamily: MONO, color: "rgba(255,255,255,0.5)", fontSize: "10px", letterSpacing: "0.2em", textTransform: "uppercase" }}>All Pages — SEO Score</p>
+        </div>
+        <div className="divide-y" style={{ borderColor: BORDER }}>
+          {scored.map(({ row, score, color, label }) => (
+            <div key={row.page_path} className="flex items-center gap-4 px-5 py-3">
+              <div className="w-2 h-2 rounded-full flex-shrink-0" style={{ background: color }} />
+              <span style={{ fontFamily: MONO, color: "#fff", fontSize: "13px", flex: 1, minWidth: 0 }} className="truncate">{row.page_path}</span>
+              <div style={{ width: "120px", height: "3px", background: "rgba(255,255,255,0.08)", borderRadius: "2px", flexShrink: 0 }}>
+                <div style={{ height: "100%", width: `${score}%`, background: color, borderRadius: "2px", transition: "width 0.3s" }} />
+              </div>
+              <span style={{ fontFamily: MONO, color, fontSize: "11px", width: "36px", textAlign: "right", flexShrink: 0 }}>{score}</span>
+              <span style={{ fontFamily: MONO, color: "rgba(255,255,255,0.35)", fontSize: "10px", letterSpacing: "0.1em", textTransform: "uppercase", width: "110px", textAlign: "right", flexShrink: 0 }}>{label}</span>
+            </div>
+          ))}
+        </div>
+      </div>
     </div>
   );
 }
@@ -995,8 +1376,15 @@ function PricingTab() {
   const deptOrder = departmentPackages.map(d => d.key);
   const sortedDepts = Object.keys(grouped).sort((a, b) => deptOrder.indexOf(a) - deptOrder.indexOf(b));
 
+  const [collapsedDepts, setCollapsedDepts] = useState<Set<string>>(() => new Set(sortedDepts));
+  const toggleDept = (dept: string) => setCollapsedDepts(prev => {
+    const next = new Set(prev);
+    next.has(dept) ? next.delete(dept) : next.add(dept);
+    return next;
+  });
+
   return (
-    <div className="space-y-10">
+    <div className="space-y-4">
       <p style={{ fontFamily: BODY, color: "rgba(255,255,255,0.75)", fontSize: "0.9375rem" }}>
         Edit prices here and click Save — changes take effect immediately on the live site.
       </p>
@@ -1004,17 +1392,28 @@ function PricingTab() {
       {sortedDepts.map(dept => {
         const deptMeta = departmentPackages.find(d => d.key === dept);
         const color = deptMeta?.color ?? TEAL;
+        const isCollapsed = collapsedDepts.has(dept);
 
         return (
-          <div key={dept}>
-            <div className="flex items-center gap-3 mb-4">
-              <span className="w-4 h-px" style={{ background: color }} />
-              <p style={{ fontFamily: MONO, color, fontSize: "0.75rem", letterSpacing: "0.2em", textTransform: "uppercase" }}>
-                {deptMeta?.label ?? dept}
-              </p>
-            </div>
+          <div key={dept} style={{ border: `1px solid ${BORDER}` }}>
+            <button
+              onClick={() => toggleDept(dept)}
+              className="w-full flex items-center justify-between px-4 py-3"
+              style={{ background: CARD, border: "none", cursor: "pointer" }}
+            >
+              <div className="flex items-center gap-3">
+                <span className="w-4 h-px" style={{ background: color }} />
+                <p style={{ fontFamily: MONO, color, fontSize: "0.75rem", letterSpacing: "0.2em", textTransform: "uppercase" }}>
+                  {deptMeta?.label ?? dept}
+                </p>
+                <span style={{ fontFamily: MONO, color: "rgba(255,255,255,0.3)", fontSize: "10px" }}>
+                  ({grouped[dept].length} tiers)
+                </span>
+              </div>
+              {isCollapsed ? <ChevronRight size={13} style={{ color: "rgba(255,255,255,0.35)" }} /> : <ChevronDown size={13} style={{ color: "rgba(255,255,255,0.35)" }} />}
+            </button>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            {!isCollapsed && <div className="grid grid-cols-1 md:grid-cols-3 gap-4 p-4">
               {grouped[dept].map(row => (
                 <div
                   key={row.id}
@@ -1203,7 +1602,7 @@ function PricingTab() {
                   )}
                 </div>
               ))}
-            </div>
+            </div>}
           </div>
         );
       })}
@@ -1414,6 +1813,118 @@ function RatesTab() {
   );
 }
 
+// ─── Settings tab ─────────────────────────────────────────────────────────────
+function SettingsTab() {
+  const [claudeKey, setClaudeKey]   = useState(() => sessionStorage.getItem("wb_claude_key") || "");
+  const [openaiKey, setOpenaiKey]   = useState(() => sessionStorage.getItem("wb_openai_key") || "");
+  const [showClaude, setShowClaude] = useState(false);
+  const [showOpenAI, setShowOpenAI] = useState(false);
+  const [saved, setSaved]           = useState(false);
+
+  const handleSave = () => {
+    if (claudeKey) sessionStorage.setItem("wb_claude_key", claudeKey);
+    else sessionStorage.removeItem("wb_claude_key");
+    if (openaiKey) sessionStorage.setItem("wb_openai_key", openaiKey);
+    else sessionStorage.removeItem("wb_openai_key");
+    setSaved(true);
+    setTimeout(() => setSaved(false), 2000);
+  };
+
+  const inputBase = {
+    flex: 1, background: CARD, border: `1px solid ${BORDER}`, color: "#fff",
+    fontFamily: "'DM Mono', monospace", fontSize: "13px", padding: "10px 14px", outline: "none",
+  } as const;
+
+  return (
+    <div className="space-y-8 max-w-2xl">
+      {/* API Keys section */}
+      <div>
+        <div className="flex items-center gap-3 mb-5">
+          <Key size={14} style={{ color: TEAL }} />
+          <p style={{ fontFamily: "'DM Mono', monospace", color: TEAL, fontSize: "10px", letterSpacing: "0.25em", textTransform: "uppercase" }}>API Keys</p>
+        </div>
+        <p style={{ fontFamily: "'Inter', sans-serif", color: "rgba(255,255,255,0.55)", fontSize: "14px", marginBottom: "24px" }}>
+          API keys are saved to your browser session only — they are never sent to our servers. You'll need to re-enter them if you clear your browser data.
+        </p>
+
+        <div className="space-y-6">
+          {/* Claude */}
+          <div style={{ border: `1px solid ${BORDER}`, background: CARD, padding: "20px" }}>
+            <div className="flex items-center gap-3 mb-4">
+              <div className="w-6 h-6 flex items-center justify-center" style={{ background: "rgba(204,153,102,0.15)", border: "1px solid rgba(204,153,102,0.3)" }}>
+                <span style={{ fontFamily: "'DM Mono', monospace", fontSize: "9px", color: "#cc9966" }}>AI</span>
+              </div>
+              <div>
+                <p style={{ fontFamily: "'DM Mono', monospace", color: "#fff", fontSize: "12px", letterSpacing: "0.1em" }}>Claude (Anthropic)</p>
+                <p style={{ fontFamily: "'Inter', sans-serif", color: "rgba(255,255,255,0.35)", fontSize: "12px" }}>Used for AI Auto-Optimise in the SEO editor</p>
+              </div>
+            </div>
+            <div className="flex gap-2">
+              <input
+                type={showClaude ? "text" : "password"}
+                value={claudeKey}
+                onChange={e => setClaudeKey(e.target.value)}
+                placeholder="sk-ant-api03-…"
+                style={inputBase}
+                onFocus={e => { e.currentTarget.style.borderColor = "rgba(0,212,232,0.5)"; }}
+                onBlur={e  => { e.currentTarget.style.borderColor = BORDER; }}
+              />
+              <button
+                onClick={() => setShowClaude(s => !s)}
+                className="w-10 flex items-center justify-center flex-shrink-0"
+                style={{ border: `1px solid ${BORDER}`, background: "transparent", color: "rgba(255,255,255,0.4)", cursor: "pointer" }}
+              >{showClaude ? <EyeOff size={13} /> : <Eye size={13} />}</button>
+            </div>
+          </div>
+
+          {/* OpenAI */}
+          <div style={{ border: `1px solid ${BORDER}`, background: CARD, padding: "20px" }}>
+            <div className="flex items-center gap-3 mb-4">
+              <div className="w-6 h-6 flex items-center justify-center" style={{ background: "rgba(16,163,127,0.15)", border: "1px solid rgba(16,163,127,0.3)" }}>
+                <span style={{ fontFamily: "'DM Mono', monospace", fontSize: "9px", color: "#10a37f" }}>AI</span>
+              </div>
+              <div>
+                <p style={{ fontFamily: "'DM Mono', monospace", color: "#fff", fontSize: "12px", letterSpacing: "0.1em" }}>ChatGPT (OpenAI)</p>
+                <p style={{ fontFamily: "'Inter', sans-serif", color: "rgba(255,255,255,0.35)", fontSize: "12px" }}>Used for AI Auto-Optimise in the SEO editor (GPT-4o Mini)</p>
+              </div>
+            </div>
+            <div className="flex gap-2">
+              <input
+                type={showOpenAI ? "text" : "password"}
+                value={openaiKey}
+                onChange={e => setOpenaiKey(e.target.value)}
+                placeholder="sk-…"
+                style={inputBase}
+                onFocus={e => { e.currentTarget.style.borderColor = "rgba(0,212,232,0.5)"; }}
+                onBlur={e  => { e.currentTarget.style.borderColor = BORDER; }}
+              />
+              <button
+                onClick={() => setShowOpenAI(s => !s)}
+                className="w-10 flex items-center justify-center flex-shrink-0"
+                style={{ border: `1px solid ${BORDER}`, background: "transparent", color: "rgba(255,255,255,0.4)", cursor: "pointer" }}
+              >{showOpenAI ? <EyeOff size={13} /> : <Eye size={13} />}</button>
+            </div>
+          </div>
+        </div>
+
+        <div className="flex items-center gap-3 mt-6">
+          <button
+            onClick={handleSave}
+            className="flex items-center gap-2 px-5 py-2.5"
+            style={{ background: saved ? "#3dd68c" : TEAL, color: "#0e1822", fontFamily: "'DM Mono', monospace", fontSize: "11px", letterSpacing: "0.15em", textTransform: "uppercase", cursor: "pointer", border: "none" }}
+          >
+            {saved ? <Check size={12} /> : <Save size={12} />}
+            {saved ? "Saved to Session" : "Save to Session"}
+          </button>
+          <p style={{ fontFamily: "'Inter', sans-serif", color: "rgba(255,255,255,0.3)", fontSize: "12px" }}>
+            Keys are saved in sessionStorage — cleared when you close the browser tab.
+          </p>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 // ─── Spinner ──────────────────────────────────────────────────────────────────
 function Spinner() {
   return (
@@ -1501,10 +2012,12 @@ function Dashboard() {
         <div style={{ borderBottom: `1px solid ${BORDER}`, background: CARD }}>
           <div className="max-w-7xl mx-auto px-6">
             <Tabs.List className="flex" style={{ gap: 0 }}>
-              <TabTrigger value="analytics" icon={BarChart2}   label="Analytics" />
-              <TabTrigger value="seo"       icon={Globe}       label="SEO" />
-              <TabTrigger value="pricing"   icon={DollarSign}  label="Pricing" />
-              <TabTrigger value="rates"     icon={Sliders}     label="Rates" />
+              <TabTrigger value="analytics"   icon={BarChart2}   label="Analytics" />
+              <TabTrigger value="seo"         icon={Globe}       label="SEO" />
+              <TabTrigger value="performance" icon={TrendingUp}  label="Performance" />
+              <TabTrigger value="pricing"     icon={DollarSign}  label="£ Packages" />
+              <TabTrigger value="rates"       icon={Sliders}     label="Rates" />
+              <TabTrigger value="settings"    icon={Settings}    label="Settings" />
             </Tabs.List>
           </div>
         </div>
@@ -1512,8 +2025,10 @@ function Dashboard() {
         <div className="max-w-7xl mx-auto px-6 py-8">
           <Tabs.Content value="analytics"><AnalyticsTab /></Tabs.Content>
           <Tabs.Content value="seo"><SeoTab /></Tabs.Content>
+          <Tabs.Content value="performance"><PerformanceTab /></Tabs.Content>
           <Tabs.Content value="pricing"><PricingTab /></Tabs.Content>
           <Tabs.Content value="rates"><RatesTab /></Tabs.Content>
+          <Tabs.Content value="settings"><SettingsTab /></Tabs.Content>
         </div>
       </Tabs.Root>
 

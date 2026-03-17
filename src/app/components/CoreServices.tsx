@@ -3,6 +3,8 @@ import { Smartphone, Palette, TrendingUp, Server, Megaphone, HeadphonesIcon, Che
 import { Link } from "react-router";
 import { useState } from "react";
 import { useIsMobile } from "../hooks/useIsMobile";
+import { useContentBlocks } from "../hooks/useContentBlocks";
+import { EditableText } from "./admin/EditableText";
 
 const services = [
   {
@@ -62,6 +64,7 @@ const services = [
 ];
 
 export function CoreServices() {
+  const contentBlocks = useContentBlocks("/");
   const [expandedMobile, setExpandedMobile] = useState<string | null>(null);
   const isMobile = useIsMobile();
 
@@ -109,7 +112,7 @@ export function CoreServices() {
             style={{ fontFamily: "'Montserrat', sans-serif" }}
             className="text-white text-4xl md:text-5xl mb-6"
           >
-            Core Services
+            <EditableText blockId="coreservices_h2" resolved={contentBlocks?.get("coreservices_h2") ?? "Core Services"} />
           </motion.h2>
           <motion.p
             initial={isMobile ? false : { opacity: 0, y: 20 }}
@@ -119,7 +122,7 @@ export function CoreServices() {
             style={{ fontFamily: "'Inter', sans-serif" }}
             className="text-white/50 text-lg max-w-2xl"
           >
-            End-to-end digital solutions designed to elevate your brand and drive measurable results
+            <EditableText blockId="coreservices_desc" resolved={contentBlocks?.get("coreservices_desc") ?? "End-to-end digital solutions designed to elevate your brand and drive measurable results"} multiline />
           </motion.p>
         </div>
 

@@ -7,11 +7,13 @@ import { Nav } from "./Nav";
 import { Footer } from "./Footer";
 import { Preloader } from "./Preloader";
 import { PreloaderContext } from "../contexts/PreloaderContext";
+import { EditModeProvider } from "../contexts/EditModeContext";
 import {
   OrganizationSchema,
   LocalBusinessSchema,
   WebSiteSchema,
 } from "./StructuredData";
+import { AdminBar } from "./admin/AdminBar";
 import { useAnalytics } from "../hooks/useAnalytics";
 
 /** Returns true when the viewport is ≥768 px (desktop breakpoint) */
@@ -61,6 +63,7 @@ export function Root() {
 
   return (
     <MotionConfig reducedMotion={isDesktop ? "never" : "always"}>
+      <EditModeProvider>
       <PreloaderContext.Provider value={preloaderDone}>
         {/* ── Global resource hints ────────────────────────────────────── */}
         <Helmet>
@@ -88,8 +91,10 @@ export function Root() {
             <Outlet />
           </Suspense>
           <Footer />
+          <AdminBar />
         </div>
       </PreloaderContext.Provider>
+      </EditModeProvider>
     </MotionConfig>
   );
 }

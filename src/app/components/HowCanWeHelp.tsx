@@ -1,6 +1,8 @@
 import { motion, AnimatePresence } from "motion/react";
 import { useState } from "react";
 import { useNavigate } from "react-router";
+import { useContentBlocks } from "../hooks/useContentBlocks";
+import { EditableText } from "./admin/EditableText";
 import { sendEmail } from "../utils/sendEmail";
 import { useIsMobile } from "../hooks/useIsMobile";
 import {
@@ -106,6 +108,7 @@ const CARDS: {
 
 // ─── Main component ───────────────────────────────────────────────────────────
 export function HowCanWeHelp() {
+  const contentBlocks = useContentBlocks("/");
   const [active, setActive] = useState<Panel>(null);
   const [sent, setSent] = useState(false);
   const [mobileExpanded, setMobileExpanded] = useState<MobileExpanded>(null);
@@ -262,7 +265,7 @@ export function HowCanWeHelp() {
               lineHeight: 1.1,
             }}
           >
-            How Can We Help?
+            <EditableText blockId="howcanwehelp_h2" resolved={contentBlocks?.get("howcanwehelp_h2") ?? "How Can We Help?"} />
           </h2>
 
           <p
@@ -274,7 +277,7 @@ export function HowCanWeHelp() {
               maxWidth: "42rem",
             }}
           >
-            Whether you're ready to start a project, have a quick question, or need support — we're here. Pick the option that suits you best.
+            <EditableText blockId="howcanwehelp_desc" resolved={contentBlocks?.get("howcanwehelp_desc") ?? "Whether you're ready to start a project, have a quick question, or need support — we're here. Pick the option that suits you best."} multiline />
           </p>
         </div>
 

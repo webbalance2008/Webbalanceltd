@@ -4,6 +4,8 @@ import { ArrowRight, X, Plus } from "lucide-react";
 import { Link } from "react-router";
 import { useEffect, useState, useRef } from "react";
 import { useIsMobile } from "../hooks/useIsMobile";
+import { useContentBlocks } from "../hooks/useContentBlocks";
+import { EditableText } from "./admin/EditableText";
 
 const CYAN = "#00d4e8";
 const CYAN_RGB = "0, 212, 232";
@@ -260,10 +262,12 @@ function ServiceItem({
   service,
   index,
   onOpen,
+  contentBlocks,
 }: {
   service: Service;
   index: number;
   onOpen: () => void;
+  contentBlocks?: Map<string, string> | null;
 }) {
   const ref = useRef(null);
   const inView = useInView(ref, { once: true, margin: "-5%" });
@@ -286,7 +290,10 @@ function ServiceItem({
           style={{ fontFamily: "'Montserrat', sans-serif", color: "white", transition: "color 0.3s" }}
           className="text-2xl md:text-3xl font-light"
         >
-          {service.title}
+          <EditableText
+            blockId={`service_${service.number}_title`}
+            resolved={contentBlocks?.get(`service_${service.number}_title`) ?? service.title}
+          />
         </h3>
         <div className="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
           <span style={{ fontFamily: "'DM Mono', monospace", color: CYAN }} className="text-[10px] tracking-[0.2em] uppercase">
@@ -297,7 +304,11 @@ function ServiceItem({
       </div>
       <div className="md:col-span-4 flex items-center">
         <p style={{ fontFamily: "'Inter', sans-serif" }} className="text-white/75 text-sm leading-relaxed">
-          {service.description}
+          <EditableText
+            blockId={`service_${service.number}_desc`}
+            resolved={contentBlocks?.get(`service_${service.number}_desc`) ?? service.description}
+            multiline
+          />
         </p>
       </div>
       <div className="md:col-span-3 flex flex-col gap-2 justify-center">
@@ -363,6 +374,7 @@ export function Services() {
   const inView = useInView(ref, { once: true, margin: "-10%" });
   const [activeService, setActiveService] = useState<Service | null>(null);
   const isMobile = useIsMobile();
+  const contentBlocks = useContentBlocks("/");
 
   useEffect(() => {
     if (activeService) {
@@ -401,7 +413,10 @@ export function Services() {
               style={{ fontFamily: "'Montserrat', sans-serif" }}
               className="text-white text-4xl md:text-5xl max-w-lg font-light"
             >
-              Full-Service Digital Studio
+              <EditableText
+                blockId="services_h2"
+                resolved={contentBlocks?.get("services_h2") ?? "Full-Service Digital Studio"}
+              />
             </motion.h2>
           </div>
 
@@ -413,6 +428,7 @@ export function Services() {
                 service={service}
                 index={i}
                 onOpen={() => setActiveService(service)}
+                contentBlocks={contentBlocks}
               />
             ))}
           </div>

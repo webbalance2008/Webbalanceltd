@@ -3,8 +3,13 @@ import { Navigate } from "react-router";
 import { supabase } from "../../utils/supabaseClient";
 import type { Session } from "@supabase/supabase-js";
 
+const isDev = !!import.meta.env.VITE_DEV_LOGIN;
+
 export function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const [session, setSession] = useState<Session | null | undefined>(undefined);
+
+  // Dev mode: bypass auth entirely
+  if (isDev) return <>{children}</>;
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data }) => {

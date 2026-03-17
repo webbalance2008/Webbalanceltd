@@ -4,10 +4,13 @@ import { ChevronLeft, ChevronRight, ArrowRight } from "lucide-react";
 import { Link } from "react-router";
 import { articles } from "../data/articles";
 import { useIsMobile } from "../hooks/useIsMobile";
+import { useContentBlocks } from "../hooks/useContentBlocks";
+import { EditableText } from "./admin/EditableText";
 
 export function InsightsSection() {
   const [currentPage, setCurrentPage] = useState(0);
   const isMobile = useIsMobile();
+  const contentBlocks = useContentBlocks("/");
   const articlesPerPage = 3;
   const totalPages = Math.ceil(articles.length / articlesPerPage);
 
@@ -75,7 +78,10 @@ export function InsightsSection() {
               style={{ fontFamily: "'Montserrat', sans-serif" }}
               className="text-white text-5xl md:text-6xl mb-4"
             >
-              Insights
+              <EditableText
+                blockId="insights_h2"
+                resolved={contentBlocks?.get("insights_h2") ?? "Insights"}
+              />
             </motion.h2>
             <motion.p
               initial={isMobile ? false : { opacity: 0, y: 20 }}
@@ -85,7 +91,11 @@ export function InsightsSection() {
               style={{ fontFamily: "'Inter', sans-serif" }}
               className="text-white/50 text-lg max-w-2xl"
             >
-              Practical strategies and industry knowledge to help your digital presence thrive
+              <EditableText
+                blockId="insights_desc"
+                resolved={contentBlocks?.get("insights_desc") ?? "Practical strategies and industry knowledge to help your digital presence thrive"}
+                multiline
+              />
             </motion.p>
           </div>
 

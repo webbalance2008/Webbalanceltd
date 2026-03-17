@@ -2,11 +2,14 @@ import { useRef } from "react";
 import { motion, useInView } from "motion/react";
 import { useIsMobile } from "../hooks/useIsMobile";
 import { ContactRouter } from "./ContactRouter";
+import { useContentBlocks } from "../hooks/useContentBlocks";
+import { EditableText } from "./admin/EditableText";
 
 export function Contact() {
   const ref = useRef(null);
   const inView = useInView(ref, { once: true, margin: "-10%" });
   const isMobile = useIsMobile();
+  const contentBlocks = useContentBlocks("/");
 
   return (
     <section id="contact" className="bg-[#16212e] py-12 md:py-20 border-t border-white/5">
@@ -31,7 +34,11 @@ export function Contact() {
               style={{ fontFamily: "'Montserrat', sans-serif" }}
               className="text-white text-4xl md:text-5xl leading-[1.15] mb-8 font-light"
             >
-              Let's build something<br />extraordinary together.
+              <EditableText
+                blockId="contact_h2"
+                resolved={contentBlocks?.get("contact_h2") ?? "Let's build something extraordinary together."}
+                multiline
+              />
             </motion.h2>
 
             <motion.p
@@ -41,8 +48,11 @@ export function Contact() {
               style={{ fontFamily: "'Inter', sans-serif" }}
               className="text-white text-sm leading-relaxed max-w-xs"
             >
-              Ready to elevate your online presence? Tell us about your project
-              and we'll get back to you within 24 hours.
+              <EditableText
+                blockId="contact_desc"
+                resolved={contentBlocks?.get("contact_desc") ?? "Ready to elevate your online presence? Tell us about your project and we'll get back to you within 24 hours."}
+                multiline
+              />
             </motion.p>
           </div>
 

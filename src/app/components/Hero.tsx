@@ -5,6 +5,9 @@ import { ArrowRight } from "lucide-react";
 import { HeroDevices } from "./HeroDevices";
 import { SolarSystem } from "./SolarSystem";
 import { usePreloaderDone } from "../contexts/PreloaderContext";
+import { useContentBlocks } from "../hooks/useContentBlocks";
+import { useEditMode } from "../contexts/EditModeContext";
+import { EditableText } from "./admin/EditableText";
 
 // Department colours — must match serviceColors.ts primary values
 const DEPT_COLORS = [
@@ -17,6 +20,10 @@ const DEPT_COLORS = [
 ];
 
 const BRAND_CYAN = "#00d4e8";
+
+// Plain text version of phase 0 body for use in inline editing
+const PHASE0_BODY_STR =
+  "For over 15 years, we have been providing professional, results-driven digital solutions — from web apps and websites to SEO, branding and strategy-led marketing.";
 
 // ── All 7 headline phases ──────────────────────────────────────────────────────
 // gradientColor: null = use brand cyan; string = fixed dept color
@@ -154,6 +161,8 @@ function GradientWord({
 
 // ── Component ──────────────────────────────────────────────────────────────────
 export function Hero() {
+  const contentBlocks = useContentBlocks("/");
+  const { isEditMode } = useEditMode();
   const [meteorKey, setMeteorKey]             = useState(0);
   const [meteorActive, setMeteorActive]       = useState(false);
   const [meteorConfig, setMeteorConfig]       = useState<MeteorConfig>(METEOR_CONFIGS[1]);
@@ -163,10 +172,19 @@ export function Hero() {
   );
   const [headlinePhase, setHeadlinePhase]     = useState(0);
   const [deviceCycleSignal, setDeviceCycleSignal] = useState(0);
-  const meteorTimer     = useRef<ReturnType<typeof setInterval> | null>(null);
-  const phaseTimeoutRef = useRef<ReturnType<typeof setTimeout>  | null>(null);
-  const phaseIntervalRef= useRef<ReturnType<typeof setInterval> | null>(null);
+  const meteorTimer      = useRef<ReturnType<typeof setInterval> | null>(null);
+  const phaseTimeoutRef  = useRef<ReturnType<typeof setTimeout>  | null>(null);
+  const phaseIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const isEditModeRef    = useRef(isEditMode);
   const ready = usePreloaderDone();
+
+  // Keep ref in sync with isEditMode state
+  useEffect(() => { isEditModeRef.current = isEditMode; }, [isEditMode]);
+
+  // Freeze on phase 0 when edit mode activates
+  useEffect(() => {
+    if (isEditMode) setHeadlinePhase(0);
+  }, [isEditMode]);
 
   // Detect mobile
   useEffect(() => {
@@ -179,12 +197,14 @@ export function Hero() {
 
   // Cycle headline phases through all 7, advancing every 9s
   useEffect(() => {
-    if (!ready) return; // cycle on both mobile and desktop
+    if (!ready) return;
     phaseTimeoutRef.current = setTimeout(() => {
+      if (isEditModeRef.current) return; // don't start cycle if editing
       let p = 1;
       setHeadlinePhase(p);
       if (!isMobile) setDeviceCycleSignal((s) => s + 1);
       phaseIntervalRef.current = setInterval(() => {
+        if (isEditModeRef.current) return; // skip tick if editing
         p = (p + 1) % TOTAL_PHASES;
         setHeadlinePhase(p);
         if (!isMobile) setDeviceCycleSignal((s) => s + 1);
@@ -396,6 +416,11 @@ export function Hero() {
                 {PHASES.map((phase, idx) => {
                   const isActive = headlinePhase === idx;
                   const gradColor = phase.gradientColor ?? BRAND_CYAN;
+                  // Apply Supabase content overrides for phase 0 (default/initial state)
+                  const line1 = idx === 0 ? (contentBlocks?.get("h1_0") ?? phase.line1) : phase.line1;
+                  const line2 = idx === 0 ? (contentBlocks?.get("h1_1") ?? phase.line2) : phase.line2;
+                  const line3 = idx === 0 ? (contentBlocks?.get("h1_2") ?? phase.line3) : phase.line3;
+                  const bodyOverride = idx === 0 ? contentBlocks?.get("p_0") : undefined;
 
                   return (
                     <div
@@ -433,7 +458,7 @@ export function Hero() {
                       <div style={{ lineHeight: 1.15 }}>
                         <span style={{ fontFamily: "'Montserrat', sans-serif", display: "block", lineHeight: 1.15 }}
                           className="text-white text-[clamp(2.25rem,5.5vw,6rem)] tracking-[-0.02em] font-light">
-                          {phase.line1}
+                          {idx === 0 ? <EditableText blockId="h1_0" resolved={line1} as="span" /> : line1}
                         </span>
                       </div>
 
@@ -441,7 +466,7 @@ export function Hero() {
                       <div style={{ lineHeight: 1.15 }}>
                         <span style={{ fontFamily: "'Montserrat', sans-serif", display: "block", lineHeight: 1.15 }}
                           className="text-white text-[clamp(2.25rem,5.5vw,6rem)] tracking-[-0.02em] font-light">
-                          {phase.line2}
+                          {idx === 0 ? <EditableText blockId="h1_1" resolved={line2} as="span" /> : line2}
                         </span>
                       </div>
 
@@ -449,14 +474,21 @@ export function Hero() {
                       <div style={{ lineHeight: 1.15, paddingBottom: "0.2em" }}>
                         <h1 style={{ fontFamily: "'Montserrat', sans-serif", margin: 0, lineHeight: 1.15 }}
                           className="text-[clamp(2.25rem,5.5vw,6rem)] tracking-[-0.02em] font-light">
-                          <GradientWord text={phase.line3} color={gradColor} />
+                          {idx === 0 && isEditMode ? (
+                            <EditableText blockId="h1_2" resolved={line3} as="span" style={{ color: gradColor }} />
+                          ) : (
+                            <GradientWord text={line3} color={gradColor} />
+                          )}
                         </h1>
                       </div>
 
                       {/* Body copy */}
                       <p style={{ fontFamily: "'Inter', sans-serif", marginTop: "2rem" }}
                         className="text-white/60 text-sm tracking-[0.3em] uppercase leading-relaxed max-w-lg">
-                        {phase.body}
+                        {idx === 0
+                          ? <EditableText blockId="p_0" resolved={bodyOverride ?? PHASE0_BODY_STR} as="span" multiline />
+                          : (bodyOverride ?? phase.body)
+                        }
                       </p>
 
                       {/* CTA */}
@@ -534,6 +566,11 @@ export function Hero() {
                 {PHASES.map((phase, idx) => {
                   const isActive = headlinePhase === idx;
                   const gradColor = phase.gradientColor ?? BRAND_CYAN;
+                  // Apply Supabase content overrides for phase 0
+                  const line1 = idx === 0 ? (contentBlocks?.get("h1_0") ?? phase.line1) : phase.line1;
+                  const line2 = idx === 0 ? (contentBlocks?.get("h1_1") ?? phase.line2) : phase.line2;
+                  const line3 = idx === 0 ? (contentBlocks?.get("h1_2") ?? phase.line3) : phase.line3;
+                  const bodyOverride = idx === 0 ? contentBlocks?.get("p_0") : undefined;
 
                   return (
                     <motion.div
@@ -585,14 +622,14 @@ export function Hero() {
                             style={{ fontFamily: "'Montserrat', sans-serif", display: "block", lineHeight: 1.15 }}
                             className="text-white text-[clamp(2.25rem,5.5vw,6rem)] tracking-[-0.02em] font-light"
                           >
-                            {phase.line1}
+                            <EditableText blockId="h1_0" resolved={line1} as="span" />
                           </motion.span>
                         </div>
                       ) : (
                         <div style={{ lineHeight: 1.15 }}>
                           <span style={{ fontFamily: "'Montserrat', sans-serif", display: "block", lineHeight: 1.15 }}
                             className="text-white text-[clamp(2.25rem,5.5vw,6rem)] tracking-[-0.02em] font-light">
-                            {phase.line1}
+                            {line1}
                           </span>
                         </div>
                       )}
@@ -607,14 +644,14 @@ export function Hero() {
                             style={{ fontFamily: "'Montserrat', sans-serif", display: "block", lineHeight: 1.15 }}
                             className="text-white text-[clamp(2.25rem,5.5vw,6rem)] tracking-[-0.02em] font-light"
                           >
-                            {phase.line2}
+                            <EditableText blockId="h1_1" resolved={line2} as="span" />
                           </motion.span>
                         </div>
                       ) : (
                         <div style={{ lineHeight: 1.15 }}>
                           <span style={{ fontFamily: "'Montserrat', sans-serif", display: "block", lineHeight: 1.15 }}
                             className="text-white text-[clamp(2.25rem,5.5vw,6rem)] tracking-[-0.02em] font-light">
-                            {phase.line2}
+                            {line2}
                           </span>
                         </div>
                       )}
@@ -629,20 +666,18 @@ export function Hero() {
                             style={{ fontFamily: "'Montserrat', sans-serif", margin: 0, lineHeight: 1.15 }}
                             className="text-[clamp(2.25rem,5.5vw,6rem)] tracking-[-0.02em] font-light"
                           >
-                            <GradientWord
-                              text={phase.line3}
-                              color={gradColor}
-                            />
+                            {isEditMode ? (
+                              <EditableText blockId="h1_2" resolved={line3} as="span" style={{ color: gradColor }} />
+                            ) : (
+                              <GradientWord text={line3} color={gradColor} />
+                            )}
                           </motion.h1>
                         </div>
                       ) : (
                         <div style={{ lineHeight: 1.15, paddingBottom: "0.2em" }}>
                           <h1 style={{ fontFamily: "'Montserrat', sans-serif", margin: 0, lineHeight: 1.15 }}
                             className="text-[clamp(2.25rem,5.5vw,6rem)] tracking-[-0.02em] font-light">
-                            <GradientWord
-                              text={phase.line3}
-                              color={gradColor}
-                            />
+                            <GradientWord text={line3} color={gradColor} />
                           </h1>
                         </div>
                       )}
@@ -656,12 +691,12 @@ export function Hero() {
                           style={{ fontFamily: "'Inter', sans-serif", marginTop: "2rem" }}
                           className="text-white/60 text-sm tracking-[0.3em] uppercase leading-relaxed max-w-lg"
                         >
-                          {phase.body}
+                          <EditableText blockId="p_0" resolved={bodyOverride ?? PHASE0_BODY_STR} as="span" multiline />
                         </motion.p>
                       ) : (
                         <p style={{ fontFamily: "'Inter', sans-serif", marginTop: "2.5rem" }}
                           className="text-white/60 text-sm tracking-[0.3em] uppercase leading-relaxed max-w-lg">
-                          {phase.body}
+                          {bodyOverride ?? phase.body}
                         </p>
                       )}
 

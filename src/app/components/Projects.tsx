@@ -5,6 +5,8 @@ import { motion, useInView, AnimatePresence } from "motion/react";
 import { ArrowUpRight, ChevronLeft, ChevronRight } from "lucide-react";
 import { useNavigate } from "react-router";
 import { useState, useRef, useCallback, useEffect } from "react";
+import { useContentBlocks } from "../hooks/useContentBlocks";
+import { EditableText } from "./admin/EditableText";
 
 /** True on mobile viewports — evaluated once per component mount */
 function useIsMobile() {
@@ -178,6 +180,7 @@ export function Projects() {
   const [desktopPage, setDesktopPage] = useState(0);
   const [direction, setDirection] = useState(1); // 1 = forward, -1 = back
   const isMobile = useIsMobile();
+  const contentBlocks = useContentBlocks("/");
 
   const displayed = projects.slice(0, 6);
   const totalPages = Math.ceil(displayed.length / 2);
@@ -237,7 +240,10 @@ export function Projects() {
               style={{ fontFamily: "'Montserrat', sans-serif" }}
               className="text-white text-4xl md:text-5xl font-light"
             >
-              Recent Projects
+              <EditableText
+                blockId="projects_h2"
+                resolved={contentBlocks?.get("projects_h2") ?? "Recent Projects"}
+              />
             </motion.h2>
           </div>
           <motion.p
@@ -247,7 +253,11 @@ export function Projects() {
             style={{ fontFamily: "'Inter', sans-serif" }}
             className="text-white/40 text-sm max-w-[280px] leading-relaxed hidden md:block"
           >
-            Every project is a unique collaboration — built to reflect the brand and convert its audience.
+            <EditableText
+              blockId="projects_desc"
+              resolved={contentBlocks?.get("projects_desc") ?? "Every project is a unique collaboration — built to reflect the brand and convert its audience."}
+              multiline
+            />
           </motion.p>
         </div>
 
