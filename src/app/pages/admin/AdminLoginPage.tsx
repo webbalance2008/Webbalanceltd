@@ -1,6 +1,11 @@
 import { useState, useEffect } from "react";
+import { createClient } from "@supabase/supabase-js";
 import { supabase } from "../../utils/supabaseClient";
-import { Mail, ArrowRight, Check } from "lucide-react";
+import { projectId } from "../../../../utils/supabase/info";
+import { Mail, ArrowRight, Check, Zap } from "lucide-react";
+
+const isDev = import.meta.env.DEV;
+const serviceRoleKey = import.meta.env.VITE_SUPABASE_SERVICE_ROLE_KEY as string | undefined;
 
 const MONO = "'DM Mono', monospace";
 const SANS = "'Montserrat', sans-serif";
@@ -13,6 +18,7 @@ export default function AdminLoginPage() {
   const [sent, setSent] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [devLink, setDevLink] = useState<string | null>(null);
 
   // Handle magic link callback — full-page replace avoids router context dependency
   useEffect(() => {
@@ -28,6 +34,24 @@ export default function AdminLoginPage() {
     e.preventDefault();
     setLoading(true);
     setError("");
+
+    // Dev mode: generate the magic link directly and show as a button
+    if (isDev && serviceRoleKey) {
+      const adminClient = createClient(`https://${projectId}.supabase.co`, serviceRoleKey);
+      const { data, error: err } = await adminClient.auth.admin.generateLink({
+        type: "magiclink",
+        email,
+        options: { redirectTo: `${window.location.origin}/admin` },
+      });
+      setLoading(false);
+      if (err) {
+        setError(err.message);
+      } else {
+        setDevLink((data as { properties?: { action_link?: string } }).properties?.action_link ?? null);
+        setSent(true);
+      }
+      return;
+    }
 
     const { error: err } = await supabase.auth.signInWithOtp({
       email,
@@ -86,14 +110,41 @@ export default function AdminLoginPage() {
             >
               <Check size={20} style={{ color: TEAL }} />
             </div>
-            <p style={{ fontFamily: SANS, color: "#fff", fontWeight: 300, fontSize: "1.1rem" }} className="mb-2">
-              Check your email
-            </p>
-            <p style={{ fontFamily: BODY, color: "rgba(255,255,255,0.5)", fontSize: "0.875rem", lineHeight: 1.7 }}>
-              We sent a magic link to <span style={{ color: "rgba(255,255,255,0.8)" }}>{email}</span>. Click the link to sign in.
-            </p>
+
+            {isDev && devLink ? (
+              <>
+                <p style={{ fontFamily: MONO, color: TEAL, fontSize: "0.5rem", letterSpacing: "0.2em", textTransform: "uppercase" }} className="mb-3">
+                  Dev mode
+                </p>
+                <p style={{ fontFamily: BODY, color: "rgba(255,255,255,0.5)", fontSize: "0.875rem", lineHeight: 1.7 }} className="mb-5">
+                  Magic link generated — no email sent.
+                </p>
+                <a
+                  href={devLink}
+                  className="w-full flex items-center justify-between px-6 py-4 transition-all"
+                  style={{ background: TEAL, textDecoration: "none", display: "flex" }}
+                  onMouseEnter={(e) => { e.currentTarget.style.background = "#33e8fa"; }}
+                  onMouseLeave={(e) => { e.currentTarget.style.background = TEAL; }}
+                >
+                  <span style={{ fontFamily: SANS, color: "#0e1822", fontSize: "0.8125rem", fontWeight: 500, letterSpacing: "0.1em", textTransform: "uppercase" }}>
+                    Sign In
+                  </span>
+                  <Zap size={15} style={{ color: "#0e1822" }} />
+                </a>
+              </>
+            ) : (
+              <>
+                <p style={{ fontFamily: SANS, color: "#fff", fontWeight: 300, fontSize: "1.1rem" }} className="mb-2">
+                  Check your email
+                </p>
+                <p style={{ fontFamily: BODY, color: "rgba(255,255,255,0.5)", fontSize: "0.875rem", lineHeight: 1.7 }}>
+                  We sent a magic link to <span style={{ color: "rgba(255,255,255,0.8)" }}>{email}</span>. Click the link to sign in.
+                </p>
+              </>
+            )}
+
             <button
-              onClick={() => setSent(false)}
+              onClick={() => { setSent(false); setDevLink(null); }}
               style={{ fontFamily: MONO, color: TEAL, fontSize: "0.625rem", letterSpacing: "0.2em", textTransform: "uppercase" }}
               className="mt-6 opacity-60 hover:opacity-100 transition-opacity"
             >
