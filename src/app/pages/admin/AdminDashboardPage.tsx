@@ -6,11 +6,12 @@ import {
 import * as Tabs from "@radix-ui/react-tabs";
 import {
   BarChart2, Globe, DollarSign, LogOut, RefreshCw, Check, X,
-  Plus, Trash2, Save, Eye, EyeOff, TrendingUp, Users, FileText, MousePointer, Zap,
+  Plus, Trash2, Save, Eye, EyeOff, TrendingUp, Users, FileText, MousePointer, Zap, Sliders,
 } from "lucide-react";
 import { supabase } from "../../utils/supabaseClient";
 import { ProtectedRoute } from "../../components/admin/ProtectedRoute";
 import { departmentPackages } from "../../data/packages";
+import { RATE_DEFAULTS } from "../../hooks/usePricingRates";
 
 // ─── Style constants ─────────────────────────────────────────────────────────
 const MONO  = "'DM Mono', monospace";
@@ -61,6 +62,16 @@ interface PricingRow {
   highlight: boolean;
   display_order: number;
   isDirty?: boolean;
+}
+
+interface RateEntry {
+  fullKey: string;
+  category: string;
+  key: string;
+  label: string;
+  value: number;
+  dbId?: string;
+  isDirty: boolean;
 }
 
 // ─── Site SEO defaults (hardcoded fallbacks for all known pages) ──────────────
@@ -1129,6 +1140,209 @@ function PricingTab() {
   );
 }
 
+// ─── Rates tab ────────────────────────────────────────────────────────────────
+const RATE_LABELS: Record<string, string> = {
+  "global.hourly_rate":         "Hourly Rate",
+  "global.vat_rate":            "VAT Rate",
+  "global.domain_registration": "Domain Registration",
+  "web-apps.base_booking":      "Base: Booking System",
+  "web-apps.base_portal":       "Base: Customer Portal",
+  "web-apps.base_saas":         "Base: SaaS Platform",
+  "web-apps.base_ecommerce":    "Base: E-commerce",
+  "web-apps.base_membership":   "Base: Membership",
+  "web-apps.base_internal":     "Base: Internal Tool",
+  "web-apps.base_other":        "Base: Other",
+  "web-apps.feat_auth":         "Feature: Auth & Roles",
+  "web-apps.feat_admin":        "Feature: Admin Panel",
+  "web-apps.feat_payments":     "Feature: Payments",
+  "web-apps.feat_notify":       "Feature: Notifications",
+  "web-apps.feat_uploads":      "Feature: File Uploads",
+  "web-apps.feat_analytics":    "Feature: Analytics",
+  "web-apps.feat_api":          "Feature: API Integration",
+  "web-apps.feat_pwa":          "Feature: PWA",
+  "web-apps.feat_native":       "Feature: Native Apps",
+  "web-apps.feat_ai_feature":   "Feature: AI Feature",
+  "web-apps.feat_i18n":         "Feature: Multilingual",
+  "web-apps.ai_content":        "AI: Content Generation",
+  "web-apps.ai_search":         "AI: Semantic Search",
+  "web-apps.ai_docs":           "AI: Document Processing",
+  "web-apps.ai_chatbot":        "AI: Chatbot",
+  "web-apps.ai_workflow":       "AI: Workflow Automation",
+  "web-apps.ai_insights":       "AI: Insights / Analytics",
+  "web-apps.hosting_managed":   "Hosting Setup: Managed",
+  "web-apps.hosting_cloudflare":"Hosting Setup: Cloudflare",
+  "web-apps.hosting_vps":       "Hosting Setup: VPS",
+  "web-design.image_unit":      "Image Optimisation (per image)",
+  "web-design.video_unit":      "Video Integration (per video)",
+  "web-design.animation_page":  "Page Animation (per page)",
+  "web-design.hosting_managed":   "Hosting Setup: Managed",
+  "web-design.hosting_wordpress": "Hosting Setup: WordPress",
+  "web-design.hosting_cloudflare":"Hosting Setup: Cloudflare",
+  "web-design.hosting_vps":       "Hosting Setup: VPS",
+  "seo.essentials_monthly":    "Essentials — Monthly",
+  "seo.essentials_setup":      "Essentials — Setup",
+  "seo.growth_monthly":        "Growth — Monthly",
+  "seo.growth_setup":          "Growth — Setup",
+  "seo.accelerator_monthly":   "Accelerator — Monthly",
+  "seo.accelerator_setup":     "Accelerator — Setup",
+  "seo.addon_google_ads":      "Add-on: Google Ads Mgmt",
+  "seo.addon_content":         "Add-on: Content Creation",
+  "seo.addon_links":           "Add-on: Link Building",
+  "seo.addon_audit":           "Add-on: SEO Audit",
+  "seo.addon_reporting":       "Add-on: Advanced Reporting",
+  "hosting.starter_monthly":      "Starter — Monthly",
+  "hosting.starter_setup":        "Starter — Setup",
+  "hosting.professional_monthly": "Professional — Monthly",
+  "hosting.professional_setup":   "Professional — Setup",
+  "branding.base_full_brand":  "Full Brand Identity",
+  "branding.base_logo":        "Logo Design",
+  "branding.base_refresh":     "Brand Refresh",
+  "branding.base_social":      "Social Media Kit",
+  "branding.base_print":       "Print Design",
+  "branding.base_marketing":   "Marketing Collateral",
+  "branding.base_guidelines":  "Brand Guidelines",
+  "branding.base_bundle":      "Full Bundle",
+  "branding.del_strategy":        "Deliverable: Brand Strategy",
+  "branding.del_logo_suite":      "Deliverable: Logo Suite",
+  "branding.del_colour":          "Deliverable: Colour Palette",
+  "branding.del_typography":      "Deliverable: Typography",
+  "branding.del_guidelines":      "Deliverable: Guidelines Doc",
+  "branding.del_iconography":     "Deliverable: Iconography",
+  "branding.del_social_pack":     "Deliverable: Social Pack",
+  "branding.del_social_profiles": "Deliverable: Social Profiles",
+  "branding.del_biz_card":        "Deliverable: Business Cards",
+  "branding.del_letterhead":      "Deliverable: Letterhead",
+  "branding.del_brochure":        "Deliverable: Brochure",
+  "branding.del_packaging":       "Deliverable: Packaging",
+  "branding.del_signage":         "Deliverable: Signage",
+  "branding.del_social_ads":      "Deliverable: Social Ads",
+  "branding.del_google_ads":      "Deliverable: Google Ads",
+  "branding.del_email_campaign":  "Deliverable: Email Campaign",
+  "branding.del_photo_art":       "Deliverable: Photography / Art Direction",
+};
+
+const RATE_CATEGORY_ORDER = ["global", "web-apps", "web-design", "seo", "hosting", "branding"];
+const RATE_CATEGORY_LABELS: Record<string, string> = {
+  global: "Global", "web-apps": "Web Apps", "web-design": "Web Design",
+  seo: "SEO", hosting: "Hosting", branding: "Branding",
+};
+const RATE_UNITS: Record<string, string> = { "global.vat_rate": "%" };
+
+function RatesTab() {
+  const [entries, setEntries] = useState<RateEntry[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [saving, setSaving]   = useState<string | null>(null);
+  const [saved, setSaved]     = useState<string | null>(null);
+
+  useEffect(() => {
+    supabase.from("pricing_rates").select("*").then(({ data }) => {
+      type DbRate = { id: string; category: string; key: string; value: number };
+      const dbMap = new Map((data ?? [] as DbRate[]).map((r: DbRate) => [`${r.category}.${r.key}`, r]));
+      const all = Object.entries(RATE_DEFAULTS).map(([fullKey, defaultVal]) => {
+        const dot      = fullKey.indexOf(".");
+        const category = fullKey.slice(0, dot);
+        const key      = fullKey.slice(dot + 1);
+        const db       = dbMap.get(fullKey) as DbRate | undefined;
+        return { fullKey, category, key, label: RATE_LABELS[fullKey] ?? key.replace(/_/g, " "), value: db ? Number(db.value) : defaultVal, dbId: db?.id, isDirty: false };
+      });
+      setEntries(all);
+      setLoading(false);
+    });
+  }, []);
+
+  const updateEntry = (fullKey: string, value: number) =>
+    setEntries(prev => prev.map(e => e.fullKey === fullKey ? { ...e, value, isDirty: true } : e));
+
+  const saveEntry = async (entry: RateEntry) => {
+    setSaving(entry.fullKey);
+    const { error } = await supabase.from("pricing_rates").upsert(
+      { category: entry.category, key: entry.key, label: entry.label, value: entry.value, unit: RATE_UNITS[entry.fullKey] ?? "£", updated_at: new Date().toISOString() },
+      { onConflict: "category,key" }
+    );
+    if (!error) {
+      setEntries(prev => prev.map(e => e.fullKey === entry.fullKey ? { ...e, isDirty: false } : e));
+      setSaved(entry.fullKey);
+      setTimeout(() => setSaved(s => s === entry.fullKey ? null : s), 2000);
+    }
+    setSaving(null);
+  };
+
+  if (loading) return <Spinner />;
+
+  const grouped: Record<string, RateEntry[]> = {};
+  for (const e of entries) {
+    if (!grouped[e.category]) grouped[e.category] = [];
+    grouped[e.category].push(e);
+  }
+
+  return (
+    <div className="space-y-8">
+      <p style={{ fontFamily: BODY, color: "rgba(255,255,255,0.75)", fontSize: "0.9375rem" }}>
+        Edit rates used across all quote builders. Changes take effect immediately on the live site.
+      </p>
+
+      {RATE_CATEGORY_ORDER.filter(cat => grouped[cat]).map(cat => {
+        const catColor = cat === "global" ? TEAL : (DEPT_COLORS[cat] ?? TEAL);
+        return (
+          <div key={cat}>
+            <div className="flex items-center gap-3 mb-3">
+              <span className="w-4 h-px" style={{ background: catColor }} />
+              <p style={{ fontFamily: MONO, color: catColor, fontSize: "0.75rem", letterSpacing: "0.2em", textTransform: "uppercase" }}>
+                {RATE_CATEGORY_LABELS[cat] ?? cat}
+              </p>
+            </div>
+            <div style={{ background: CARD, border: `1px solid ${BORDER}` }}>
+              {grouped[cat].map((entry, i) => {
+                const unit = RATE_UNITS[entry.fullKey] ?? "£";
+                return (
+                  <div
+                    key={entry.fullKey}
+                    className="flex items-center gap-4 px-5 py-3"
+                    style={{ borderBottom: i < grouped[cat].length - 1 ? `1px solid rgba(255,255,255,0.04)` : "none" }}
+                  >
+                    <div style={{ flex: 1, minWidth: 0 }}>
+                      <p style={{ fontFamily: BODY, color: "rgba(255,255,255,0.85)", fontSize: "0.875rem" }}>{entry.label}</p>
+                      <p style={{ fontFamily: MONO, color: "rgba(255,255,255,0.22)", fontSize: "0.5rem", letterSpacing: "0.1em" }}>{entry.fullKey}</p>
+                    </div>
+                    <div className="flex items-center gap-2 flex-shrink-0">
+                      <span style={{ fontFamily: MONO, color: "rgba(255,255,255,0.35)", fontSize: "0.875rem" }}>{unit}</span>
+                      <input
+                        type="number"
+                        value={entry.value}
+                        onChange={e => updateEntry(entry.fullKey, Number(e.target.value))}
+                        style={{
+                          width: "96px", background: "transparent",
+                          border: `1px solid ${entry.isDirty ? "rgba(0,212,232,0.45)" : "rgba(255,255,255,0.1)"}`,
+                          color: "#fff", fontFamily: MONO, fontSize: "0.9375rem",
+                          padding: "5px 10px", outline: "none", textAlign: "right",
+                        }}
+                        onFocus={e => { e.currentTarget.style.borderColor = "rgba(0,212,232,0.55)"; }}
+                        onBlur={e  => { e.currentTarget.style.borderColor = entry.isDirty ? "rgba(0,212,232,0.45)" : "rgba(255,255,255,0.1)"; }}
+                      />
+                    </div>
+                    <div style={{ width: "60px", flexShrink: 0 }}>
+                      {entry.isDirty && (
+                        <button
+                          onClick={() => saveEntry(entry)}
+                          disabled={saving === entry.fullKey}
+                          className="w-full flex items-center justify-center gap-1 py-1.5 transition-all"
+                          style={{ background: TEAL, color: "#0e1822", fontFamily: MONO, fontSize: "0.5rem", letterSpacing: "0.1em", textTransform: "uppercase", opacity: saving === entry.fullKey ? 0.6 : 1 }}
+                        >
+                          {saving === entry.fullKey ? <RefreshCw size={10} className="animate-spin" /> : saved === entry.fullKey ? <><Check size={10} /> OK</> : <><Save size={10} /> Save</>}
+                        </button>
+                      )}
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        );
+      })}
+    </div>
+  );
+}
+
 // ─── Spinner ──────────────────────────────────────────────────────────────────
 function Spinner() {
   return (
@@ -1219,6 +1433,7 @@ function Dashboard() {
               <TabTrigger value="analytics" icon={BarChart2}   label="Analytics" />
               <TabTrigger value="seo"       icon={Globe}       label="SEO" />
               <TabTrigger value="pricing"   icon={DollarSign}  label="Pricing" />
+              <TabTrigger value="rates"     icon={Sliders}     label="Rates" />
             </Tabs.List>
           </div>
         </div>
@@ -1227,6 +1442,7 @@ function Dashboard() {
           <Tabs.Content value="analytics"><AnalyticsTab /></Tabs.Content>
           <Tabs.Content value="seo"><SeoTab /></Tabs.Content>
           <Tabs.Content value="pricing"><PricingTab /></Tabs.Content>
+          <Tabs.Content value="rates"><RatesTab /></Tabs.Content>
         </div>
       </Tabs.Root>
 
