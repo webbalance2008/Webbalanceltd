@@ -6,7 +6,7 @@ import {
 import * as Tabs from "@radix-ui/react-tabs";
 import {
   BarChart2, Globe, DollarSign, LogOut, RefreshCw, Check, X,
-  Plus, Trash2, Save, Eye, EyeOff, TrendingUp, Users, FileText, MousePointer, Sliders, Zap,
+  Plus, Trash2, Save, Eye, EyeOff, TrendingUp, Users, FileText, MousePointer, Zap, Sliders,
 } from "lucide-react";
 import { supabase } from "../../utils/supabaseClient";
 import { ProtectedRoute } from "../../components/admin/ProtectedRoute";
@@ -62,6 +62,16 @@ interface PricingRow {
   highlight: boolean;
   display_order: number;
   isDirty?: boolean;
+}
+
+interface RateEntry {
+  fullKey: string;
+  category: string;
+  key: string;
+  label: string;
+  value: number;
+  dbId?: string;
+  isDirty: boolean;
 }
 
 // ─── Site SEO defaults (hardcoded fallbacks for all known pages) ──────────────
@@ -442,19 +452,31 @@ function SeoEditModal({ row, onClose, onSave }: {
   onClose: () => void;
   onSave: (updated: SeoRow) => void;
 }) {
-  const [draft, setDraft]           = useState<SeoRow>({ ...row });
-  const [aiLoading, setAiLoading]   = useState(false);
-  const [aiError, setAiError]       = useState<string | null>(null);
-  const [apiKey, setApiKey]         = useState(() => sessionStorage.getItem("wb_claude_key") || "");
-  const [showKey, setShowKey]       = useState(false);
+  const [draft, setDraft]             = useState<SeoRow>({ ...row });
+  const [aiLoading, setAiLoading]     = useState(false);
+  const [aiError, setAiError]         = useState<string | null>(null);
+  const [aiProvider, setAiProvider]   = useState<"claude" | "openai">(() =>
+    (sessionStorage.getItem("wb_ai_provider") as "claude" | "openai") || "claude"
+  );
+  const [apiKey, setApiKey]           = useState(() =>
+    sessionStorage.getItem(aiProvider === "claude" ? "wb_claude_key" : "wb_openai_key") || ""
+  );
+  const [showKey, setShowKey]         = useState(false);
   const scoreData = scoreSeoRow(draft);
   const set = (field: keyof SeoRow, val: string | boolean) => setDraft(d => ({ ...d, [field]: val }));
 
+  const switchProvider = (p: "claude" | "openai") => {
+    setAiProvider(p);
+    sessionStorage.setItem("wb_ai_provider", p);
+    setApiKey(sessionStorage.getItem(p === "claude" ? "wb_claude_key" : "wb_openai_key") || "");
+    setAiError(null);
+  };
+
   const handleAutoOptimise = async () => {
-    if (!apiKey) { setAiError("Enter your Claude API key to use AI optimisation."); return; }
+    if (!apiKey) { setAiError(`Enter your ${aiProvider === "claude" ? "Claude" : "OpenAI"} API key to use AI optimisation.`); return; }
     setAiLoading(true);
     setAiError(null);
-    sessionStorage.setItem("wb_claude_key", apiKey);
+    sessionStorage.setItem(aiProvider === "claude" ? "wb_claude_key" : "wb_openai_key", apiKey);
     const prompt = `You are an expert SEO copywriter for "Web Balance", a UK digital agency specialising in web design, web apps, SEO, hosting, and branding.
 
 Optimise the SEO meta tags for this page:
@@ -471,22 +493,40 @@ Rules:
 Respond with ONLY a raw JSON object, no markdown, no explanation:
 {"title":"...","description":"...","keywords":"..."}`;
     try {
-      const res = await fetch("https://api.anthropic.com/v1/messages", {
-        method: "POST",
-        headers: {
-          "x-api-key": apiKey,
-          "anthropic-version": "2023-06-01",
-          "content-type": "application/json",
-          "anthropic-dangerous-direct-browser-access": "true",
-        },
-        body: JSON.stringify({ model: "claude-sonnet-4-6", max_tokens: 512, messages: [{ role: "user", content: prompt }] }),
-      });
-      if (!res.ok) {
-        const err = await res.json().catch(() => ({})) as { error?: { message?: string } };
-        throw new Error(err?.error?.message || `HTTP ${res.status}`);
+      let text = "";
+      if (aiProvider === "claude") {
+        const res = await fetch("https://api.anthropic.com/v1/messages", {
+          method: "POST",
+          headers: {
+            "x-api-key": apiKey,
+            "anthropic-version": "2023-06-01",
+            "content-type": "application/json",
+            "anthropic-dangerous-direct-browser-access": "true",
+          },
+          body: JSON.stringify({ model: "claude-sonnet-4-6", max_tokens: 512, messages: [{ role: "user", content: prompt }] }),
+        });
+        if (!res.ok) {
+          const err = await res.json().catch(() => ({})) as { error?: { message?: string } };
+          throw new Error(err?.error?.message || `HTTP ${res.status}`);
+        }
+        const json = await res.json() as { content: { text: string }[] };
+        text = (json.content?.[0]?.text || "").trim();
+      } else {
+        const res = await fetch("https://api.openai.com/v1/chat/completions", {
+          method: "POST",
+          headers: {
+            "Authorization": `Bearer ${apiKey}`,
+            "content-type": "application/json",
+          },
+          body: JSON.stringify({ model: "gpt-4o-mini", max_tokens: 512, messages: [{ role: "user", content: prompt }] }),
+        });
+        if (!res.ok) {
+          const err = await res.json().catch(() => ({})) as { error?: { message?: string } };
+          throw new Error(err?.error?.message || `HTTP ${res.status}`);
+        }
+        const json = await res.json() as { choices: { message: { content: string } }[] };
+        text = (json.choices?.[0]?.message?.content || "").trim();
       }
-      const json  = await res.json() as { content: { text: string }[] };
-      const text  = (json.content?.[0]?.text || "").trim();
       const parsed = JSON.parse(text) as { title?: string; description?: string; keywords?: string };
       if (parsed.title)       setDraft(d => ({ ...d, title:       parsed.title! }));
       if (parsed.description) setDraft(d => ({ ...d, description: parsed.description! }));
@@ -606,17 +646,34 @@ Respond with ONLY a raw JSON object, no markdown, no explanation:
             </div>
           </div>
 
-          {/* Claude AI optimiser */}
+          {/* AI optimiser */}
           <div style={{ border: `1px solid rgba(0,212,232,0.2)`, background: "rgba(0,212,232,0.03)", padding: "16px" }}>
-            <p style={{ fontFamily: MONO, color: TEAL, fontSize: "0.5rem", letterSpacing: "0.2em", textTransform: "uppercase", marginBottom: "12px" }}>
-              Auto-Optimise with Claude AI
-            </p>
+            <div className="flex items-center justify-between mb-3">
+              <p style={{ fontFamily: MONO, color: TEAL, fontSize: "0.5rem", letterSpacing: "0.2em", textTransform: "uppercase" }}>
+                Auto-Optimise with AI
+              </p>
+              {/* Provider toggle */}
+              <div className="flex" style={{ border: `1px solid ${BORDER}` }}>
+                {(["claude", "openai"] as const).map(p => (
+                  <button
+                    key={p}
+                    onClick={() => switchProvider(p)}
+                    style={{
+                      fontFamily: MONO, fontSize: "0.5rem", letterSpacing: "0.15em", textTransform: "uppercase",
+                      padding: "5px 10px", background: aiProvider === p ? TEAL : "transparent",
+                      color: aiProvider === p ? "#0e1822" : "rgba(255,255,255,0.4)",
+                      border: "none", cursor: "pointer",
+                    }}
+                  >{p === "claude" ? "Claude" : "ChatGPT"}</button>
+                ))}
+              </div>
+            </div>
             <div className="flex gap-2 mb-2">
               <input
                 type={showKey ? "text" : "password"}
                 value={apiKey}
                 onChange={e => setApiKey(e.target.value)}
-                placeholder="sk-ant-api03-..."
+                placeholder={aiProvider === "claude" ? "sk-ant-api03-..." : "sk-..."}
                 style={{ flex: 1, background: CARD, border: `1px solid ${BORDER}`, color: "#fff", fontFamily: MONO, fontSize: "0.75rem", padding: "8px 12px", outline: "none" }}
                 onFocus={e => { e.currentTarget.style.borderColor = "rgba(0,212,232,0.4)"; }}
                 onBlur={e  => { e.currentTarget.style.borderColor = BORDER; }}
@@ -638,7 +695,10 @@ Respond with ONLY a raw JSON object, no markdown, no explanation:
             </div>
             {aiError && <p style={{ fontFamily: BODY, color: "#f87171", fontSize: "0.8125rem", marginBottom: "8px" }}>{aiError}</p>}
             <p style={{ fontFamily: BODY, color: "rgba(255,255,255,0.3)", fontSize: "0.75rem" }}>
-              Claude suggests an optimised title, description, and keywords applied to the fields above for review. API key is saved to session storage only.
+              {aiProvider === "claude"
+                ? "Uses Claude Sonnet. Suggests an optimised title, description & keywords — applied above for review."
+                : "Uses GPT-4o Mini. Suggests an optimised title, description & keywords — applied above for review."}
+              {" "}API key saved to session storage only.
             </p>
           </div>
         </div>
@@ -1130,151 +1190,201 @@ function PricingTab() {
   );
 }
 
-// ─── Rates tab ───────────────────────────────────────────────────────────────
-interface RateRow {
-  id?: string;
-  category: string;
-  key: string;
-  label: string;
-  value: number;
-  unit: string;
-  isDirty?: boolean;
-}
-
-const RATE_CATEGORY_LABELS: Record<string, string> = {
-  global:      "Global",
-  "web-apps":  "Web Apps",
-  "web-design":"Web Design",
-  seo:         "SEO",
-  hosting:     "Hosting",
-  branding:    "Branding",
+// ─── Rates tab ────────────────────────────────────────────────────────────────
+const RATE_LABELS: Record<string, string> = {
+  "global.hourly_rate":         "Hourly Rate",
+  "global.vat_rate":            "VAT Rate",
+  "global.domain_registration": "Domain Registration",
+  "web-apps.base_booking":      "Base: Booking System",
+  "web-apps.base_portal":       "Base: Customer Portal",
+  "web-apps.base_saas":         "Base: SaaS Platform",
+  "web-apps.base_ecommerce":    "Base: E-commerce",
+  "web-apps.base_membership":   "Base: Membership",
+  "web-apps.base_internal":     "Base: Internal Tool",
+  "web-apps.base_other":        "Base: Other",
+  "web-apps.feat_auth":         "Feature: Auth & Roles",
+  "web-apps.feat_admin":        "Feature: Admin Panel",
+  "web-apps.feat_payments":     "Feature: Payments",
+  "web-apps.feat_notify":       "Feature: Notifications",
+  "web-apps.feat_uploads":      "Feature: File Uploads",
+  "web-apps.feat_analytics":    "Feature: Analytics",
+  "web-apps.feat_api":          "Feature: API Integration",
+  "web-apps.feat_pwa":          "Feature: PWA",
+  "web-apps.feat_native":       "Feature: Native Apps",
+  "web-apps.feat_ai_feature":   "Feature: AI Feature",
+  "web-apps.feat_i18n":         "Feature: Multilingual",
+  "web-apps.ai_content":        "AI: Content Generation",
+  "web-apps.ai_search":         "AI: Semantic Search",
+  "web-apps.ai_docs":           "AI: Document Processing",
+  "web-apps.ai_chatbot":        "AI: Chatbot",
+  "web-apps.ai_workflow":       "AI: Workflow Automation",
+  "web-apps.ai_insights":       "AI: Insights / Analytics",
+  "web-apps.hosting_managed":   "Hosting Setup: Managed",
+  "web-apps.hosting_cloudflare":"Hosting Setup: Cloudflare",
+  "web-apps.hosting_vps":       "Hosting Setup: VPS",
+  "web-design.image_unit":      "Image Optimisation (per image)",
+  "web-design.video_unit":      "Video Integration (per video)",
+  "web-design.animation_page":  "Page Animation (per page)",
+  "web-design.hosting_managed":   "Hosting Setup: Managed",
+  "web-design.hosting_wordpress": "Hosting Setup: WordPress",
+  "web-design.hosting_cloudflare":"Hosting Setup: Cloudflare",
+  "web-design.hosting_vps":       "Hosting Setup: VPS",
+  "seo.essentials_monthly":    "Essentials — Monthly",
+  "seo.essentials_setup":      "Essentials — Setup",
+  "seo.growth_monthly":        "Growth — Monthly",
+  "seo.growth_setup":          "Growth — Setup",
+  "seo.accelerator_monthly":   "Accelerator — Monthly",
+  "seo.accelerator_setup":     "Accelerator — Setup",
+  "seo.addon_google_ads":      "Add-on: Google Ads Mgmt",
+  "seo.addon_content":         "Add-on: Content Creation",
+  "seo.addon_links":           "Add-on: Link Building",
+  "seo.addon_audit":           "Add-on: SEO Audit",
+  "seo.addon_reporting":       "Add-on: Advanced Reporting",
+  "hosting.starter_monthly":      "Starter — Monthly",
+  "hosting.starter_setup":        "Starter — Setup",
+  "hosting.professional_monthly": "Professional — Monthly",
+  "hosting.professional_setup":   "Professional — Setup",
+  "branding.base_full_brand":  "Full Brand Identity",
+  "branding.base_logo":        "Logo Design",
+  "branding.base_refresh":     "Brand Refresh",
+  "branding.base_social":      "Social Media Kit",
+  "branding.base_print":       "Print Design",
+  "branding.base_marketing":   "Marketing Collateral",
+  "branding.base_guidelines":  "Brand Guidelines",
+  "branding.base_bundle":      "Full Bundle",
+  "branding.del_strategy":        "Deliverable: Brand Strategy",
+  "branding.del_logo_suite":      "Deliverable: Logo Suite",
+  "branding.del_colour":          "Deliverable: Colour Palette",
+  "branding.del_typography":      "Deliverable: Typography",
+  "branding.del_guidelines":      "Deliverable: Guidelines Doc",
+  "branding.del_iconography":     "Deliverable: Iconography",
+  "branding.del_social_pack":     "Deliverable: Social Pack",
+  "branding.del_social_profiles": "Deliverable: Social Profiles",
+  "branding.del_biz_card":        "Deliverable: Business Cards",
+  "branding.del_letterhead":      "Deliverable: Letterhead",
+  "branding.del_brochure":        "Deliverable: Brochure",
+  "branding.del_packaging":       "Deliverable: Packaging",
+  "branding.del_signage":         "Deliverable: Signage",
+  "branding.del_social_ads":      "Deliverable: Social Ads",
+  "branding.del_google_ads":      "Deliverable: Google Ads",
+  "branding.del_email_campaign":  "Deliverable: Email Campaign",
+  "branding.del_photo_art":       "Deliverable: Photography / Art Direction",
 };
+
 const RATE_CATEGORY_ORDER = ["global", "web-apps", "web-design", "seo", "hosting", "branding"];
+const RATE_CATEGORY_LABELS: Record<string, string> = {
+  global: "Global", "web-apps": "Web Apps", "web-design": "Web Design",
+  seo: "SEO", hosting: "Hosting", branding: "Branding",
+};
+const RATE_UNITS: Record<string, string> = { "global.vat_rate": "%" };
 
 function RatesTab() {
-  const [rows, setRows] = useState<RateRow[]>([]);
+  const [entries, setEntries] = useState<RateEntry[]>([]);
   const [loading, setLoading] = useState(true);
-  const [saving, setSaving] = useState<string | null>(null);
+  const [saving, setSaving]   = useState<string | null>(null);
+  const [saved, setSaved]     = useState<string | null>(null);
 
   useEffect(() => {
-    supabase.from("pricing_rates").select("*").order("category").order("key").then(({ data }) => {
-      if (data && data.length > 0) {
-        setRows(data.map(r => ({ ...r, isDirty: false })));
-      } else {
-        // DB not seeded yet — show defaults
-        const staticRows: RateRow[] = Object.entries(RATE_DEFAULTS).map(([compositeKey, value]) => {
-          const dot = compositeKey.indexOf(".");
-          const category = compositeKey.slice(0, dot);
-          const key = compositeKey.slice(dot + 1);
-          return { category, key, label: key.replace(/_/g, " "), value, unit: "", isDirty: false };
-        });
-        setRows(staticRows);
-      }
+    supabase.from("pricing_rates").select("*").then(({ data }) => {
+      type DbRate = { id: string; category: string; key: string; value: number };
+      const dbMap = new Map((data ?? [] as DbRate[]).map((r: DbRate) => [`${r.category}.${r.key}`, r]));
+      const all = Object.entries(RATE_DEFAULTS).map(([fullKey, defaultVal]) => {
+        const dot      = fullKey.indexOf(".");
+        const category = fullKey.slice(0, dot);
+        const key      = fullKey.slice(dot + 1);
+        const db       = dbMap.get(fullKey) as DbRate | undefined;
+        return { fullKey, category, key, label: RATE_LABELS[fullKey] ?? key.replace(/_/g, " "), value: db ? Number(db.value) : defaultVal, dbId: db?.id, isDirty: false };
+      });
+      setEntries(all);
       setLoading(false);
     });
   }, []);
 
-  const updateRow = (idx: number, value: number) => {
-    setRows(prev => prev.map((r, i) => i === idx ? { ...r, value, isDirty: true } : r));
-  };
+  const updateEntry = (fullKey: string, value: number) =>
+    setEntries(prev => prev.map(e => e.fullKey === fullKey ? { ...e, value, isDirty: true } : e));
 
-  const saveRow = async (idx: number) => {
-    const row = rows[idx];
-    const compositeKey = `${row.category}.${row.key}`;
-    setSaving(compositeKey);
-    const payload = { category: row.category, key: row.key, label: row.label, value: row.value, unit: row.unit, updated_at: new Date().toISOString() };
-    const { data: saved, error } = row.id
-      ? await supabase.from("pricing_rates").update(payload).eq("id", row.id).select().single()
-      : await supabase.from("pricing_rates").upsert(payload, { onConflict: "category,key" }).select().single();
-    setSaving(null);
-    if (!error && saved) {
-      setRows(prev => prev.map((r, i) => i === idx ? { ...r, id: saved.id, isDirty: false } : r));
+  const saveEntry = async (entry: RateEntry) => {
+    setSaving(entry.fullKey);
+    const { error } = await supabase.from("pricing_rates").upsert(
+      { category: entry.category, key: entry.key, label: entry.label, value: entry.value, unit: RATE_UNITS[entry.fullKey] ?? "£", updated_at: new Date().toISOString() },
+      { onConflict: "category,key" }
+    );
+    if (!error) {
+      setEntries(prev => prev.map(e => e.fullKey === entry.fullKey ? { ...e, isDirty: false } : e));
+      setSaved(entry.fullKey);
+      setTimeout(() => setSaved(s => s === entry.fullKey ? null : s), 2000);
     }
+    setSaving(null);
   };
 
   if (loading) return <Spinner />;
 
-  // Group by category
-  const grouped: Record<string, RateRow[]> = {};
-  for (const row of rows) {
-    if (!grouped[row.category]) grouped[row.category] = [];
-    grouped[row.category].push(row);
+  const grouped: Record<string, RateEntry[]> = {};
+  for (const e of entries) {
+    if (!grouped[e.category]) grouped[e.category] = [];
+    grouped[e.category].push(e);
   }
 
-  const DEPT_COLORS_MAP: Record<string, string> = { global: TEAL, "web-apps": DEPT_COLORS["web-apps"], "web-design": DEPT_COLORS["web-design"], seo: DEPT_COLORS.seo, hosting: DEPT_COLORS.hosting, branding: DEPT_COLORS.branding };
-
   return (
-    <div className="space-y-10">
+    <div className="space-y-8">
       <p style={{ fontFamily: BODY, color: "rgba(255,255,255,0.75)", fontSize: "0.9375rem" }}>
-        Edit rates used in the quote builders — hourly rate, domain fees, add-on costs, retainer prices, and more.
+        Edit rates used across all quote builders. Changes take effect immediately on the live site.
       </p>
 
       {RATE_CATEGORY_ORDER.filter(cat => grouped[cat]).map(cat => {
-        const color = DEPT_COLORS_MAP[cat] ?? TEAL;
+        const catColor = cat === "global" ? TEAL : (DEPT_COLORS[cat] ?? TEAL);
         return (
           <div key={cat}>
-            <div className="flex items-center gap-3 mb-4">
-              <span className="w-4 h-px" style={{ background: color }} />
-              <p style={{ fontFamily: MONO, color, fontSize: "0.75rem", letterSpacing: "0.2em", textTransform: "uppercase" }}>
+            <div className="flex items-center gap-3 mb-3">
+              <span className="w-4 h-px" style={{ background: catColor }} />
+              <p style={{ fontFamily: MONO, color: catColor, fontSize: "0.75rem", letterSpacing: "0.2em", textTransform: "uppercase" }}>
                 {RATE_CATEGORY_LABELS[cat] ?? cat}
               </p>
             </div>
-
-            <div style={{ border: `1px solid ${BORDER}`, background: CARD }}>
-              <table className="w-full" style={{ borderCollapse: "collapse" }}>
-                <thead>
-                  <tr style={{ borderBottom: `1px solid ${BORDER}` }}>
-                    <th className="p-4 text-left" style={{ fontFamily: MONO, color: "rgba(255,255,255,0.65)", fontSize: "0.625rem", letterSpacing: "0.15em", textTransform: "uppercase", fontWeight: 400, width: "55%" }}>Rate</th>
-                    <th className="p-4 text-right" style={{ fontFamily: MONO, color: "rgba(255,255,255,0.65)", fontSize: "0.625rem", letterSpacing: "0.15em", textTransform: "uppercase", fontWeight: 400, width: "20%" }}>Value (£)</th>
-                    <th className="p-4 text-left" style={{ fontFamily: MONO, color: "rgba(255,255,255,0.65)", fontSize: "0.625rem", letterSpacing: "0.15em", textTransform: "uppercase", fontWeight: 400, width: "15%" }}>Unit</th>
-                    <th className="p-4" style={{ width: "10%" }} />
-                  </tr>
-                </thead>
-                <tbody>
-                  {grouped[cat].map((row, idx) => {
-                    const globalIdx = rows.indexOf(row);
-                    const compositeKey = `${row.category}.${row.key}`;
-                    return (
-                      <tr key={compositeKey} style={{ borderBottom: `1px solid rgba(255,255,255,0.04)` }}>
-                        <td className="px-4 py-3">
-                          <span style={{ fontFamily: BODY, color: "#fff", fontSize: "0.875rem" }}>{row.label}</span>
-                          <span style={{ fontFamily: MONO, color: "rgba(255,255,255,0.3)", fontSize: "0.5625rem", marginLeft: "0.75rem" }}>{row.key}</span>
-                        </td>
-                        <td className="px-4 py-3 text-right" style={{ minWidth: "100px" }}>
-                          <input
-                            type="number"
-                            value={row.value}
-                            onChange={e => updateRow(globalIdx, Number(e.target.value))}
-                            style={{
-                              fontFamily: SANS, color: "#fff", fontWeight: 300, fontSize: "1rem",
-                              background: "transparent", border: "none", borderBottom: "1px solid rgba(255,255,255,0.1)",
-                              width: "100%", padding: "2px 0", outline: "none", textAlign: "right",
-                            }}
-                            onFocus={e => { e.currentTarget.style.borderBottomColor = color; }}
-                            onBlur={e => { e.currentTarget.style.borderBottomColor = "rgba(255,255,255,0.1)"; }}
-                          />
-                        </td>
-                        <td className="px-4 py-3">
-                          <span style={{ fontFamily: MONO, color: "rgba(255,255,255,0.55)", fontSize: "0.6875rem" }}>{row.unit}</span>
-                        </td>
-                        <td className="px-4 py-3 text-center">
-                          {row.isDirty && (
-                            <button
-                              onClick={() => saveRow(globalIdx)}
-                              disabled={saving === compositeKey}
-                              className="flex items-center justify-center gap-1 px-3 py-1.5 mx-auto transition-all"
-                              style={{ background: color, fontFamily: MONO, fontSize: "0.5625rem", letterSpacing: "0.15em", textTransform: "uppercase", color: "#0e1822", opacity: saving === compositeKey ? 0.5 : 1 }}
-                            >
-                              {saving === compositeKey ? <RefreshCw size={10} className="animate-spin" /> : <Save size={10} />}
-                              Save
-                            </button>
-                          )}
-                        </td>
-                      </tr>
-                    );
-                  })}
-                </tbody>
-              </table>
+            <div style={{ background: CARD, border: `1px solid ${BORDER}` }}>
+              {grouped[cat].map((entry, i) => {
+                const unit = RATE_UNITS[entry.fullKey] ?? "£";
+                return (
+                  <div
+                    key={entry.fullKey}
+                    className="flex items-center gap-4 px-5 py-3"
+                    style={{ borderBottom: i < grouped[cat].length - 1 ? `1px solid rgba(255,255,255,0.04)` : "none" }}
+                  >
+                    <div style={{ flex: 1, minWidth: 0 }}>
+                      <p style={{ fontFamily: BODY, color: "rgba(255,255,255,0.85)", fontSize: "0.875rem" }}>{entry.label}</p>
+                      <p style={{ fontFamily: MONO, color: "rgba(255,255,255,0.22)", fontSize: "0.5rem", letterSpacing: "0.1em" }}>{entry.fullKey}</p>
+                    </div>
+                    <div className="flex items-center gap-2 flex-shrink-0">
+                      <span style={{ fontFamily: MONO, color: "rgba(255,255,255,0.35)", fontSize: "0.875rem" }}>{unit}</span>
+                      <input
+                        type="number"
+                        value={entry.value}
+                        onChange={e => updateEntry(entry.fullKey, Number(e.target.value))}
+                        style={{
+                          width: "96px", background: "transparent",
+                          border: `1px solid ${entry.isDirty ? "rgba(0,212,232,0.45)" : "rgba(255,255,255,0.1)"}`,
+                          color: "#fff", fontFamily: MONO, fontSize: "0.9375rem",
+                          padding: "5px 10px", outline: "none", textAlign: "right",
+                        }}
+                        onFocus={e => { e.currentTarget.style.borderColor = "rgba(0,212,232,0.55)"; }}
+                        onBlur={e  => { e.currentTarget.style.borderColor = entry.isDirty ? "rgba(0,212,232,0.45)" : "rgba(255,255,255,0.1)"; }}
+                      />
+                    </div>
+                    <div style={{ width: "60px", flexShrink: 0 }}>
+                      {entry.isDirty && (
+                        <button
+                          onClick={() => saveEntry(entry)}
+                          disabled={saving === entry.fullKey}
+                          className="w-full flex items-center justify-center gap-1 py-1.5 transition-all"
+                          style={{ background: TEAL, color: "#0e1822", fontFamily: MONO, fontSize: "0.5rem", letterSpacing: "0.1em", textTransform: "uppercase", opacity: saving === entry.fullKey ? 0.6 : 1 }}
+                        >
+                          {saving === entry.fullKey ? <RefreshCw size={10} className="animate-spin" /> : saved === entry.fullKey ? <><Check size={10} /> OK</> : <><Save size={10} /> Save</>}
+                        </button>
+                      )}
+                    </div>
+                  </div>
+                );
+              })}
             </div>
           </div>
         );
@@ -1372,7 +1482,7 @@ function Dashboard() {
             <Tabs.List className="flex" style={{ gap: 0 }}>
               <TabTrigger value="analytics" icon={BarChart2}   label="Analytics" />
               <TabTrigger value="seo"       icon={Globe}       label="SEO" />
-              <TabTrigger value="pricing"   icon={DollarSign}  label="Packages" />
+              <TabTrigger value="pricing"   icon={DollarSign}  label="Pricing" />
               <TabTrigger value="rates"     icon={Sliders}     label="Rates" />
             </Tabs.List>
           </div>
