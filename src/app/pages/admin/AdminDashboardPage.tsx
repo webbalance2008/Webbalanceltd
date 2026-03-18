@@ -1310,6 +1310,8 @@ function PricingTab() {
   const [saving, setSaving] = useState<string | null>(null);
   const [saved, setSaved] = useState<string | null>(null);
   const [editingFeatures, setEditingFeatures] = useState<string | null>(null);
+  const [collapsedDepts, setCollapsedDepts] = useState<Set<string>>(new Set());
+  const [collapsedInited, setCollapsedInited] = useState(false);
 
   useEffect(() => {
     supabase
@@ -1376,7 +1378,12 @@ function PricingTab() {
   const deptOrder = departmentPackages.map(d => d.key);
   const sortedDepts = Object.keys(grouped).sort((a, b) => deptOrder.indexOf(a) - deptOrder.indexOf(b));
 
-  const [collapsedDepts, setCollapsedDepts] = useState<Set<string>>(() => new Set(sortedDepts));
+  // Initialise collapsed state once we have data
+  if (!collapsedInited && sortedDepts.length > 0) {
+    setCollapsedDepts(new Set(sortedDepts));
+    setCollapsedInited(true);
+  }
+
   const toggleDept = (dept: string) => setCollapsedDepts(prev => {
     const next = new Set(prev);
     next.has(dept) ? next.delete(dept) : next.add(dept);
