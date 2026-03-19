@@ -36,11 +36,11 @@ type MobileExpanded = string | null;
 
 // ─── Department data ─────────────────────────────────────────────────────────
 const departments = [
-  { key: "web-design", label: "Web Design",  description: "Websites that convert visitors into customers", color: "#00d4e8", bg: "rgba(0,212,232,0.07)", border: "rgba(0,212,232,0.22)", icon: Layout,    href: "/web-design/start" },
-  { key: "web-apps",   label: "Web Apps",    description: "Bespoke applications & custom platforms",       color: "#b89fd4", bg: "rgba(184,159,212,0.07)", border: "rgba(184,159,212,0.22)", icon: Code2,     href: "/web-apps/start" },
-  { key: "seo",        label: "SEO",         description: "Dominate search & drive organic growth",        color: "#3dd68c", bg: "rgba(61,214,140,0.07)", border: "rgba(61,214,140,0.22)", icon: TrendingUp, href: "/seo/start" },
-  { key: "hosting",    label: "Hosting",     description: "Fast, secure, fully managed hosting",           color: "#f59e6a", bg: "rgba(245,158,106,0.07)", border: "rgba(245,158,106,0.22)", icon: Server,    href: "/hosting/start" },
-  { key: "branding",   label: "Branding",    description: "Identity design that makes you unforgettable", color: "#f472b6", bg: "rgba(244,114,182,0.07)", border: "rgba(244,114,182,0.22)", icon: Palette,   href: "/branding/start" },
+  { key: "web-design", label: "Web Design",  description: "Websites that convert visitors into customers", color: "#00d4e8", bg: "rgba(0,212,232,0.07)", border: "rgba(0,212,232,0.45)", icon: Layout,    href: "/web-design/start" },
+  { key: "web-apps",   label: "Web Apps",    description: "Bespoke applications & custom platforms",       color: "#b89fd4", bg: "rgba(184,159,212,0.07)", border: "rgba(184,159,212,0.45)", icon: Code2,     href: "/web-apps/start" },
+  { key: "seo",        label: "SEO",         description: "Dominate search & drive organic growth",        color: "#3dd68c", bg: "rgba(61,214,140,0.07)", border: "rgba(61,214,140,0.45)", icon: TrendingUp, href: "/seo/start" },
+  { key: "hosting",    label: "Hosting",     description: "Fast, secure, fully managed hosting",           color: "#f59e6a", bg: "rgba(245,158,106,0.07)", border: "rgba(245,158,106,0.45)", icon: Server,    href: "/hosting/start" },
+  { key: "branding",   label: "Branding",    description: "Identity design that makes you unforgettable", color: "#f472b6", bg: "rgba(244,114,182,0.07)", border: "rgba(244,114,182,0.45)", icon: Palette,   href: "/branding/start" },
 ];
 
 // ─── Card meta ───────────────────────────────────────────────────────────────
@@ -67,10 +67,10 @@ const CARDS: {
       { Icon: CreditCard,          text: "Review payment options" },
     ],
     cta: "Choose a Service",
-    iconBg: "linear-gradient(135deg, #1e1040 0%, #2a1a4e 100%)",
-    iconBgHover: "linear-gradient(135deg, #3b1278 0%, #8b5cf6 100%)",
-    accentColor: "#8b5cf6",
-    accentRgb: "139, 92, 246",
+    iconBg: "linear-gradient(135deg, #0a2535 0%, #0f3545 100%)",
+    iconBgHover: "linear-gradient(135deg, #0a5a68 0%, #00d4e8 100%)",
+    accentColor: "#00d4e8",
+    accentRgb: "0, 212, 232",
   },
   {
     id: "packages",
@@ -660,7 +660,7 @@ export function HowCanWeHelp() {
                           }}
                           onMouseEnter={(e) => {
                             e.currentTarget.style.background = dept.bg.replace("0.07", "0.14");
-                            e.currentTarget.style.borderColor = dept.border.replace("0.22", "0.5");
+                            e.currentTarget.style.borderColor = dept.border.replace("0.45", "0.7");
                           }}
                           onMouseLeave={(e) => {
                             e.currentTarget.style.background = dept.bg;
