@@ -968,6 +968,7 @@ export function WebDesignStartPage() {
                       pages={data.pages}
                       onChange={(pages) => set("pages", pages)}
                       isSetupType={hasSetupFee(data.websiteType)}
+                      rates={rates}
                     />
                   )}
 
@@ -1894,7 +1895,8 @@ function BuildHoursInfo() {
 
 // ─── PageBuilder ──────────────────────────────────────────────────────────────
 
-function PageBuilder({ pages, onChange, typeId = "brochure", isSetupType = false }: { pages: PageItem[]; onChange: (p: PageItem[]) => void; typeId?: string; isSetupType?: boolean }) {
+function PageBuilder({ pages, onChange, typeId = "brochure", isSetupType = false, rates }: { pages: PageItem[]; onChange: (p: PageItem[]) => void; typeId?: string; isSetupType?: boolean; rates: RatesMap }) {
+  const HR = rates["global.hourly_rate"] ?? HOURLY_RATE;
   const isLanding = typeId === "landing";
   const presetPages = presetPagesByType[typeId] ?? presetPagesByType.brochure;
   const [customName, setCustomName] = useState("");
