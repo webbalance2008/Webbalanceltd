@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router";
+import * as DialogPrimitive from "@radix-ui/react-dialog";
 import {
   ArrowUpRight,
   ArrowLeft,
@@ -94,6 +95,47 @@ function SectionLabel({ children }: { children: React.ReactNode }) {
   );
 }
 
+// ─── Modal wrapper ──────────────────────────────────────────────────────────────
+function ContactModal({ open, onClose, title, children }: { open: boolean; onClose: () => void; title: string; children: React.ReactNode }) {
+  return (
+    <DialogPrimitive.Root open={open} onOpenChange={(o) => { if (!o) onClose(); }}>
+      <DialogPrimitive.Portal>
+        <DialogPrimitive.Overlay className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0" />
+        <DialogPrimitive.Content
+          className="fixed top-[50%] left-[50%] z-50 translate-x-[-50%] translate-y-[-50%] w-[calc(100%-2rem)] max-w-[640px] max-h-[85vh] overflow-y-auto border p-0 shadow-2xl rounded-none data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 duration-200"
+          style={{ background: "#16212e", borderColor: "rgba(0,212,232,0.2)" }}
+        >
+          <div className="p-6 md:p-8">
+            <div className="flex items-center justify-between mb-8">
+              <DialogPrimitive.Title asChild>
+                <p
+                  style={{ fontFamily: "'DM Mono', monospace", color: "#00d4e8", fontSize: "0.6rem", letterSpacing: "0.3em", textTransform: "uppercase" }}
+                  className="flex items-center gap-3"
+                >
+                  <span style={{ width: "1rem", height: "1px", backgroundColor: "#00d4e8", display: "inline-block" }} />
+                  {title}
+                </p>
+              </DialogPrimitive.Title>
+              <button
+                type="button"
+                onClick={onClose}
+                className="flex items-center gap-2 transition-colors"
+                style={{ fontFamily: "'DM Mono', monospace", color: "rgba(255,255,255,0.3)", fontSize: "0.6rem", letterSpacing: "0.2em" }}
+                onMouseEnter={(e) => (e.currentTarget.style.color = "#00d4e8")}
+                onMouseLeave={(e) => (e.currentTarget.style.color = "rgba(255,255,255,0.3)")}
+              >
+                <ArrowLeft size={10} />
+                Close
+              </button>
+            </div>
+            {children}
+          </div>
+        </DialogPrimitive.Content>
+      </DialogPrimitive.Portal>
+    </DialogPrimitive.Root>
+  );
+}
+
 // ─── Main component ────────────────────────────────────────────────────────────
 export function ContactRouter() {
   const [mode, setMode] = useState<Mode>("choose");
@@ -111,109 +153,79 @@ export function ContactRouter() {
     trackEvent("contact_open", { mode: m });
   };
 
+  const closeModal = () => { setMode("choose"); setSent(false); };
+
+  const choices = [
+    { mode: "project" as Mode, Icon: Rocket, label: "Start a Project", description: "Pick a service and kick off your tailored project wizard" },
+    { mode: "enquiry" as Mode, Icon: Mail, label: "General Enquiry", description: "Have a question or want to explore what's possible?" },
+    { mode: "whatsapp" as Mode, Icon: MessageCircle, label: "WhatsApp Business", description: "Quick replies — message us directly" },
+    { mode: "support" as Mode, Icon: LifeBuoy, label: "Support", description: "Existing client? Get dedicated help from our team" },
+  ];
+
+  const modalTitles: Record<string, string> = {
+    project: "Choose a Service",
+    enquiry: "Send a Message",
+    whatsapp: "WhatsApp Business",
+    support: "Support",
+  };
+
   return (
     <div className="w-full relative z-10">
+      {/* ── CHOICE BUTTONS (always visible) ─────────────────────────────────── */}
+      <div className="space-y-3">
+        <p
+          style={{ fontFamily: "'DM Mono', monospace" }}
+          className="text-[#00d4e8] text-[10px] tracking-[0.3em] uppercase mb-5 flex items-center gap-3"
+        >
+          <span className="w-5 h-px bg-[#00d4e8] flex-shrink-0" />
+          How can we help?
+        </p>
+        {choices.map(({ mode: m, Icon, label, description }) => (
+          <ChoiceRow
+            key={m}
+            Icon={Icon}
+            label={label}
+            description={description}
+            onClick={() => handleModeChange(m)}
+            accent={m === "whatsapp" ? "#25D366" : undefined}
+          />
+        ))}
+      </div>
 
-      {/* ── CHOOSE ───────────────────────────────────────────────────────────── */}
-      {mode === "choose" && (
-        <div className="space-y-3">
-          <p
-            style={{ fontFamily: "'DM Mono', monospace" }}
-            className="text-[#00d4e8] text-[10px] tracking-[0.3em] uppercase mb-5 flex items-center gap-3"
-          >
-            <span className="w-5 h-px bg-[#00d4e8] flex-shrink-0" />
-            How can we help?
-          </p>
-          {[
-            {
-              mode: "project" as Mode,
-              Icon: Rocket,
-              label: "Start a Project",
-              description: "Pick a service and kick off your tailored project wizard",
-            },
-            {
-              mode: "enquiry" as Mode,
-              Icon: Mail,
-              label: "General Enquiry",
-              description: "Have a question or want to explore what's possible?",
-            },
-            {
-              mode: "whatsapp" as Mode,
-              Icon: MessageCircle,
-              label: "WhatsApp Business",
-              description: "Quick replies — message us directly",
-            },
-            {
-              mode: "support" as Mode,
-              Icon: LifeBuoy,
-              label: "Support",
-              description: "Existing client? Get dedicated help from our team",
-            },
-          ].map(({ mode: m, Icon, label, description }) => (
-            <ChoiceRow
-              key={m}
-              Icon={Icon}
-              label={label}
-              description={description}
-              onClick={() => handleModeChange(m)}
-              accent={m === "whatsapp" ? "#25D366" : undefined}
-            />
+      {/* ── START A PROJECT modal ─────────────────────────────────────────── */}
+      <ContactModal open={mode === "project"} onClose={closeModal} title={modalTitles.project}>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          {departments.map((dept) => (
+            <DeptCard key={dept.key} dept={dept} onClick={() => { closeModal(); navigate(dept.href); }} />
           ))}
         </div>
-      )}
+      </ContactModal>
 
-      {/* ── START A PROJECT ──────────────────────────────────────────────────── */}
-      {mode === "project" && (
-        <div>
-          <InlineHeader onBack={goBack} />
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-            {departments.map((dept) => (
-              <DeptCard key={dept.key} dept={dept} onClick={() => navigate(dept.href)} />
-            ))}
-          </div>
-        </div>
-      )}
+      {/* ── GENERAL ENQUIRY modal ─────────────────────────────────────────── */}
+      <ContactModal open={mode === "enquiry"} onClose={closeModal} title={modalTitles.enquiry}>
+        {sent ? (
+          <SuccessState title="Message Received" subtitle="We'll be in touch within 24 hours." />
+        ) : (
+          <EnquiryForm onSubmit={() => { setSent(true); trackEvent("form_submit", { formType: "enquiry" }); }} />
+        )}
+      </ContactModal>
 
-      {/* ── GENERAL ENQUIRY ──────────────────────────────────────────────────── */}
-      {mode === "enquiry" && (
-        <div>
-          <InlineHeader onBack={goBack} />
-          {sent ? (
-            <SuccessState
-              title="Message Received"
-              subtitle="We'll be in touch within 24 hours."
-            />
-          ) : (
-            <EnquiryForm onSubmit={() => { setSent(true); trackEvent("form_submit", { formType: "enquiry" }); }} />
-          )}
-        </div>
-      )}
+      {/* ── WHATSAPP modal ────────────────────────────────────────────────── */}
+      <ContactModal open={mode === "whatsapp"} onClose={closeModal} title={modalTitles.whatsapp}>
+        <WhatsAppPanel />
+      </ContactModal>
 
-      {/* ── WHATSAPP ─────────────────────────────────────────────────────────── */}
-      {mode === "whatsapp" && (
-        <div>
-          <InlineHeader onBack={goBack} />
-          <WhatsAppPanel />
-        </div>
-      )}
-
-      {/* ── SUPPORT ──────────────────────────────────────────────────────────── */}
-      {mode === "support" && (
-        <div>
-          <InlineHeader onBack={goBack} />
-          {sent ? (
-            <SuccessState
-              title="Support Request Received"
-              subtitle="Our team will reach out within 4 business hours."
-            />
-          ) : (
-            <SupportPanel
-              onSubmit={() => { setSent(true); trackEvent("form_submit", { formType: "support" }); }}
-              onNavigate={() => navigate("/support")}
-            />
-          )}
-        </div>
-      )}
+      {/* ── SUPPORT modal ─────────────────────────────────────────────────── */}
+      <ContactModal open={mode === "support"} onClose={closeModal} title={modalTitles.support}>
+        {sent ? (
+          <SuccessState title="Support Request Received" subtitle="Our team will reach out within 4 business hours." />
+        ) : (
+          <SupportPanel
+            onSubmit={() => { setSent(true); trackEvent("form_submit", { formType: "support" }); }}
+            onNavigate={() => navigate("/support")}
+          />
+        )}
+      </ContactModal>
     </div>
   );
 }
