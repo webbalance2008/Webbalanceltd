@@ -182,7 +182,7 @@ export function Projects() {
   const isMobile = useIsMobile();
   const contentBlocks = useContentBlocks("/");
 
-  const displayed = projects.slice(0, 6);
+  const displayed = projects;
   const totalPages = Math.ceil(displayed.length / 2);
 
   const goToPage = useCallback((page: number) => {
