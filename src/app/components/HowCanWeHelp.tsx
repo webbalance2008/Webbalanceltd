@@ -1,23 +1,22 @@
-import { motion, AnimatePresence } from "motion/react";
+import { motion } from "motion/react";
 import { useState } from "react";
 import { useNavigate } from "react-router";
 import { useContentBlocks } from "../hooks/useContentBlocks";
 import { EditableText } from "./admin/EditableText";
-import { sendEmail } from "../utils/sendEmail";
+import { EnquiryForm } from "./ContactRouter";
 import { useIsMobile } from "../hooks/useIsMobile";
+import * as DialogPrimitive from "@radix-ui/react-dialog";
 import {
   Rocket,
   MessageSquare,
   ArrowUpRight,
   ArrowLeft,
-  Send,
   Check,
   Layout,
   Code2,
   TrendingUp,
   Server,
   Palette,
-  X,
   ChevronRight,
   FileText,
   BadgePoundSterling,
@@ -32,7 +31,6 @@ import {
 
 // ─── Types ──────────────────────────────────────────────────────────────────
 type Panel = "project" | "enquiry" | "packages" | null;
-type MobileExpanded = string | null;
 
 // ─── Department data ─────────────────────────────────────────────────────────
 const departments = [
@@ -111,43 +109,19 @@ export function HowCanWeHelp() {
   const contentBlocks = useContentBlocks("/");
   const [active, setActive] = useState<Panel>(null);
   const [sent, setSent] = useState(false);
-  const [mobileExpanded, setMobileExpanded] = useState<MobileExpanded>(null);
   const navigate = useNavigate();
   const isMobile = useIsMobile();
 
-  const toggle = (id: Panel) => {
-    // "Packages" navigates directly to the packages page
-    if (id === "packages") {
-      navigate("/packages");
-      return;
-    }
-    if (active === id) {
-      setActive(null);
-      setSent(false);
-    } else {
-      setActive(id);
-      setSent(false);
-    }
-  };
-
-  const toggleMobile = (id: string) => {
-    if (id === "packages") {
-      navigate("/packages");
-      return;
-    }
-    setMobileExpanded(mobileExpanded === id ? null : id);
-  };
-
   const handleCardClick = (card: typeof CARDS[number]) => {
-    // Check if we're on mobile
-    if (isMobile) {
-      toggleMobile(card.id);
-    } else {
-      toggle(card.id);
+    if (card.id === "packages") {
+      navigate("/packages");
+      return;
     }
+    setActive(card.id);
+    setSent(false);
   };
 
-  const close = () => {
+  const closeModal = () => {
     setActive(null);
     setSent(false);
   };
@@ -284,353 +258,242 @@ export function HowCanWeHelp() {
         {/* ── 3-column cards ─────────────────────────────────────────── */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           {CARDS.map((card) => {
-            const isActive = active === card.id;
-            const isMobileOpen = mobileExpanded === card.id;
             const Icon = card.Icon;
             return (
-              <div key={card.id}>
-                <button
-                  type="button"
-                  onClick={() => handleCardClick(card)}
-                  className="group relative flex flex-col text-left transition-all duration-300 w-full"
-                  style={{
-                    padding: "2.5rem",
-                    minHeight: isMobileOpen ? undefined : undefined,
-                    borderWidth: 1,
-                    borderStyle: "solid",
-                    borderColor: isActive
-                      ? `${card.accentColor}66`
-                      : "rgba(255,255,255,0.08)",
-                    background: isActive
-                      ? `rgba(22,33,46,0.95)`
-                      : "rgba(22,33,46,0.85)",
-                    boxShadow: isActive
-                      ? `0 0 0 1px ${card.accentColor}22, 0 20px 60px rgba(0,0,0,0.35)`
-                      : "none",
-                    outline: "none",
-                  }}
-                  onMouseEnter={(e) => {
-                    if (!isActive) {
-                      e.currentTarget.style.borderColor = `${card.accentColor}44`;
-                      e.currentTarget.style.background = "rgba(29,42,58,0.95)";
-                    }
-                  }}
-                  onMouseLeave={(e) => {
-                    if (!isActive) {
-                      e.currentTarget.style.borderColor = "rgba(255,255,255,0.08)";
-                      e.currentTarget.style.background = "rgba(22,33,46,0.85)";
-                    }
-                  }}
-                >
-                  {/* Mobile: compact header row */}
-                  <div className="flex md:hidden items-center gap-4 w-full">
-                    <div
-                      className="flex items-center justify-center flex-shrink-0"
-                      style={{
-                        width: 48,
-                        height: 48,
-                        borderRadius: 12,
-                        background: isActive ? card.iconBgHover : card.iconBg,
-                        border: `1px solid rgba(${card.accentRgb}, ${isActive ? "0.5" : "0.25"})`,
-                        boxShadow: `0 0 14px rgba(${card.accentRgb}, 0.12)`,
-                      }}
-                    >
-                      <Icon
-                        size={20}
-                        strokeWidth={1.5}
-                        style={{ color: isActive ? "#ffffff" : card.accentColor }}
-                      />
-                    </div>
-                    <div className="flex-1 text-left">
-                      <h3
-                        style={{
-                          fontFamily: "'Montserrat', sans-serif",
-                          color: "#ffffff",
-                          fontSize: "1.25rem",
-                          fontWeight: 300,
-                          lineHeight: 1.2,
-                        }}
-                      >
-                        {card.label}
-                      </h3>
-                      <p
-                        style={{
-                          fontFamily: "'Inter', sans-serif",
-                          color: "rgba(255,255,255,0.4)",
-                          fontSize: "0.75rem",
-                          lineHeight: 1.5,
-                          marginTop: "0.25rem",
-                        }}
-                      >
-                        {card.description}
-                      </p>
-                    </div>
-                    <div
-                      className="flex-shrink-0 transition-transform duration-300"
-                      style={{
-                        color: card.accentColor,
-                        transform: isMobileOpen ? "rotate(90deg)" : "rotate(0deg)",
-                      }}
-                    >
-                      <ChevronRight size={18} />
-                    </div>
+              <button
+                key={card.id}
+                type="button"
+                onClick={() => handleCardClick(card)}
+                className="group relative flex flex-col text-left transition-all duration-300 w-full"
+                style={{
+                  padding: "2.5rem",
+                  borderWidth: 1,
+                  borderStyle: "solid",
+                  borderColor: "rgba(255,255,255,0.08)",
+                  background: "rgba(22,33,46,0.85)",
+                  outline: "none",
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.borderColor = `${card.accentColor}44`;
+                  e.currentTarget.style.background = "rgba(29,42,58,0.95)";
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.borderColor = "rgba(255,255,255,0.08)";
+                  e.currentTarget.style.background = "rgba(22,33,46,0.85)";
+                }}
+              >
+                {/* Mobile: compact header row */}
+                <div className="flex md:hidden items-center gap-4 w-full">
+                  <div
+                    className="flex items-center justify-center flex-shrink-0"
+                    style={{
+                      width: 48,
+                      height: 48,
+                      borderRadius: 12,
+                      background: card.iconBg,
+                      border: `1px solid rgba(${card.accentRgb}, 0.25)`,
+                      boxShadow: `0 0 14px rgba(${card.accentRgb}, 0.12)`,
+                    }}
+                  >
+                    <Icon
+                      size={20}
+                      strokeWidth={1.5}
+                      style={{ color: card.accentColor }}
+                    />
                   </div>
-
-                  {/* Desktop: full card layout */}
-                  <div className="hidden md:flex md:flex-col md:h-full w-full" style={{ minHeight: 320 }}>
-                    {/* Icon box */}
-                    <div
-                      className="mb-6 flex items-center justify-center transition-all duration-500 group-hover:scale-105"
-                      style={{
-                        width: 72,
-                        height: 72,
-                        borderRadius: 16,
-                        background: isActive ? card.iconBgHover : card.iconBg,
-                        border: `1px solid rgba(${card.accentRgb}, ${isActive ? "0.5" : "0.25"})`,
-                        boxShadow: `0 0 ${isActive ? "28px" : "18px"} rgba(${card.accentRgb}, ${isActive ? "0.25" : "0.12"})`,
-                        flexShrink: 0,
-                        transition: "all 0.4s ease",
-                      }}
-                    >
-                      <Icon
-                        size={26}
-                        strokeWidth={1.5}
-                        style={{ color: isActive ? "#ffffff" : card.accentColor, transition: "color 0.4s ease" }}
-                      />
-                    </div>
-
-                    {/* Title */}
+                  <div className="flex-1 text-left">
                     <h3
                       style={{
                         fontFamily: "'Montserrat', sans-serif",
                         color: "#ffffff",
-                        fontSize: "1.6rem",
+                        fontSize: "1.25rem",
                         fontWeight: 300,
                         lineHeight: 1.2,
-                        letterSpacing: "-0.01em",
                       }}
-                      className="mb-3"
                     >
                       {card.label}
                     </h3>
-
-                    {/* Description */}
                     <p
                       style={{
                         fontFamily: "'Inter', sans-serif",
-                        color: "rgba(255,255,255,0.45)",
-                        fontSize: "0.875rem",
-                        lineHeight: 1.7,
+                        color: "rgba(255,255,255,0.4)",
+                        fontSize: "0.75rem",
+                        lineHeight: 1.5,
+                        marginTop: "0.25rem",
                       }}
-                      className="mb-6"
                     >
                       {card.description}
                     </p>
+                  </div>
+                  <div className="flex-shrink-0" style={{ color: card.accentColor }}>
+                    <ChevronRight size={18} />
+                  </div>
+                </div>
 
-                    {/* ── Bullet points ── */}
-                    <ul className="flex flex-col gap-3 flex-1">
-                      {card.bullets.map((bullet, i) => {
-                        const BulletIcon = bullet.Icon;
-                        return (
-                          <li key={i} className="flex items-center gap-3">
-                            <div
-                              style={{
-                                width: 30,
-                                height: 30,
-                                borderRadius: 8,
-                                background: `rgba(${card.accentRgb}, 0.12)`,
-                                border: `1px solid rgba(${card.accentRgb}, 0.3)`,
-                                display: "flex",
-                                alignItems: "center",
-                                justifyContent: "center",
-                                flexShrink: 0,
-                              }}
-                            >
-                              <BulletIcon
-                                size={13}
-                                strokeWidth={1.5}
-                                style={{ color: card.accentColor } as React.CSSProperties}
-                              />
-                            </div>
-                            <span
-                              style={{
-                                fontFamily: "'Inter', sans-serif",
-                                color: "#ffffff",
-                                fontSize: "0.8125rem",
-                              }}
-                            >
-                              {bullet.text}
-                            </span>
-                          </li>
-                        );
-                      })}
-                    </ul>
+                {/* Desktop: full card layout */}
+                <div className="hidden md:flex md:flex-col md:h-full w-full" style={{ minHeight: 320 }}>
+                  {/* Icon box */}
+                  <div
+                    className="mb-6 flex items-center justify-center transition-all duration-500 group-hover:scale-105"
+                    style={{
+                      width: 72,
+                      height: 72,
+                      borderRadius: 16,
+                      background: card.iconBg,
+                      border: `1px solid rgba(${card.accentRgb}, 0.25)`,
+                      boxShadow: `0 0 18px rgba(${card.accentRgb}, 0.12)`,
+                      flexShrink: 0,
+                      transition: "all 0.4s ease",
+                    }}
+                  >
+                    <Icon
+                      size={26}
+                      strokeWidth={1.5}
+                      style={{ color: card.accentColor, transition: "color 0.4s ease" }}
+                    />
+                  </div>
 
-                    {/* ── CTA pill ── */}
-                    <div className="mt-8">
-                      <div
+                  {/* Title */}
+                  <h3
+                    style={{
+                      fontFamily: "'Montserrat', sans-serif",
+                      color: "#ffffff",
+                      fontSize: "1.6rem",
+                      fontWeight: 300,
+                      lineHeight: 1.2,
+                      letterSpacing: "-0.01em",
+                    }}
+                    className="mb-3"
+                  >
+                    {card.label}
+                  </h3>
+
+                  {/* Description */}
+                  <p
+                    style={{
+                      fontFamily: "'Inter', sans-serif",
+                      color: "rgba(255,255,255,0.45)",
+                      fontSize: "0.875rem",
+                      lineHeight: 1.7,
+                    }}
+                    className="mb-6"
+                  >
+                    {card.description}
+                  </p>
+
+                  {/* ── Bullet points ── */}
+                  <ul className="flex flex-col gap-3 flex-1">
+                    {card.bullets.map((bullet, i) => {
+                      const BulletIcon = bullet.Icon;
+                      return (
+                        <li key={i} className="flex items-center gap-3">
+                          <div
+                            style={{
+                              width: 30,
+                              height: 30,
+                              borderRadius: 8,
+                              background: `rgba(${card.accentRgb}, 0.12)`,
+                              border: `1px solid rgba(${card.accentRgb}, 0.3)`,
+                              display: "flex",
+                              alignItems: "center",
+                              justifyContent: "center",
+                              flexShrink: 0,
+                            }}
+                          >
+                            <BulletIcon
+                              size={13}
+                              strokeWidth={1.5}
+                              style={{ color: card.accentColor } as React.CSSProperties}
+                            />
+                          </div>
+                          <span
+                            style={{
+                              fontFamily: "'Inter', sans-serif",
+                              color: "#ffffff",
+                              fontSize: "0.8125rem",
+                            }}
+                          >
+                            {bullet.text}
+                          </span>
+                        </li>
+                      );
+                    })}
+                  </ul>
+
+                  {/* ── CTA pill ── */}
+                  <div className="mt-8">
+                    <div
+                      style={{
+                        height: 1,
+                        background: `rgba(${card.accentRgb}, 0.25)`,
+                        marginBottom: "1.25rem",
+                      }}
+                    />
+                    <div
+                      className="flex items-center justify-between"
+                      style={{
+                        borderWidth: 1,
+                        borderStyle: "solid",
+                        borderColor: `rgba(${card.accentRgb}, 0.3)`,
+                        background: `rgba(${card.accentRgb}, 0.07)`,
+                        padding: "0.65rem 1rem",
+                        transition: "all 0.3s ease",
+                      }}
+                    >
+                      <span
                         style={{
-                          height: 1,
-                          background: `rgba(${card.accentRgb}, 0.25)`,
-                          marginBottom: "1.25rem",
-                        }}
-                      />
-                      <div
-                        className="flex items-center justify-between"
-                        style={{
-                          borderWidth: 1,
-                          borderStyle: "solid",
-                          borderColor: isActive
-                            ? `rgba(${card.accentRgb}, 0.55)`
-                            : `rgba(${card.accentRgb}, 0.3)`,
-                          background: isActive
-                            ? `rgba(${card.accentRgb}, 0.14)`
-                            : `rgba(${card.accentRgb}, 0.07)`,
-                          padding: "0.65rem 1rem",
-                          transition: "all 0.3s ease",
+                          fontFamily: "'DM Mono', monospace",
+                          color: card.accentColor,
+                          fontSize: "0.625rem",
+                          letterSpacing: "0.22em",
+                          textTransform: "uppercase",
                         }}
                       >
-                        <span
-                          style={{
-                            fontFamily: "'DM Mono', monospace",
-                            color: card.accentColor,
-                            fontSize: "0.625rem",
-                            letterSpacing: "0.22em",
-                            textTransform: "uppercase",
-                          }}
-                        >
-                          {isActive ? "Collapse" : card.cta}
-                        </span>
-                        <div style={{ color: card.accentColor }}>
-                          {isActive ? <X size={13} /> : <ChevronRight size={13} />}
-                        </div>
+                        {card.cta}
+                      </span>
+                      <div style={{ color: card.accentColor }}>
+                        <ChevronRight size={13} />
                       </div>
                     </div>
                   </div>
-                </button>
-
-                {/* Mobile: collapsible content */}
-                <AnimatePresence>
-                  {isMobileOpen && (
-                    <motion.div
-                      initial={{ opacity: 0, height: 0 }}
-                      animate={{ opacity: 1, height: "auto" }}
-                      exit={{ opacity: 0, height: 0 }}
-                      transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
-                      className="overflow-hidden md:hidden"
-                      style={{
-                        borderWidth: "0 1px 1px 1px",
-                        borderStyle: "solid",
-                        borderColor: `rgba(${card.accentRgb}, 0.2)`,
-                        background: "rgba(22,33,46,0.9)",
-                      }}
-                    >
-                      <div className="px-6 py-5">
-                        {/* Bullets */}
-                        <ul className="flex flex-col gap-3 mb-5">
-                          {card.bullets.map((bullet, i) => {
-                            const BulletIcon = bullet.Icon;
-                            return (
-                              <li key={i} className="flex items-center gap-3">
-                                <div
-                                  style={{
-                                    width: 28,
-                                    height: 28,
-                                    borderRadius: 7,
-                                    background: `rgba(${card.accentRgb}, 0.12)`,
-                                    border: `1px solid rgba(${card.accentRgb}, 0.3)`,
-                                    display: "flex",
-                                    alignItems: "center",
-                                    justifyContent: "center",
-                                    flexShrink: 0,
-                                  }}
-                                >
-                                  <BulletIcon size={12} strokeWidth={1.5} style={{ color: card.accentColor } as React.CSSProperties} />
-                                </div>
-                                <span style={{ fontFamily: "'Inter', sans-serif", color: "#ffffff", fontSize: "0.8125rem" }}>
-                                  {bullet.text}
-                                </span>
-                              </li>
-                            );
-                          })}
-                        </ul>
-                        {/* CTA */}
-                        <button
-                          type="button"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            toggle(card.id);
-                          }}
-                          className="flex items-center justify-between w-full"
-                          style={{
-                            borderWidth: 1,
-                            borderStyle: "solid",
-                            borderColor: `rgba(${card.accentRgb}, 0.35)`,
-                            background: `rgba(${card.accentRgb}, 0.1)`,
-                            padding: "0.6rem 1rem",
-                          }}
-                        >
-                          <span
-                            style={{
-                              fontFamily: "'DM Mono', monospace",
-                              color: card.accentColor,
-                              fontSize: "0.6rem",
-                              letterSpacing: "0.22em",
-                              textTransform: "uppercase",
-                            }}
-                          >
-                            {card.cta}
-                          </span>
-                          <ChevronRight size={12} style={{ color: card.accentColor }} />
-                        </button>
-                      </div>
-                    </motion.div>
-                  )}
-                </AnimatePresence>
-              </div>
+                </div>
+              </button>
             );
           })}
         </div>
 
-        {/* ── Expanding panel ─────────────────────────────────────────── */}
-        <AnimatePresence>
-          {active && (
-            <motion.div
-              key={active}
-              initial={{ opacity: 0, height: 0 }}
-              animate={{ opacity: 1, height: "auto" }}
-              exit={{ opacity: 0, height: 0 }}
-              transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
-              className="overflow-hidden"
+        {/* ── Choose a Service modal ──────────────────────────────────── */}
+        <DialogPrimitive.Root open={active === "project"} onOpenChange={(open) => { if (!open) closeModal(); }}>
+          <DialogPrimitive.Portal>
+            <DialogPrimitive.Overlay className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0" />
+            <DialogPrimitive.Content
+              className="fixed top-[50%] left-[50%] z-50 translate-x-[-50%] translate-y-[-50%] w-[calc(100%-2rem)] max-w-[640px] border p-0 shadow-2xl rounded-none data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 duration-200"
+              style={{
+                background: "#16212e",
+                borderColor: "rgba(0,212,232,0.2)",
+              }}
             >
-              <div
-                style={{
-                  marginTop: "2rem",
-                  borderWidth: 1,
-                  borderStyle: "solid",
-                  borderColor: "rgba(0,212,232,0.2)",
-                  background: "rgba(22,33,46,0.5)",
-                  padding: "2.5rem",
-                }}
-              >
-                {/* Panel header row */}
+              <div className="p-6 md:p-8">
+                {/* Header */}
                 <div className="flex items-center justify-between mb-8">
-                  <p
-                    style={{
-                      fontFamily: "'DM Mono', monospace",
-                      color: "#00d4e8",
-                      fontSize: "0.6rem",
-                      letterSpacing: "0.3em",
-                      textTransform: "uppercase",
-                    }}
-                    className="flex items-center gap-3"
-                  >
-                    <span style={{ width: "1rem", height: "1px", backgroundColor: "#00d4e8", display: "inline-block" }} />
-                    {active === "project" ? "Choose a Service" : "Send a Message"}
-                  </p>
+                  <DialogPrimitive.Title asChild>
+                    <p
+                      style={{
+                        fontFamily: "'DM Mono', monospace",
+                        color: "#00d4e8",
+                        fontSize: "0.6rem",
+                        letterSpacing: "0.3em",
+                        textTransform: "uppercase",
+                      }}
+                      className="flex items-center gap-3"
+                    >
+                      <span style={{ width: "1rem", height: "1px", backgroundColor: "#00d4e8", display: "inline-block" }} />
+                      Choose a Service
+                    </p>
+                  </DialogPrimitive.Title>
                   <button
                     type="button"
-                    onClick={close}
+                    onClick={closeModal}
                     className="flex items-center gap-2 transition-colors"
                     style={{ fontFamily: "'DM Mono', monospace", color: "rgba(255,255,255,0.3)", fontSize: "0.6rem", letterSpacing: "0.2em" }}
                     onMouseEnter={(e) => (e.currentTarget.style.color = "#00d4e8")}
@@ -641,64 +504,107 @@ export function HowCanWeHelp() {
                   </button>
                 </div>
 
-                {/* ── Project: department grid ──────────────────────── */}
-                {active === "project" && (
-                  <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
-                    {departments.map((dept) => {
-                      const Icon = dept.icon;
-                      return (
-                        <button
-                          key={dept.key}
-                          type="button"
-                          onClick={() => navigate(dept.href)}
-                          className="group relative flex flex-col items-start gap-3 p-5 text-left transition-all duration-300"
-                          style={{
-                            borderWidth: 1,
-                            borderStyle: "solid",
-                            borderColor: dept.border,
-                            background: dept.bg,
-                          }}
-                          onMouseEnter={(e) => {
-                            e.currentTarget.style.background = dept.bg.replace("0.07", "0.14");
-                            e.currentTarget.style.borderColor = dept.border.replace("0.45", "0.7");
-                          }}
-                          onMouseLeave={(e) => {
-                            e.currentTarget.style.background = dept.bg;
-                            e.currentTarget.style.borderColor = dept.border;
-                          }}
-                        >
-                          <div style={{ color: dept.color }}>
-                            <Icon size={17} />
-                          </div>
-                          <div>
-                            <p style={{ fontFamily: "'Montserrat', sans-serif", color: dept.color, fontWeight: 300, fontSize: "0.875rem", marginBottom: "0.25rem" }}>
-                              {dept.label}
-                            </p>
-                            <p style={{ fontFamily: "'Inter', sans-serif", color: "rgba(255,255,255,0.5)", fontSize: "0.75rem", lineHeight: 1.5 }}>
-                              {dept.description}
-                            </p>
-                          </div>
-                          <ArrowUpRight
-                            size={12}
-                            className="absolute bottom-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity duration-200"
-                            style={{ color: dept.color }}
-                          />
-                        </button>
-                      );
-                    })}
-                  </div>
-                )}
-
-                {/* ── Enquiry form ──────────────────────────────────── */}
-                {active === "enquiry" && (
-                  sent
-                    ? <SuccessState title="Message Received" subtitle="We'll be in touch within 24 hours." />
-                    : <EnquiryForm onSubmit={() => setSent(true)} />
-                )}
+                {/* Department grid */}
+                <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+                  {departments.map((dept) => {
+                    const DeptIcon = dept.icon;
+                    return (
+                      <button
+                        key={dept.key}
+                        type="button"
+                        onClick={() => { closeModal(); navigate(dept.href); }}
+                        className="group relative flex flex-col items-start gap-3 p-5 text-left transition-all duration-300"
+                        style={{
+                          borderWidth: 1,
+                          borderStyle: "solid",
+                          borderColor: dept.border,
+                          background: dept.bg,
+                        }}
+                        onMouseEnter={(e) => {
+                          e.currentTarget.style.background = dept.bg.replace("0.07", "0.14");
+                          e.currentTarget.style.borderColor = dept.border.replace("0.45", "0.7");
+                        }}
+                        onMouseLeave={(e) => {
+                          e.currentTarget.style.background = dept.bg;
+                          e.currentTarget.style.borderColor = dept.border;
+                        }}
+                      >
+                        <div style={{ color: dept.color }}>
+                          <DeptIcon size={17} />
+                        </div>
+                        <div>
+                          <p style={{ fontFamily: "'Montserrat', sans-serif", color: dept.color, fontWeight: 300, fontSize: "0.875rem", marginBottom: "0.25rem" }}>
+                            {dept.label}
+                          </p>
+                          <p style={{ fontFamily: "'Inter', sans-serif", color: "rgba(255,255,255,0.5)", fontSize: "0.75rem", lineHeight: 1.5 }}>
+                            {dept.description}
+                          </p>
+                        </div>
+                        <ArrowUpRight
+                          size={12}
+                          className="absolute bottom-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity duration-200"
+                          style={{ color: dept.color }}
+                        />
+                      </button>
+                    );
+                  })}
+                </div>
               </div>
-            </motion.div>
-          )}
-        </AnimatePresence>
+            </DialogPrimitive.Content>
+          </DialogPrimitive.Portal>
+        </DialogPrimitive.Root>
+
+        {/* ── Send a Message modal ────────────────────────────────────── */}
+        <DialogPrimitive.Root open={active === "enquiry"} onOpenChange={(open) => { if (!open) closeModal(); }}>
+          <DialogPrimitive.Portal>
+            <DialogPrimitive.Overlay className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0" />
+            <DialogPrimitive.Content
+              className="fixed top-[50%] left-[50%] z-50 translate-x-[-50%] translate-y-[-50%] w-[calc(100%-2rem)] max-w-[640px] border p-0 shadow-2xl rounded-none data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 duration-200"
+              style={{
+                background: "#16212e",
+                borderColor: "rgba(0,212,232,0.2)",
+              }}
+            >
+              <div className="p-6 md:p-8">
+                {/* Header */}
+                <div className="flex items-center justify-between mb-8">
+                  <DialogPrimitive.Title asChild>
+                    <p
+                      style={{
+                        fontFamily: "'DM Mono', monospace",
+                        color: "#00d4e8",
+                        fontSize: "0.6rem",
+                        letterSpacing: "0.3em",
+                        textTransform: "uppercase",
+                      }}
+                      className="flex items-center gap-3"
+                    >
+                      <span style={{ width: "1rem", height: "1px", backgroundColor: "#00d4e8", display: "inline-block" }} />
+                      Send a Message
+                    </p>
+                  </DialogPrimitive.Title>
+                  <button
+                    type="button"
+                    onClick={closeModal}
+                    className="flex items-center gap-2 transition-colors"
+                    style={{ fontFamily: "'DM Mono', monospace", color: "rgba(255,255,255,0.3)", fontSize: "0.6rem", letterSpacing: "0.2em" }}
+                    onMouseEnter={(e) => (e.currentTarget.style.color = "#00d4e8")}
+                    onMouseLeave={(e) => (e.currentTarget.style.color = "rgba(255,255,255,0.3)")}
+                  >
+                    <ArrowLeft size={10} />
+                    Close
+                  </button>
+                </div>
+
+                {/* Form or success */}
+                {sent
+                  ? <SuccessState title="Message Received" subtitle="We'll be in touch within 24 hours." />
+                  : <EnquiryForm onSubmit={() => setSent(true)} />
+                }
+              </div>
+            </DialogPrimitive.Content>
+          </DialogPrimitive.Portal>
+        </DialogPrimitive.Root>
       </div>
 
       {/* Bottom fade */}
@@ -707,108 +613,6 @@ export function HowCanWeHelp() {
         style={{ background: "linear-gradient(to top, rgba(22,33,46,0.4) 0%, transparent 100%)" }}
       />
     </section>
-  );
-}
-
-// ─── Enquiry form ─────────────────────────────────────────────────────────────
-function EnquiryForm({ onSubmit }: { onSubmit: () => void }) {
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [message, setMessage] = useState("");
-  const [budget, setBudget] = useState("");
-  const [sending, setSending] = useState(false);
-  const [error, setError] = useState("");
-  const budgets = ["< £3k", "£3k – £8k", "£8k – £20k", "£20k+"];
-
-  const handle = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setSending(true);
-    setError("");
-    const result = await sendEmail("enquiry", { name, email, message, budget });
-    setSending(false);
-    if (result.success) {
-      onSubmit();
-    } else {
-      setError(result.error || "Failed to send — please try again.");
-    }
-  };
-
-  return (
-    <form onSubmit={handle} className="space-y-5">
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <Field label="Name" placeholder="Your name" value={name} onChange={setName} required />
-        <Field label="Email" type="email" placeholder="your@email.com" value={email} onChange={setEmail} required />
-      </div>
-
-      <div>
-        <MonoLabel>Budget Range</MonoLabel>
-        <div className="flex flex-wrap gap-2 mt-2">
-          {budgets.map((b) => (
-            <button
-              key={b}
-              type="button"
-              onClick={() => setBudget(b)}
-              style={{
-                fontFamily: "'DM Mono', monospace",
-                fontSize: "0.625rem",
-                letterSpacing: "0.18em",
-                textTransform: "uppercase",
-                borderWidth: 1,
-                borderStyle: "solid",
-                borderColor: budget === b ? "#00d4e8" : "rgba(255,255,255,0.2)",
-                color: budget === b ? "#00d4e8" : "rgba(255,255,255,0.55)",
-                background: budget === b ? "rgba(0,212,232,0.08)" : "transparent",
-                padding: "0.5rem 1.25rem",
-                transition: "all 0.2s ease",
-                cursor: "pointer",
-              }}
-              onMouseEnter={(e) => { if (budget !== b) { e.currentTarget.style.borderColor = "rgba(255,255,255,0.4)"; e.currentTarget.style.color = "#fff"; } }}
-              onMouseLeave={(e) => { if (budget !== b) { e.currentTarget.style.borderColor = "rgba(255,255,255,0.2)"; e.currentTarget.style.color = "rgba(255,255,255,0.55)"; } }}
-            >
-              {b}
-            </button>
-          ))}
-        </div>
-      </div>
-
-      <div>
-        <MonoLabel>Message</MonoLabel>
-        <textarea
-          required
-          rows={4}
-          value={message}
-          onChange={(e) => setMessage(e.target.value)}
-          placeholder="Tell us about your project or question..."
-          className="w-full bg-transparent text-white placeholder-white/30 text-sm px-4 py-3 outline-none resize-none transition-colors"
-          style={{
-            fontFamily: "'Inter', sans-serif",
-            fontSize: "0.8125rem",
-            borderWidth: 1,
-            borderStyle: "solid",
-            borderColor: "rgba(255,255,255,0.18)",
-            marginTop: "0.5rem",
-          }}
-          onFocus={(e) => (e.currentTarget.style.borderColor = "rgba(0,212,232,0.5)")}
-          onBlur={(e) => (e.currentTarget.style.borderColor = "rgba(255,255,255,0.18)")}
-        />
-      </div>
-
-      {error && (
-        <p style={{ fontFamily: "'Inter', sans-serif", color: "#f87171", fontSize: "0.75rem" }}>{error}</p>
-      )}
-
-      <button
-        type="submit"
-        disabled={sending}
-        className="flex items-center justify-between px-7 py-4 bg-[#00d4e8] hover:bg-[#33e8fa] transition-colors group disabled:opacity-60"
-        style={{ minWidth: 220 }}
-      >
-        <span style={{ fontFamily: "'Inter', sans-serif", color: "#16212e", fontSize: "0.7rem", letterSpacing: "0.2em", textTransform: "uppercase", fontWeight: 500 }}>
-          {sending ? "Sending..." : "Send Message"}
-        </span>
-        <Send size={13} className="text-[#16212e] ml-6 group-hover:translate-x-0.5 transition-transform" />
-      </button>
-    </form>
   );
 }
 
@@ -826,52 +630,5 @@ function SuccessState({ title, subtitle }: { title: string; subtitle: string }) 
         {subtitle}
       </p>
     </div>
-  );
-}
-
-// ─── Shared field ─────────────────────────────────────────────────────────────
-function Field({
-  label, type = "text", placeholder, value, onChange, required,
-}: {
-  label: string; type?: string; placeholder?: string;
-  value: string; onChange: (v: string) => void; required?: boolean;
-}) {
-  return (
-    <div>
-      <MonoLabel>{label}</MonoLabel>
-      <input
-        type={type}
-        required={required}
-        value={value}
-        onChange={(e) => onChange(e.target.value)}
-        placeholder={placeholder}
-        className="w-full bg-transparent text-white placeholder-white/30 px-4 py-3 outline-none transition-colors"
-        style={{
-          fontFamily: "'Inter', sans-serif",
-          fontSize: "0.8125rem",
-          borderWidth: 1,
-          borderStyle: "solid",
-          borderColor: "rgba(255,255,255,0.18)",
-          marginTop: "0.5rem",
-        }}
-        onFocus={(e) => (e.currentTarget.style.borderColor = "rgba(0,212,232,0.5)")}
-        onBlur={(e) => (e.currentTarget.style.borderColor = "rgba(255,255,255,0.18)")}
-      />
-    </div>
-  );
-}
-
-// ─── Mono label ───────────────────────────────────────────────────────────────
-function MonoLabel({ children }: { children: React.ReactNode }) {
-  return (
-    <p style={{
-      fontFamily: "'DM Mono', monospace",
-      color: "rgba(0,212,232,0.7)",
-      fontSize: "0.6rem",
-      letterSpacing: "0.25em",
-      textTransform: "uppercase",
-    }}>
-      {children}
-    </p>
   );
 }
