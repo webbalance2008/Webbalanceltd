@@ -12,9 +12,9 @@ export function Contact() {
   const contentBlocks = useContentBlocks("/");
 
   return (
-    <section id="contact" className="bg-[#16212e] py-12 md:py-20 border-t border-white/5">
-      <div className="max-w-[1440px] mx-auto px-8 md:px-16">
-        <div ref={ref} className="grid grid-cols-1 md:grid-cols-2 gap-10 md:gap-20 items-center">
+    <section id="contact" className="bg-[#16212e] border-t border-white/5 flex flex-col" style={{ minHeight: "100vh" }}>
+      <div className="max-w-[1440px] mx-auto px-8 md:px-16 py-12 md:py-20 flex-1 flex items-center">
+        <div ref={ref} className="grid grid-cols-1 md:grid-cols-2 gap-10 md:gap-20 items-center w-full">
           {/* Left */}
           <div className="flex flex-col justify-center">
             <motion.p
