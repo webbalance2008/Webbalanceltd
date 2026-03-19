@@ -3,7 +3,6 @@
 
 const omalleysHero         = "/omalleys-hero.png";
 const banksODeeHero        = "/banks-hero.png";
-const aberdeenNorthernHero = "/hero-laptop-granite-elite.png";
 const romarAbradoHero      = "/romar-hero.png";
 const earlyBirdHero        = "/earlybird-hero.png";
 const puls8Hero            = "/puls8-hero.png";
@@ -19,7 +18,6 @@ export const projectImages: Record<string, string> = {
   // ── Real client assets ────────────────────────────────────────────────────
   "omalleys-irish-bar":      omalleysHero,
   "banks-o-dee-fitness":     banksODeeHero,
-  "aberdeen-northern-hotel": aberdeenNorthernHero,
   "romar-abrado":            romarAbradoHero,
   "early-bird-vending":      earlyBirdHero,
   "puls8-piping-solutions":  puls8Hero,

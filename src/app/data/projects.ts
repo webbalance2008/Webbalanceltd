@@ -461,38 +461,6 @@ export const projects: Project[] = [
       { label: "myWellness App Sign-Ups",    value: "+185%" },
     ],
     gallery: [],
-    nextSlug: "aberdeen-northern-hotel",
-  },
-  {
-    id: 13,
-    slug: "aberdeen-northern-hotel",
-    title: "Aberdeen Northern Hotel",
-    subtitle: "Hospitality & Accommodation",
-    category: "Hospitality",
-    year: "2023",
-    tags: ["Responsive Design", "Art Deco", "Hotel"],
-    description:
-      "A responsive digital identity for one of Aberdeen's most storied independent hotels — honouring its rich Art Deco heritage while setting a confident course for its future.",
-    image: "",
-    color: "#1a3a3a",
-    size: "large",
-    externalUrl: "https://aberdeennorthernhotel.com",
-    client: "Aberdeen Northern Hotel",
-    duration: "7 Weeks",
-    services: ["Brand-Led Web Design", "Responsive Development", "CMS Integration", "SEO Foundation"],
-    overview:
-      "Aberdeen Northern Hotel is a proud independent institution that has warmly welcomed guests from near and far for generations. Rooted in the city's architectural heritage — with stunning original Art Deco interiors — the hotel needed a website that honoured its past while signalling a confident and modern vision for its future.",
-    challenge:
-      "An outdated web presence was underselling a genuinely special property. The site failed to communicate the hotel's history, warmth, or the breadth of its offer — from beautifully appointed rooms and a restaurant to meetings, functions and celebrations. Prospective guests were choosing competitors with stronger digital first impressions.",
-    solution:
-      "We built a fully responsive, brand-led website rooted in the hotel's Art Deco identity — using refined typography, rich photography and measured animation to convey character and quality. Clear navigation across Stay, Celebrate, Meet, Dine and Book reduced friction at every stage of the guest journey, and a lightweight CMS gave the team full control over content.",
-    results: [
-      { label: "Direct Booking Increase", value: "+260%" },
-      { label: "Bounce Rate Reduction",   value: "−48%" },
-      { label: "Organic Search Growth",   value: "+195%" },
-      { label: "Avg. Session Duration",   value: "3m 40s" },
-    ],
-    gallery: [],
     nextSlug: "waverley-cutting-tools",
   },
 ];

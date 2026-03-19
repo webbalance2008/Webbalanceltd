@@ -15,14 +15,6 @@ const omalleysGallery3 = "/omalleys-gallery-3.png";
 const omalleysGallery4 = "/omalleys-gallery-4.png";
 const omalleysMobile   = "/omalleys-phone-scroll.png";
 
-// Aberdeen Northern Hotel assets (awaiting real images)
-const aberdeenPhone   = "";
-const aberdeenLaptop  = "";
-const aberdeenTablets = "";
-const aberdeenDesktop = "";
-const aberdeenLogo    = "";
-const aberdeenRoom    = "";
-
 // Banks O' Dee Sports & Fitness assets
 const banksPhonesHero = "/banks-gallery-1.png";
 const banksLaptop     = "/banks-gallery-2.png";
@@ -80,8 +72,6 @@ export function ProjectPage() {
       ? grandMeridianHero
       : project.slug === "omalleys-irish-bar"
       ? omalleysHero
-      : project.slug === "aberdeen-northern-hotel"
-      ? aberdeenLaptop
       : project.slug === "banks-o-dee-fitness"
       ? projectImages[project.slug] ?? project.image
       : projectImages[project.slug] ?? project.image;
@@ -90,8 +80,6 @@ export function ProjectPage() {
   const screenshots =
     project.slug === "omalleys-irish-bar"
       ? [omalleysFullPage]
-      : project.slug === "aberdeen-northern-hotel"
-      ? [aberdeenTablets, aberdeenDesktop]
       : project.slug === "banks-o-dee-fitness"
       ? [banksPhonesHero, banksDesktop]
       : project.gallery.length > 0 ? project.gallery : [];
@@ -100,8 +88,6 @@ export function ProjectPage() {
   const galleryImages =
     project.slug === "omalleys-irish-bar"
       ? [omalleysGallery1, omalleysGallery2, omalleysGallery3, omalleysGallery4]
-      : project.slug === "aberdeen-northern-hotel"
-      ? [aberdeenLaptop, aberdeenPhone, aberdeenTablets, aberdeenDesktop, aberdeenRoom]
       : project.slug === "banks-o-dee-fitness"
       ? [banksLaptop, banksPhonesHero, banksDesktop, banksMember, banksGym, "/banks-gallery-6.png"]
       : project.slug === "romar-abrado"
@@ -301,58 +287,6 @@ export function ProjectPage() {
           </section>
         )}
 
-        {/* ─── ABERDEEN NORTHERN HOTEL CLIENT BRIEF ─────────────── */}
-        {project.slug === "aberdeen-northern-hotel" && (
-          <section className="py-20 border-b border-white/5" style={{ background: "#1a2840" }}>
-            <div className="max-w-[1440px] mx-auto px-8 md:px-16">
-              <div className="grid grid-cols-1 md:grid-cols-12 gap-10 md:gap-16 items-start">
-
-                {/* Left — label + logo */}
-                <div className="md:col-span-4 flex flex-col gap-8">
-                  <SectionLabel>About the Client</SectionLabel>
-                  <div className="flex flex-col items-start gap-4">
-                    <img
-                      src={aberdeenLogo}
-                      alt="Aberdeen Northern Hotel logo"
-                      className="h-32 w-auto object-contain opacity-90"
-                    />
-                    <div className="inline-flex items-center gap-3 px-4 py-2.5 border border-white/10"
-                      style={{ background: "rgba(255,255,255,0.03)" }}>
-                      <span className="w-1.5 h-1.5 rounded-full flex-shrink-0" style={{ backgroundColor: CYAN }} />
-                      <span style={{ fontFamily: "'DM Mono', monospace", color: CYAN }}
-                        className="text-[10px] tracking-[0.25em] uppercase">
-                        Web Balance Ltd — Responsive Website
-                      </span>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Right — description */}
-                <div className="md:col-span-8 flex flex-col gap-6">
-                  <p style={{ fontFamily: "'Montserrat', sans-serif" }}
-                    className="text-white/75 text-xl md:text-2xl leading-relaxed font-light">
-                    An Aberdeen institution with an eye for the past and a vision for the future.
-                  </p>
-                  <p style={{ fontFamily: "'Inter', sans-serif" }}
-                    className="text-white/45 text-base leading-relaxed">
-                    Aberdeen Northern Hotel is a proud independent hotel that has for generations been warmly welcoming guests from near and far to enjoy their unique Art Deco spaces and comfortable accommodation. We had the pleasure of working with them to deliver a brand new, fully responsive website that honours that heritage while setting a confident course for the future.
-                  </p>
-                  <a
-                    href="https://aberdeennorthernhotel.com"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    style={{ fontFamily: "'DM Mono', monospace", color: CYAN }}
-                    className="text-[11px] tracking-[0.25em] uppercase flex items-center gap-2 hover:opacity-70 transition-opacity self-start"
-                  >
-                    Visit Site
-                    <ArrowUpRight size={13} />
-                  </a>
-                </div>
-
-              </div>
-            </div>
-          </section>
-        )}
 
         {/* ─── OVERVIEW ─────────────────────────────────────── */}
         <section className="py-24 border-b border-white/5">
