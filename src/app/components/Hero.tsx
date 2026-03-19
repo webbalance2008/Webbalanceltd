@@ -42,7 +42,7 @@ const PHASES = [
     gradientColor: null, // brand cyan
     label: null,
     isInitial: true,
-    cta: { label: "Start Your Project", href: "/start", secondary: null },
+    cta: { label: "Start Your Project", href: "/build-your-quote", secondary: null },
   },
   {
     line1: "Let's build something",
@@ -51,7 +51,7 @@ const PHASES = [
     body: <>Ready to elevate your online presence? Tell us about your project and we'll get back to you within 24 hours.</>,
     gradientColor: null, // brand cyan
     label: null,
-    cta: { label: "Start Your Project", href: "/start", secondary: null },
+    cta: { label: "Start Your Project", href: "/build-your-quote", secondary: null },
   },
   {
     line1: "Websites that",
@@ -60,7 +60,7 @@ const PHASES = [
     body: <>Award-winning web design that blends stunning aesthetics with conversion-focused architecture — crafted to turn visitors into customers.</>,
     gradientColor: "#5ec4d4",
     label: "Web Design",
-    cta: { label: "Explore Web Design", href: "/web-design", secondary: { label: "Start a Project", href: "/start/web-design" } },
+    cta: { label: "Explore Web Design", href: "/web-design", secondary: { label: "Start a Project", href: "/web-design/start" } },
   },
   {
     line1: "Web apps built",
@@ -69,7 +69,7 @@ const PHASES = [
     body: <>From client portals to complex platforms, we build powerful web applications tailored precisely to your workflows and growth ambitions.</>,
     gradientColor: "#b89fd4",
     label: "Web Apps",
-    cta: { label: "Explore Web Apps", href: "/web-apps", secondary: { label: "Start a Project", href: "/start/web-apps" } },
+    cta: { label: "Explore Web Apps", href: "/web-apps", secondary: { label: "Start a Project", href: "/web-apps/start" } },
   },
   {
     line1: "Rank higher.",
@@ -78,7 +78,7 @@ const PHASES = [
     body: <>Data-led SEO strategies that put your business at the top of search results — and keep it there. More visibility, more traffic, more revenue.</>,
     gradientColor: "#3dd68c",
     label: "SEO",
-    cta: { label: "Explore SEO", href: "/seo", secondary: { label: "Start a Project", href: "/start/seo" } },
+    cta: { label: "Explore SEO", href: "/seo", secondary: { label: "Start a Project", href: "/seo/start" } },
   },
   {
     line1: "A brand identity",
@@ -87,7 +87,7 @@ const PHASES = [
     body: <>Strategic brand design — from logo to full visual guidelines — that makes you instantly recognisable, memorable, and trusted.</>,
     gradientColor: "#f472b6",
     label: "Branding",
-    cta: { label: "Explore Branding", href: "/branding", secondary: { label: "Start a Project", href: "/start/branding" } },
+    cta: { label: "Explore Branding", href: "/branding", secondary: { label: "Start a Project", href: "/branding/start" } },
   },
   {
     line1: "Always on.",
@@ -96,7 +96,7 @@ const PHASES = [
     body: <>Managed hosting and dedicated ongoing support — so your website performs at its peak, every hour of every day.</>,
     gradientColor: "#f59e6a",
     label: "Hosting & Support",
-    cta: { label: "Explore Hosting", href: "/hosting", secondary: { label: "Start a Project", href: "/start/hosting" } },
+    cta: { label: "Explore Hosting", href: "/hosting", secondary: { label: "Start a Project", href: "/hosting/start" } },
   },
 ] as const;
 
