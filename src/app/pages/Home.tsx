@@ -111,6 +111,7 @@ export function Home() {
           <StickySection
             key={i}
             index={i}
+            isLast={i === SECTION_META.length - 1}
             SectionComponent={Component}
             translateY={translateYs[i]}
             fadeOpacity={fadeOpacities[i]}
@@ -207,6 +208,7 @@ function SectionNav({
 interface StickySectionProps {
   SectionComponent: React.ComponentType;
   index: number;
+  isLast: boolean;
   translateY: number;
   fadeOpacity: number;
   isInteractive: boolean;
@@ -217,6 +219,7 @@ interface StickySectionProps {
 function StickySection({
   SectionComponent,
   index,
+  isLast,
   translateY,
   fadeOpacity,
   isInteractive,
@@ -284,6 +287,27 @@ function StickySection({
       <div ref={(el) => { wrapperEl.current = el; onWrapperRef(el); }}>
         <div ref={(el) => { contentEl.current = el; onContentRef(el); }}>
           <SectionComponent />
+        </div>
+      </div>
+    );
+  }
+
+  // ── Last section: no sticky container needed, just render content ────
+  if (isLast) {
+    return (
+      <div
+        ref={(el) => { wrapperEl.current = el; onWrapperRef(el); }}
+        className="relative"
+        style={{ zIndex: index + 1 }}
+      >
+        <div ref={(el) => { contentEl.current = el; onContentRef(el); }}>
+          <motion.div
+            initial={{ opacity: 0, y: 50 }}
+            animate={hasEntered ? { opacity: 1, y: 0 } : { opacity: 0, y: 50 }}
+            transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
+          >
+            <SectionComponent />
+          </motion.div>
         </div>
       </div>
     );
