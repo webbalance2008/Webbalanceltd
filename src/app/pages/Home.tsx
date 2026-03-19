@@ -300,10 +300,9 @@ function StickySection({
           top: STICKY_TOP,
           height: `calc(100vh - ${STICKY_TOP}px)`,
           zIndex: index + 1,
-          // Sections that haven't entered yet are transparent & invisible —
-          // block their pointer events so they can't intercept clicks on lower sections.
-          // Once entered, z-index governs priority (higher index = on top).
-          pointerEvents: hasEntered && isInteractive ? "auto" : "none",
+          // Container is always pointer-events:none so transparent areas
+          // pass clicks through to sections below.
+          pointerEvents: "none",
         }}
       >
         <div
@@ -311,7 +310,12 @@ function StickySection({
             contentEl.current = el;
             onContentRef(el);
           }}
-          style={{ transform: `translateY(${translateY}px)` }}
+          style={{
+            transform: `translateY(${translateY}px)`,
+            // Content gets pointer-events:auto once entered — overflow:hidden
+            // on the parent clips the hit-test area to the visible region only.
+            pointerEvents: hasEntered ? "auto" : "none",
+          }}
         >
           <motion.div
             initial={index === 0 ? false : { opacity: 0, y: 50 }}
