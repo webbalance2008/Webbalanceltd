@@ -114,6 +114,7 @@ export function Home() {
             SectionComponent={Component}
             translateY={translateYs[i]}
             fadeOpacity={fadeOpacities[i]}
+            isInteractive={i <= activeIndex}
             onWrapperRef={(el) => { wrapperRefs.current[i] = el; }}
             onContentRef={(el) => { contentRefs.current[i] = el; }}
           />
@@ -208,6 +209,7 @@ interface StickySectionProps {
   index: number;
   translateY: number;
   fadeOpacity: number;
+  isInteractive: boolean;
   onWrapperRef: (el: HTMLDivElement | null) => void;
   onContentRef: (el: HTMLDivElement | null) => void;
 }
@@ -217,6 +219,7 @@ function StickySection({
   index,
   translateY,
   fadeOpacity,
+  isInteractive,
   onWrapperRef,
   onContentRef,
 }: StickySectionProps) {
@@ -300,7 +303,7 @@ function StickySection({
           // Sections that haven't entered yet are transparent & invisible —
           // block their pointer events so they can't intercept clicks on lower sections.
           // Once entered, z-index governs priority (higher index = on top).
-          pointerEvents: hasEntered ? "auto" : "none",
+          pointerEvents: hasEntered && isInteractive ? "auto" : "none",
         }}
       >
         <div
