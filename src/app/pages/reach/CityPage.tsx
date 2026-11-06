@@ -40,8 +40,8 @@ export function CityPage() {
   return (
     <div className="min-h-screen" style={{ backgroundColor: "#16212e" }}>
       <SEOHead
-        title={`Web Design & Digital Services in ${city.name}`}
-        description={`Professional web design, SEO, branding, and hosting services in ${city.name}. Web Balance delivers high-performance digital solutions for ${city.name} businesses.`}
+        title={`Web Design ${city.name} — Digital Services for Business`}
+        description={`Professional web design ${city.name} businesses trust. Web Balance delivers bespoke websites, web apps, SEO and branding across ${city.region}.`}
         path={`/our-reach/${city.slug}`}
         keywords={`web design ${city.name}, SEO ${city.name}, digital agency ${city.name}, website development ${city.name}`}
       />

@@ -29,8 +29,8 @@ export function BrandingPage() {
   return (
     <>
       <SEOHead
-        title="Branding &amp; Identity Design"
-        description="We create distinctive brand identities for ambitious businesses — from logo design and visual systems to brand guidelines, print, and digital collateral."
+        title="Brand Identity Design & Branding Services for UK"
+        description="We create distinctive brand identity design for ambitious UK businesses — from logo design and visual systems to brand guidelines, print and digital collateral."
         path="/branding"
         keywords="brand identity design, logo design UK, branding agency, visual identity, brand guidelines"
       />

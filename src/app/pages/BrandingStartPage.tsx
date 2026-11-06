@@ -321,8 +321,8 @@ export function BrandingStartPage() {
   return (
     <div className="min-h-screen" style={{ backgroundColor: DEPT_BG }}>
       <SEOHead
-        title="Branding Quote Builder"
-        description="Walk through our branding wizard to scope your brand identity project. Logo design, brand guidelines, print, and more — get a tailored estimate in minutes."
+        title="Branding Quote Builder — Scope Your Project"
+        description="Walk through our branding wizard to scope your brand identity project. Logo design, brand guidelines, print and more — get a tailored branding quote."
         path="/branding/start"
         keywords="branding quote, logo design pricing, brand identity cost, UK branding agency"
       />

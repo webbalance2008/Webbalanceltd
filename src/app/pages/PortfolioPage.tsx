@@ -30,8 +30,8 @@ export function PortfolioPage() {
   return (
     <>
       <SEOHead
-        title="Web Design Portfolio"
-        description="Explore our portfolio of bespoke web design projects — from hospitality and healthcare to industrial and technology businesses across the UK."
+        title="Web Design Portfolio — Our Work | Web Balance"
+        description="Explore our web design portfolio of bespoke projects — from hospitality and healthcare to industrial and technology businesses across the UK."
         path="/web-design/portfolio"
         keywords="web design portfolio, website examples, bespoke websites, UK web design work"
       />

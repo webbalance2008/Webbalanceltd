@@ -677,8 +677,8 @@ export function WebDesignStartPage() {
   return (
     <div className="min-h-screen" style={{ background:"#16212e" }}>
       <SEOHead
-        title="Web Design Quote Builder"
-        description="Walk through our 7-step web design wizard to build a tailored quote for your bespoke website. Get a personalised estimate in minutes."
+        title="Web Design Quote Builder — Get Your Estimate"
+        description="Walk through our 7-step web design wizard to build a tailored quote for your bespoke website. Get a personalised estimate from Web Balance in minutes."
         path="/web-design/start"
         keywords="web design quote, website cost estimator, bespoke website wizard, UK web design pricing"
       />

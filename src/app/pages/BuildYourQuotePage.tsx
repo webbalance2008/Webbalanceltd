@@ -32,10 +32,10 @@ export function BuildYourQuotePage() {
   return (
     <>
       <SEOHead
-        title="Build Your Quote | Web Balance"
-        description="Walk through a tailored brief, get an accurate project quote, and review payment options — all in minutes. Choose your service and start building today."
+        title="Build Your Website Quote | Web Balance"
+        description="Walk through a tailored brief, get an accurate website quote and review payment options — all in minutes. Start your project with Web Balance today."
         path="/build-your-quote"
-        keywords="web design quote, website cost, project brief, get a quote, web development pricing"
+        keywords="website quote, web design cost, project brief, get a quote, web development pricing"
       />
 
       <div className="min-h-screen" style={{ background: "#16212e" }}>

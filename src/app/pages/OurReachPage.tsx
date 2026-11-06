@@ -42,8 +42,8 @@ export function OurReachPage() {
   return (
     <>
       <SEOHead
-        title="Web Design &amp; Digital Services Across the UK"
-        description="Web Balance serves businesses across Scotland and the UK — from Edinburgh and Glasgow to London and Manchester. Local expertise, national reach."
+        title="Web Design & Digital Services Across Scotland"
+        description="Web Balance delivers web design Scotland businesses trust — from Aberdeen and Edinburgh to Glasgow and Inverness. Local digital expertise, national reach."
         path="/our-reach"
         keywords="web design Scotland, web design Glasgow, web design Edinburgh, UK web agency, local web design"
       />

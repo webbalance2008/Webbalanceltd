@@ -196,8 +196,8 @@ export function SeoPage() {
   return (
     <>
       <SEOHead
-        title="SEO Services"
-        description="Strategy-led SEO that gets your business found on Google. Technical SEO, content strategy, link building, and local SEO — all built around measurable growth."
+        title="SEO Services — Get Your Business Found on Google"
+        description="Strategy-led SEO services that UK businesses trust to rank higher on Google. Technical SEO, content strategy, link building and local SEO for growth."
         path="/seo"
         keywords="SEO services UK, search engine optimisation, technical SEO, local SEO, content strategy, link building"
       />

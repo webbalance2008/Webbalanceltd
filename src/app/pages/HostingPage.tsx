@@ -29,10 +29,10 @@ export function HostingPage() {
   return (
     <>
       <SEOHead
-        title="Managed Web Hosting"
-        description="Fast, secure, UK-based managed hosting for business websites. 99.9% uptime guarantee, daily backups, SSL, and expert support included."
+        title="Managed Web Hosting — Fast, Secure & UK-Based"
+        description="Fast, secure managed web hosting for UK business websites. 99.9% uptime guarantee, daily backups, free SSL and expert UK-based support — all included."
         path="/hosting"
-        keywords="managed web hosting UK, business website hosting, WordPress hosting, fast hosting, secure hosting"
+        keywords="managed web hosting UK, business website hosting, fast hosting, secure hosting, UK web hosting"
       />
       <ServiceSchema
         name="Managed Web Hosting"

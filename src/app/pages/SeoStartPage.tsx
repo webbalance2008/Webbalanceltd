@@ -392,8 +392,8 @@ export function SeoStartPage() {
   return (
     <div className="min-h-screen" style={{ backgroundColor: DEPT_BG }}>
       <SEOHead
-        title="SEO Quote Builder"
-        description="Walk through our SEO wizard to scope your search engine optimisation campaign. Get a tailored strategy estimate in minutes."
+        title="SEO Quote Builder — Get Your SEO Estimate"
+        description="Walk through our SEO wizard to scope your search engine optimisation campaign. Get a tailored SEO quote from Web Balance in just a few minutes."
         path="/seo/start"
         keywords="SEO quote, search engine optimisation pricing, SEO cost estimator, UK SEO services"
       />

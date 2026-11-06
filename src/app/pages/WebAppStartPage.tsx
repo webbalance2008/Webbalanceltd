@@ -857,8 +857,8 @@ export function WebAppStartPage() {
   return (
     <div className="min-h-screen" style={{ background:"#16212e" }}>
       <SEOHead
-        title="Web App Quote Builder"
-        description="Walk through our 8-step web app wizard to scope your custom application and get a tailored estimate. Booking systems, portals, SaaS, and more."
+        title="Web App Quote Builder — Scope Your Project"
+        description="Walk through our 8-step web app wizard to scope your custom application and get a tailored estimate. Booking systems, portals, SaaS and more."
         path="/web-apps/start"
         keywords="web app quote, custom app cost, bespoke web application, UK web app development pricing"
       />

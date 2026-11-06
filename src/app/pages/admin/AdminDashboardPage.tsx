@@ -76,30 +76,69 @@ interface RateEntry {
 
 // ─── Site SEO defaults (hardcoded fallbacks for all known pages) ──────────────
 const SITE_SEO_DEFAULTS: Omit<SeoRow, "id" | "isNew" | "isDirty">[] = [
-  { page_path: "/",                    title: "Web Balance",                                       description: "Award-Winning Web Design & Development Agency",                                                                                                   keywords: "web design UK, bespoke website design, web development agency, SEO services, custom web apps, hosting, branding", og_image: "", no_index: false },
-  { page_path: "/web-design",          title: "Web Design Services",                               description: "Bespoke, conversion-focused website design for ambitious UK brands. We craft beautiful, high-performance websites tailored to your business.",         keywords: "bespoke web design, website design UK, conversion-focused design, custom website, web design agency",              og_image: "", no_index: false },
-  { page_path: "/web-design/start",    title: "Web Design Quote Builder",                          description: "Walk through our 7-step web design wizard to build a tailored quote for your bespoke website. Get a personalised estimate in minutes.",              keywords: "web design quote, website cost estimator, bespoke website wizard, UK web design pricing",                         og_image: "", no_index: false },
-  { page_path: "/web-design/packages", title: "Web Design Packages & Pricing — Web Balance",      description: "Transparent web design packages for businesses of every size — from starter brochure sites to bespoke enterprise builds. No hidden fees.",            keywords: "web design pricing, website packages, web design cost UK, affordable web design",                                  og_image: "", no_index: false },
-  { page_path: "/web-design/portfolio",title: "Web Design Portfolio",                              description: "Explore our portfolio of bespoke web design projects — from hospitality and healthcare to industrial and technology businesses across the UK.",        keywords: "web design portfolio, website examples, bespoke websites, UK web design work",                                     og_image: "", no_index: false },
-  { page_path: "/web-apps",            title: "Custom Web App Development",                        description: "We build powerful, scalable custom web applications — from booking systems and SaaS platforms to customer portals and internal tools.",                keywords: "custom web app development, SaaS platform, booking system, customer portal, web application UK",                   og_image: "", no_index: false },
-  { page_path: "/web-apps/start",      title: "Web App Quote Builder",                             description: "Walk through our 8-step web app wizard to scope your custom application and get a tailored estimate. Booking systems, portals, SaaS, and more.",     keywords: "web app quote, custom app cost, bespoke web application, UK web app development pricing",                         og_image: "", no_index: false },
-  { page_path: "/web-apps/packages",   title: "Web App Packages & Pricing — Web Balance",         description: "Custom web application packages from MVP to Enterprise. Booking systems, portals, SaaS platforms — transparent pricing with no hidden fees.",         keywords: "web app pricing, custom software packages, web application cost UK, SaaS development pricing",                    og_image: "", no_index: false },
-  { page_path: "/seo",                 title: "SEO Services",                                      description: "Strategy-led SEO that gets your business found on Google. Technical SEO, content strategy, link building, and local SEO — all built around measurable growth.", keywords: "SEO services UK, search engine optimisation, technical SEO, local SEO, content strategy, link building",          og_image: "", no_index: false },
-  { page_path: "/seo/start",           title: "SEO Quote Builder",                                 description: "Walk through our SEO wizard to scope your search engine optimisation campaign. Get a tailored strategy estimate in minutes.",                         keywords: "SEO quote, search engine optimisation pricing, SEO cost estimator, UK SEO services",                               og_image: "", no_index: false },
-  { page_path: "/seo/packages",        title: "SEO Packages & Pricing — Web Balance",              description: "Results-driven SEO packages from Foundation to Domination. Monthly plans with keyword research, content strategy, link building, and transparent reporting.", keywords: "SEO packages UK, SEO pricing, monthly SEO plans, search engine optimisation cost",                                og_image: "", no_index: false },
-  { page_path: "/hosting",             title: "Managed Web Hosting",                               description: "Fast, secure, UK-based managed hosting for business websites. 99.9% uptime guarantee, daily backups, SSL, and expert support included.",               keywords: "managed web hosting UK, business website hosting, WordPress hosting, fast hosting, secure hosting",                og_image: "", no_index: false },
-  { page_path: "/hosting/start",       title: "Hosting Quote Builder",                             description: "Configure your managed hosting plan with our step-by-step wizard. UK-based servers, daily backups, SSL, and expert support — get a tailored estimate.", keywords: "managed hosting quote, UK web hosting, hosting pricing, business hosting plan",                                    og_image: "", no_index: false },
-  { page_path: "/hosting/packages",    title: "Hosting & Support Packages — Web Balance",         description: "Managed cloud hosting plans from Starter to Enterprise. SSL, daily backups, CDN, staging environments, and dedicated UK support included.",             keywords: "managed hosting UK, website hosting plans, cloud hosting pricing, web hosting packages",                          og_image: "", no_index: false },
-  { page_path: "/branding",            title: "Branding & Identity Design",                        description: "We create distinctive brand identities for ambitious businesses — from logo design and visual systems to brand guidelines, print, and digital collateral.", keywords: "brand identity design, logo design UK, branding agency, visual identity, brand guidelines",                       og_image: "", no_index: false },
-  { page_path: "/branding/start",      title: "Branding Quote Builder",                            description: "Walk through our branding wizard to scope your brand identity project. Logo design, brand guidelines, print, and more — get a tailored estimate.",      keywords: "branding quote, logo design pricing, brand identity cost, UK branding agency",                                     og_image: "", no_index: false },
-  { page_path: "/branding/packages",   title: "Branding Packages & Pricing — Web Balance",        description: "Professional branding packages from Identity to Premium. Logo design, brand strategy, visual identity systems, and launch campaign assets.",             keywords: "branding packages UK, brand identity pricing, logo design cost, branding agency pricing",                         og_image: "", no_index: false },
-  { page_path: "/packages",            title: "Packages — Mix & Match Services | Web Balance",    description: "Build your perfect digital package. Mix and match Web Design, Web Apps, SEO, Hosting, and Branding services — see your total instantly.",               keywords: "web design packages, digital services pricing, mix and match web services, website pricing UK",                   og_image: "", no_index: false },
-  { page_path: "/build-your-quote",    title: "Build Your Quote | Web Balance",                    description: "Walk through a tailored brief, get an accurate project quote, and review payment options — all in minutes.",                                           keywords: "web design quote, website cost, project brief, get a quote, web development pricing",                              og_image: "", no_index: false },
-  { page_path: "/contact",             title: "Contact Us",                                        description: "Get in touch with the Web Balance team. Whether you have a project in mind or just want to explore what's possible — we'd love to hear from you.",       keywords: "contact web design agency, get a website quote, web design enquiry UK",                                           og_image: "", no_index: false },
-  { page_path: "/support",             title: "Website Support & Maintenance Plans",               description: "Keep your website fast, secure, and always evolving with a Web Balance support plan. Monthly care packages from £49/mo.",                              keywords: "website support plan, web maintenance, website care plan, website management UK",                                  og_image: "", no_index: false },
-  { page_path: "/insights",            title: "Insights — Web Design & Digital Marketing Blog",   description: "Practical articles on web design, SEO, branding, and digital strategy from the Web Balance team. Stay ahead of the curve.",                            keywords: "web design blog, digital marketing insights, SEO articles, website tips, UX design",                               og_image: "", no_index: false },
-  { page_path: "/testimonials",        title: "Client Testimonials",                               description: "Hear from the businesses Web Balance has helped grow online. Real results, real relationships — from Aberdeen to Edinburgh and beyond.",                 keywords: "web design testimonials, client reviews, web agency reviews UK",                                                   og_image: "", no_index: false },
-  { page_path: "/our-reach",           title: "Web Design & Digital Services Across the UK",      description: "Web Balance serves businesses across Scotland and the UK — from Edinburgh and Glasgow to London and Manchester. Local expertise, national reach.",         keywords: "web design Scotland, web design Glasgow, web design Edinburgh, UK web agency, local web design",                  og_image: "", no_index: false },
+  // ── Homepage ──────────────────────────────────────────────────────────────────
+  { page_path: "/", focus_keyword: "web design", title: "Web Balance: Leading Web Design & Development Agency", description: "Discover Web Balance, the award-winning digital agency in the UK. Bespoke web design, custom web apps, SEO, hosting and branding — all under one roof.", keywords: "web design agency UK, bespoke website design, web development, SEO services, custom web apps, hosting, branding", og_image: "", no_index: false },
+
+  // ── Web Design ────────────────────────────────────────────────────────────────
+  { page_path: "/web-design", focus_keyword: "bespoke web design", title: "Bespoke Web Design Services for Ambitious UK Brands", description: "Bespoke web design tailored for UK brands. Our conversion-focused websites combine stunning design with fast performance to grow your business online.", keywords: "bespoke web design, website design UK, conversion-focused design, custom website, web design agency", og_image: "", no_index: false },
+  { page_path: "/web-design/start", focus_keyword: "web design quote", title: "Web Design Quote Builder — Get Your Estimate", description: "Walk through our 7-step web design wizard to build a tailored quote for your bespoke website. Get a personalised estimate from Web Balance in minutes.", keywords: "web design quote, website cost estimator, bespoke website wizard, UK web design pricing", og_image: "", no_index: false },
+  { page_path: "/web-design/packages", focus_keyword: "web design packages", title: "Web Design Packages & Pricing — Web Balance", description: "Transparent web design packages for businesses of every size — from starter brochure sites to bespoke enterprise builds. No hidden fees, clear pricing.", keywords: "web design packages, website pricing, web design cost UK, affordable web design", og_image: "", no_index: false },
+  { page_path: "/web-design/portfolio", focus_keyword: "web design portfolio", title: "Web Design Portfolio — Our Work | Web Balance", description: "Explore our web design portfolio of bespoke projects — from hospitality and healthcare to industrial and technology businesses across the UK.", keywords: "web design portfolio, website examples, bespoke websites, UK web design work", og_image: "", no_index: false },
+  { page_path: "/web-design/corporate-websites", focus_keyword: "corporate website design", title: "Corporate Website Design — Professional Sites", description: "Professional corporate website design for UK businesses. We build trust-building, enquiry-driven websites that position your company as a market leader.", keywords: "corporate website design, business website, professional web design, UK company websites, bespoke corporate sites", og_image: "", no_index: false },
+  { page_path: "/web-design/ecommerce-websites", focus_keyword: "ecommerce website design", title: "E-Commerce Website Design — Online Stores UK", description: "Beautiful ecommerce website design that turns browsers into buyers. Custom online stores built on Shopify, WooCommerce or bespoke platforms for UK brands.", keywords: "ecommerce website design, online store, Shopify, WooCommerce, UK ecommerce development", og_image: "", no_index: false },
+  { page_path: "/web-design/portfolio-websites", focus_keyword: "portfolio website design", title: "Portfolio & Creative Website Design | Web Balance", description: "Showcase your work with a distinctive portfolio website design. Bespoke creative sites for photographers, artists and designers across the UK.", keywords: "portfolio website design, creative website, photographer website, artist website, designer portfolio UK", og_image: "", no_index: false },
+  { page_path: "/web-design/landing-pages", focus_keyword: "landing page design", title: "Landing Page Design — High-Converting Pages UK", description: "High-converting landing page design for campaigns and lead generation. Single-purpose pages built by Web Balance to maximise your return on ad spend.", keywords: "landing page design, microsite, conversion optimisation, lead generation page, campaign landing page UK", og_image: "", no_index: false },
+  { page_path: "/web-design/blog-websites", focus_keyword: "blog website design", title: "Blog & Content Website Design | Web Balance", description: "Professional blog website design that turns your expertise into traffic and authority. Content-first websites built for SEO performance and readability.", keywords: "blog website design, content website, content marketing, blog platform, UK content website development", og_image: "", no_index: false },
+  { page_path: "/web-design/restaurant-websites", focus_keyword: "restaurant website design", title: "Restaurant & Hospitality Website Design UK", description: "Mouth-watering restaurant website design for UK hospitality businesses. Custom sites for restaurants, cafes, hotels and bars that drive bookings.", keywords: "restaurant website design, hospitality web design, cafe website, hotel website, UK restaurant websites", og_image: "", no_index: false },
+
+  // ── Web Apps ──────────────────────────────────────────────────────────────────
+  { page_path: "/web-apps", focus_keyword: "custom web app", title: "Custom Web App Development for UK Businesses", description: "We build powerful, scalable custom web app solutions — from booking systems and SaaS platforms to customer portals and internal tools. Built for performance.", keywords: "custom web app development, SaaS platform, booking system, customer portal, web application UK", og_image: "", no_index: false },
+  { page_path: "/web-apps/start", focus_keyword: "web app quote", title: "Web App Quote Builder — Scope Your Project", description: "Walk through our 8-step web app wizard to scope your custom application and get a tailored estimate. Booking systems, portals, SaaS and more.", keywords: "web app quote, custom app cost, bespoke web application, UK web app development pricing", og_image: "", no_index: false },
+  { page_path: "/web-apps/packages", focus_keyword: "web app packages", title: "Web App Packages & Pricing — Web Balance", description: "Custom web app packages from MVP to Enterprise. Booking systems, portals, SaaS platforms — transparent pricing from Web Balance with no hidden fees.", keywords: "web app packages, custom software pricing, web application cost UK, SaaS development pricing", og_image: "", no_index: false },
+  { page_path: "/web-apps/booking-systems", focus_keyword: "booking system development", title: "Custom Booking System Development | Web Balance", description: "Bespoke booking system development for UK businesses. Take reservations 24/7 with a custom scheduling platform — no per-booking fees, fully branded.", keywords: "booking system development, reservation software, online scheduling, appointment booking app, UK", og_image: "", no_index: false },
+  { page_path: "/web-apps/customer-portals", focus_keyword: "customer portal development", title: "Customer Portal Development — Branded Dashboards", description: "Custom customer portal development for UK businesses. Give every client a private, branded dashboard to manage accounts, documents and communications.", keywords: "customer portal development, client dashboard, account management app, branded portal, UK custom development", og_image: "", no_index: false },
+  { page_path: "/web-apps/saas-platforms", focus_keyword: "SaaS platform development", title: "SaaS Platform Development — Multi-Tenant Apps", description: "End-to-end SaaS platform development for UK startups and businesses. We build scalable, multi-tenant cloud applications from idea to launch.", keywords: "SaaS platform development, multi-tenant platform, software as a service, cloud app development, UK SaaS builder", og_image: "", no_index: false },
+  { page_path: "/web-apps/ecommerce-stores", focus_keyword: "custom ecommerce development", title: "Custom E-Commerce Store Development | Web Balance", description: "Bespoke custom ecommerce development for UK businesses. Beautiful online stores built on your terms — no templates, no per-transaction platform fees.", keywords: "custom ecommerce development, online store development, bespoke shopping platform, UK ecommerce developer", og_image: "", no_index: false },
+  { page_path: "/web-apps/membership-platforms", focus_keyword: "membership platform development", title: "Membership & Subscription Platform Development", description: "Custom membership platform development for recurring revenue. Gated content, subscription billing and community features built for UK businesses.", keywords: "membership platform development, subscription app, gated content, recurring revenue, UK membership website", og_image: "", no_index: false },
+  { page_path: "/web-apps/internal-tools", focus_keyword: "internal business tools", title: "Internal Business Tools & Custom Dashboards", description: "Replace spreadsheets with custom internal business tools built for how you actually work. Bespoke dashboards and workflow automation for UK companies.", keywords: "internal business tools, custom dashboard, bespoke admin software, workflow automation, UK", og_image: "", no_index: false },
+
+  // ── SEO ────────────────────────────────────────────────────────────────────────
+  { page_path: "/seo", focus_keyword: "SEO services", title: "SEO Services — Get Your Business Found on Google", description: "Strategy-led SEO services that UK businesses trust to rank higher on Google. Technical SEO, content strategy, link building and local SEO for growth.", keywords: "SEO services UK, search engine optimisation, technical SEO, local SEO, content strategy, link building", og_image: "", no_index: false },
+  { page_path: "/seo/start", focus_keyword: "SEO quote", title: "SEO Quote Builder — Get Your SEO Estimate", description: "Walk through our SEO wizard to scope your search engine optimisation campaign. Get a tailored SEO quote from Web Balance in just a few minutes.", keywords: "SEO quote, search engine optimisation pricing, SEO cost estimator, UK SEO services", og_image: "", no_index: false },
+  { page_path: "/seo/packages", focus_keyword: "SEO packages", title: "SEO Packages & Pricing — Web Balance", description: "Results-driven SEO packages from Foundation to Domination. Monthly plans with keyword research, content strategy, link building and transparent reporting.", keywords: "SEO packages, SEO pricing UK, monthly SEO plans, search engine optimisation cost", og_image: "", no_index: false },
+
+  // ── Hosting ───────────────────────────────────────────────────────────────────
+  { page_path: "/hosting", focus_keyword: "managed web hosting", title: "Managed Web Hosting — Fast, Secure & UK-Based", description: "Fast, secure managed web hosting for UK business websites. 99.9% uptime guarantee, daily backups, free SSL and expert UK-based support — all included.", keywords: "managed web hosting UK, business website hosting, fast hosting, secure hosting, UK web hosting", og_image: "", no_index: false },
+  { page_path: "/hosting/start", focus_keyword: "hosting quote", title: "Hosting Quote Builder — Configure Your Plan", description: "Configure your managed hosting plan with our step-by-step wizard. UK-based servers, daily backups, SSL and expert support — get a hosting quote now.", keywords: "hosting quote, UK web hosting, hosting pricing, business hosting plan", og_image: "", no_index: false },
+  { page_path: "/hosting/packages", focus_keyword: "hosting packages", title: "Hosting & Support Packages — Web Balance", description: "Managed cloud hosting packages from Starter to Enterprise. SSL, daily backups, CDN, staging environments and dedicated UK support — all included.", keywords: "hosting packages, website hosting plans UK, cloud hosting pricing, web hosting plans", og_image: "", no_index: false },
+
+  // ── Branding ──────────────────────────────────────────────────────────────────
+  { page_path: "/branding", focus_keyword: "brand identity design", title: "Brand Identity Design & Branding Services for UK", description: "We create distinctive brand identity design for ambitious UK businesses — from logo design and visual systems to brand guidelines, print and digital collateral.", keywords: "brand identity design, logo design UK, branding agency, visual identity, brand guidelines", og_image: "", no_index: false },
+  { page_path: "/branding/start", focus_keyword: "branding quote", title: "Branding Quote Builder — Scope Your Project", description: "Walk through our branding wizard to scope your brand identity project. Logo design, brand guidelines, print and more — get a tailored branding quote.", keywords: "branding quote, logo design pricing, brand identity cost, UK branding agency", og_image: "", no_index: false },
+  { page_path: "/branding/packages", focus_keyword: "branding packages", title: "Branding Packages & Pricing — Web Balance", description: "Professional branding packages from Identity to Premium. Logo design, brand strategy, visual identity systems and launch campaign assets — clear pricing.", keywords: "branding packages, brand identity pricing UK, logo design cost, branding agency pricing", og_image: "", no_index: false },
+
+  // ── General pages ─────────────────────────────────────────────────────────────
+  { page_path: "/packages", focus_keyword: "digital services packages", title: "Digital Services Packages — Mix & Match", description: "Build your perfect digital services package. Mix and match web design, web apps, SEO, hosting and branding from Web Balance — see your total instantly.", keywords: "digital services packages, web design pricing, mix and match web services, website pricing UK", og_image: "", no_index: false },
+  { page_path: "/build-your-quote", focus_keyword: "website quote", title: "Build Your Website Quote | Web Balance", description: "Walk through a tailored brief, get an accurate website quote and review payment options — all in minutes. Start your project with Web Balance today.", keywords: "website quote, web design cost, project brief, get a quote, web development pricing", og_image: "", no_index: false },
+  { page_path: "/contact", focus_keyword: "contact", title: "Contact Web Balance — Start Your Digital Project", description: "Contact Web Balance to start your next digital project. Whether you have a website in mind or want to explore what is possible, we would love to hear from you.", keywords: "contact web design agency, get a website quote, web design enquiry UK", og_image: "", no_index: false },
+  { page_path: "/support", focus_keyword: "website support plan", title: "Website Support & Maintenance Plans | Web Balance", description: "Keep your website fast, secure and always evolving with a website support plan from Web Balance. Monthly care packages with expert UK-based support.", keywords: "website support plan, web maintenance, website care plan, website management UK", og_image: "", no_index: false },
+  { page_path: "/insights", focus_keyword: "web design blog", title: "Insights — Web Design & Digital Marketing Blog", description: "Practical articles on our web design blog covering SEO, branding and digital strategy from the Web Balance team. Tips to help your business stay ahead.", keywords: "web design blog, digital marketing insights, SEO articles, website tips, UX design", og_image: "", no_index: false },
+  { page_path: "/testimonials", focus_keyword: "testimonials", title: "Client Testimonials & Reviews — Web Balance", description: "Read client testimonials from businesses Web Balance has helped grow online. Real results, real relationships — from Aberdeen to Edinburgh and beyond.", keywords: "web design testimonials, client reviews, web agency reviews UK, web design reviews", og_image: "", no_index: false },
+
+  // ── Our Reach — main page ─────────────────────────────────────────────────────
+  { page_path: "/our-reach", focus_keyword: "web design Scotland", title: "Web Design & Digital Services Across Scotland", description: "Web Balance delivers web design Scotland businesses trust — from Aberdeen and Edinburgh to Glasgow and Inverness. Local digital expertise, national reach.", keywords: "web design Scotland, web design Glasgow, web design Edinburgh, UK web agency, local web design", og_image: "", no_index: false },
+
+  // ── Our Reach — city pages ────────────────────────────────────────────────────
+  { page_path: "/our-reach/aberdeen", focus_keyword: "web design Aberdeen", title: "Web Design Aberdeen — Digital Services for Business", description: "Professional web design Aberdeen businesses trust. Web Balance is based in Aberdeen, delivering bespoke websites, web apps, SEO and branding locally.", keywords: "web design Aberdeen, SEO Aberdeen, digital agency Aberdeen, website development Aberdeen", og_image: "", no_index: false },
+  { page_path: "/our-reach/edinburgh", focus_keyword: "web design Edinburgh", title: "Web Design Edinburgh — Bespoke Digital Services", description: "Bespoke web design Edinburgh businesses choose to stand out. Web Balance delivers high-performance websites, SEO and digital marketing in the capital.", keywords: "web design Edinburgh, SEO Edinburgh, digital agency Edinburgh, website development Edinburgh", og_image: "", no_index: false },
+  { page_path: "/our-reach/glasgow", focus_keyword: "web design Glasgow", title: "Web Design Glasgow — Bold Digital Solutions", description: "Bold, conversion-focused web design Glasgow businesses need to compete. Web Balance builds websites, web apps and SEO strategies for Scotland's largest city.", keywords: "web design Glasgow, SEO Glasgow, digital agency Glasgow, website development Glasgow", og_image: "", no_index: false },
+  { page_path: "/our-reach/dundee", focus_keyword: "web design Dundee", title: "Web Design Dundee — Creative Digital Services", description: "Creative web design Dundee businesses trust. Web Balance delivers bespoke websites, web applications and SEO for Dundee's thriving creative and tech sectors.", keywords: "web design Dundee, SEO Dundee, digital agency Dundee, website development Dundee", og_image: "", no_index: false },
+  { page_path: "/our-reach/inverness", focus_keyword: "web design Inverness", title: "Web Design Inverness — Highland Digital Services", description: "Reliable web design Inverness and Highland businesses depend on. Web Balance builds high-performance websites, SEO and digital solutions for the Highlands.", keywords: "web design Inverness, SEO Inverness, digital agency Inverness, website development Highlands", og_image: "", no_index: false },
+  { page_path: "/our-reach/perth", focus_keyword: "web design Perth", title: "Web Design Perth — Digital Services in Perthshire", description: "Professional web design Perth businesses choose to grow online. Web Balance delivers bespoke websites, SEO and digital marketing across Perthshire.", keywords: "web design Perth, SEO Perth Scotland, digital agency Perth, website development Perthshire", og_image: "", no_index: false },
+  { page_path: "/our-reach/stirling", focus_keyword: "web design Stirling", title: "Web Design Stirling — Forth Valley Digital Services", description: "Forward-thinking web design Stirling businesses trust. Web Balance delivers bespoke websites, web apps and SEO for the Forth Valley and Central Scotland.", keywords: "web design Stirling, SEO Stirling, digital agency Stirling, website development Forth Valley", og_image: "", no_index: false },
+  { page_path: "/our-reach/st-andrews", focus_keyword: "web design St Andrews", title: "Web Design St Andrews — Digital Services in Fife", description: "World-class web design St Andrews businesses and institutions rely on. Web Balance builds bespoke websites and SEO strategies for Fife's premier destination.", keywords: "web design St Andrews, SEO St Andrews, digital agency St Andrews, website development Fife", og_image: "", no_index: false },
+  { page_path: "/our-reach/fort-william", focus_keyword: "web design Fort William", title: "Web Design Fort William — Highland Digital Agency", description: "Adventure-ready web design Fort William tourism and hospitality businesses trust. Web Balance builds websites that capture the spirit of the Highlands.", keywords: "web design Fort William, SEO Fort William, digital agency Lochaber, website development Highlands", og_image: "", no_index: false },
+  { page_path: "/our-reach/aviemore", focus_keyword: "web design Aviemore", title: "Web Design Aviemore — Cairngorms Digital Services", description: "Year-round web design Aviemore tourism businesses rely on. Web Balance builds stunning websites and SEO strategies for the Cairngorms National Park area.", keywords: "web design Aviemore, SEO Aviemore, digital agency Cairngorms, website development Speyside", og_image: "", no_index: false },
 ];
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
@@ -107,11 +146,64 @@ function fmt(n: number) {
   return n.toLocaleString("en-GB");
 }
 
-function daysAgo(days: number) {
-  const d = new Date();
-  d.setDate(d.getDate() - days);
-  d.setHours(0, 0, 0, 0);
-  return d.toISOString();
+function startOfDay(d: Date) {
+  const x = new Date(d);
+  x.setHours(0, 0, 0, 0);
+  return x;
+}
+
+// ─── Analytics period selector ────────────────────────────────────────────────
+type PeriodGroup = "quick" | "month" | "year";
+interface Period {
+  key: string;
+  label: string;
+  group: PeriodGroup;
+  from: Date;
+  to: Date;            // exclusive upper bound
+  bucket: "day" | "month";
+}
+
+// Build the list of selectable periods: last 30 days, every month and every
+// year back to the earliest recorded event, plus all-time.
+function buildPeriods(minDate: Date | null): Period[] {
+  const now = new Date();
+  const tomorrow = startOfDay(now); tomorrow.setDate(tomorrow.getDate() + 1);
+  const out: Period[] = [];
+
+  const d30 = startOfDay(now); d30.setDate(d30.getDate() - 30);
+  out.push({ key: "30d", label: "Last 30 days", group: "quick", from: d30, to: tomorrow, bucket: "day" });
+
+  const earliest = minDate ? startOfDay(minDate) : new Date(now.getFullYear(), now.getMonth() - 11, 1);
+
+  // Months, newest first
+  let y = now.getFullYear(), m = now.getMonth();
+  while (y > earliest.getFullYear() || (y === earliest.getFullYear() && m >= earliest.getMonth())) {
+    const from = new Date(y, m, 1);
+    out.push({
+      key: `m-${y}-${m}`,
+      label: from.toLocaleDateString("en-GB", { month: "long", year: "numeric" }),
+      group: "month",
+      from,
+      to: new Date(y, m + 1, 1),
+      bucket: "day",
+    });
+    m--; if (m < 0) { m = 11; y--; }
+  }
+
+  // Years, newest first
+  for (let yr = now.getFullYear(); yr >= earliest.getFullYear(); yr--) {
+    out.push({
+      key: `y-${yr}`,
+      label: `${yr} — full year`,
+      group: "year",
+      from: new Date(yr, 0, 1),
+      to: new Date(yr + 1, 0, 1),
+      bucket: "month",
+    });
+  }
+
+  out.push({ key: "all", label: "All time", group: "quick", from: earliest, to: tomorrow, bucket: "month" });
+  return out;
 }
 
 function formatDate(iso: string) {
@@ -171,13 +263,13 @@ function MetricCard({
         <Icon size={16} style={{ color }} />
       </div>
       <div>
-        <p style={{ fontFamily: MONO, color: "rgba(255,255,255,0.65)", fontSize: "0.625rem", letterSpacing: "0.2em", textTransform: "uppercase" }}>
+        <p style={{ fontFamily: MONO, color: "rgba(255,255,255,0.95)", fontSize: "0.8125rem", letterSpacing: "0.2em", textTransform: "uppercase" }}>
           {label}
         </p>
         <p style={{ fontFamily: SANS, color: "#fff", fontWeight: 300, fontSize: "1.75rem", lineHeight: 1.1 }} className="mt-1">
           {value}
         </p>
-        {sub && <p style={{ fontFamily: BODY, color: "rgba(255,255,255,0.55)", fontSize: "0.8125rem" }} className="mt-0.5">{sub}</p>}
+        {sub && <p style={{ fontFamily: BODY, color: "rgba(255,255,255,0.9)", fontSize: "0.8125rem" }} className="mt-0.5">{sub}</p>}
       </div>
     </div>
   );
@@ -187,26 +279,42 @@ function MetricCard({
 function AnalyticsTab() {
   const [events, setEvents] = useState<AnalyticsEvent[]>([]);
   const [loading, setLoading] = useState(true);
+  const [minDate, setMinDate] = useState<Date | null>(null);
+  const [periodKey, setPeriodKey] = useState("30d");
+
+  const periods = useMemo(() => buildPeriods(minDate), [minDate]);
+  const period  = useMemo(() => periods.find(p => p.key === periodKey) ?? periods[0], [periods, periodKey]);
+  const isDefault = period.key === "30d";
+
+  // Discover the earliest event once so we can offer every month/year back to it.
+  useEffect(() => {
+    supabase
+      .from("analytics_events")
+      .select("created_at")
+      .order("created_at", { ascending: true })
+      .limit(1)
+      .then(({ data }) => { if (data?.[0]) setMinDate(new Date(data[0].created_at)); });
+  }, []);
 
   const load = useCallback(async () => {
     setLoading(true);
     const { data } = await supabase
       .from("analytics_events")
       .select("*")
-      .gte("created_at", daysAgo(30))
+      .gte("created_at", period.from.toISOString())
+      .lt("created_at", period.to.toISOString())
       .order("created_at", { ascending: false })
-      .limit(2000);
+      .limit(50000);
     setEvents(data ?? []);
     setLoading(false);
-  }, []);
+  }, [period.from, period.to]);
 
   useEffect(() => { load(); }, [load]);
 
-  // ── Aggregations ──
+  // ── Aggregations (over the events in the selected period) ──
   const today = new Date();
   today.setHours(0, 0, 0, 0);
   const weekAgo = new Date(); weekAgo.setDate(weekAgo.getDate() - 7); weekAgo.setHours(0,0,0,0);
-  const monthAgo = new Date(); monthAgo.setDate(monthAgo.getDate() - 30); monthAgo.setHours(0,0,0,0);
 
   const pageViews  = events.filter(e => e.event_type === "page_view");
   const sessions   = new Set(events.map(e => e.session_id)).size;
@@ -221,23 +329,43 @@ function AnalyticsTab() {
     events.filter(e => new Date(e.created_at) >= weekAgo).map(e => e.session_id)
   ).size;
 
-  // ── Daily chart data (last 30 days) ──
-  const dailyMap: Record<string, { page_view: number; form_submit: number; gallery_click: number; quote_submit: number }> = {};
-  for (let i = 29; i >= 0; i--) {
-    const d = new Date(); d.setDate(d.getDate() - i); d.setHours(0,0,0,0);
-    const key = d.toISOString().slice(0, 10);
-    dailyMap[key] = { page_view: 0, form_submit: 0, gallery_click: 0, quote_submit: 0 };
-  }
-  for (const e of events) {
-    const key = e.created_at.slice(0, 10);
-    if (dailyMap[key] && (e.event_type in dailyMap[key])) {
-      (dailyMap[key] as Record<string, number>)[e.event_type]++;
+  // ── Chart data: daily buckets for short ranges, monthly for years/all-time ──
+  const dailyData = useMemo(() => {
+    const map: Record<string, { date: string; page_view: number; form_submit: number; gallery_click: number; quote_submit: number }> = {};
+    const order: string[] = [];
+
+    if (period.bucket === "day") {
+      const tomorrow = startOfDay(new Date()); tomorrow.setDate(tomorrow.getDate() + 1);
+      const end = new Date(Math.min(period.to.getTime(), tomorrow.getTime()));
+      const cursor = new Date(period.from);
+      while (cursor < end) {
+        const key = cursor.toISOString().slice(0, 10);
+        map[key] = { date: cursor.toLocaleDateString("en-GB", { day: "numeric", month: "short" }), page_view: 0, form_submit: 0, gallery_click: 0, quote_submit: 0 };
+        order.push(key);
+        cursor.setDate(cursor.getDate() + 1);
+      }
+      for (const e of events) {
+        const key = e.created_at.slice(0, 10);
+        if (map[key] && e.event_type in map[key]) (map[key] as Record<string, number>)[e.event_type]++;
+      }
+    } else {
+      const cursor = new Date(period.from.getFullYear(), period.from.getMonth(), 1);
+      while (cursor < period.to) {
+        const key = `${cursor.getFullYear()}-${String(cursor.getMonth() + 1).padStart(2, "0")}`;
+        map[key] = { date: cursor.toLocaleDateString("en-GB", { month: "short", year: "2-digit" }), page_view: 0, form_submit: 0, gallery_click: 0, quote_submit: 0 };
+        order.push(key);
+        cursor.setMonth(cursor.getMonth() + 1);
+      }
+      for (const e of events) {
+        const key = e.created_at.slice(0, 7);
+        if (map[key] && e.event_type in map[key]) (map[key] as Record<string, number>)[e.event_type]++;
+      }
     }
-  }
-  const dailyData = Object.entries(dailyMap).map(([date, counts]) => ({
-    date: formatDate(date + "T00:00:00"),
-    ...counts,
-  }));
+    return order.map(k => map[k]);
+  }, [events, period]);
+
+  const subLabel = isDefault ? "last 30 days" : period.label;
+  const chartInterval = period.bucket === "month" ? 0 : Math.max(0, Math.floor(dailyData.length / 7));
 
   // ── Event type breakdown ──
   const typeCounts: Record<string, number> = {};
@@ -260,33 +388,69 @@ function AnalyticsTab() {
     .filter(e => e.event_type === "form_submit" || e.event_type === "quote_submit")
     .slice(0, 20);
 
-  if (loading) return <Spinner />;
-
   return (
     <div className="space-y-8">
+      {/* Period selector */}
+      <div className="flex items-center justify-end gap-3">
+        <label style={{ fontFamily: MONO, color: "rgba(255,255,255,0.5)", fontSize: "0.625rem", letterSpacing: "0.2em", textTransform: "uppercase" }}>
+          Period
+        </label>
+        <select
+          value={periodKey}
+          onChange={e => setPeriodKey(e.target.value)}
+          style={{ fontFamily: MONO, fontSize: "0.8125rem", letterSpacing: "0.05em", color: "#fff", background: CARD, border: `1px solid ${BORDER}`, padding: "8px 14px", outline: "none", cursor: "pointer", minWidth: "12rem" }}
+        >
+          <optgroup label="Quick">
+            {periods.filter(p => p.group === "quick").map(p => (
+              <option key={p.key} value={p.key} style={{ background: CARD }}>{p.label}</option>
+            ))}
+          </optgroup>
+          <optgroup label="Months">
+            {periods.filter(p => p.group === "month").map(p => (
+              <option key={p.key} value={p.key} style={{ background: CARD }}>{p.label}</option>
+            ))}
+          </optgroup>
+          <optgroup label="Years">
+            {periods.filter(p => p.group === "year").map(p => (
+              <option key={p.key} value={p.key} style={{ background: CARD }}>{p.label}</option>
+            ))}
+          </optgroup>
+        </select>
+      </div>
+
+      {loading ? <Spinner /> : (
+      <div className="space-y-8">
       {/* Metric cards */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-        <MetricCard icon={Users}      label="Visitors Today"   value={todaySessions}  sub={`${weekSessions} this week`} />
-        <MetricCard icon={TrendingUp} label="Total Sessions"   value={sessions}        sub="last 30 days" color="#3dd68c" />
-        <MetricCard icon={FileText}   label="Form Submissions" value={formSubmits}     sub="last 30 days" color="#f59e6a" />
-        <MetricCard icon={MousePointer} label="Quote Requests" value={quoteSubmits}    sub="last 30 days" color="#f472b6" />
+        {isDefault ? (
+          <MetricCard icon={Users} label="Visitors Today" value={todaySessions} sub={`${weekSessions} this week`} />
+        ) : (
+          <MetricCard icon={Users} label="Sessions" value={sessions} sub={subLabel} />
+        )}
+        {isDefault ? (
+          <MetricCard icon={TrendingUp} label="Total Sessions" value={sessions} sub={subLabel} color="#3dd68c" />
+        ) : (
+          <MetricCard icon={TrendingUp} label="Page Views" value={pageViews.length} sub={subLabel} color="#3dd68c" />
+        )}
+        <MetricCard icon={FileText}   label="Form Submissions" value={formSubmits}     sub={subLabel} color="#f59e6a" />
+        <MetricCard icon={MousePointer} label="Quote Requests" value={quoteSubmits}    sub={subLabel} color="#f472b6" />
       </div>
 
       {/* Visitor trend line chart */}
       <div style={{ background: CARD, border: `1px solid ${BORDER}` }} className="p-6">
-        <p style={{ fontFamily: MONO, color: "#fff", fontSize: "0.75rem", letterSpacing: "0.15em", textTransform: "uppercase" }} className="mb-5">
-          Daily Activity — Last 30 Days
+        <p style={{ fontFamily: MONO, color: "#fff", fontSize: "0.9375rem", letterSpacing: "0.15em", textTransform: "uppercase" }} className="mb-5">
+          {period.bucket === "month" ? "Monthly" : "Daily"} Activity — {period.label}
         </p>
         <ResponsiveContainer width="100%" height={220}>
           <LineChart data={dailyData} margin={{ top: 5, right: 10, bottom: 5, left: -20 }}>
             <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.04)" />
-            <XAxis dataKey="date" tick={{ fontFamily: MONO, fontSize: 9, fill: "rgba(255,255,255,0.3)" }} tickLine={false} axisLine={false} interval={4} />
-            <YAxis tick={{ fontFamily: MONO, fontSize: 9, fill: "rgba(255,255,255,0.3)" }} tickLine={false} axisLine={false} allowDecimals={false} />
+            <XAxis dataKey="date" tick={{ fontFamily: MONO, fontSize: 9, fill: "rgba(255,255,255,0.85)" }} tickLine={false} axisLine={false} interval={chartInterval} />
+            <YAxis tick={{ fontFamily: MONO, fontSize: 9, fill: "rgba(255,255,255,0.85)" }} tickLine={false} axisLine={false} allowDecimals={false} />
             <Tooltip
               contentStyle={{ background: "#1a2a3a", border: "1px solid rgba(255,255,255,0.1)", borderRadius: 0, fontFamily: MONO, fontSize: 11 }}
-              labelStyle={{ color: "rgba(255,255,255,0.6)" }}
+              labelStyle={{ color: "rgba(255,255,255,0.95)" }}
             />
-            <Legend wrapperStyle={{ fontFamily: MONO, fontSize: 10, color: "rgba(255,255,255,0.5)" }} />
+            <Legend wrapperStyle={{ fontFamily: MONO, fontSize: 10, color: "rgba(255,255,255,0.9)" }} />
             <Line type="monotone" dataKey="page_view"    name="Page Views"    stroke={TEAL}      strokeWidth={1.5} dot={false} />
             <Line type="monotone" dataKey="form_submit"  name="Form Submits"  stroke="#3dd68c"   strokeWidth={1.5} dot={false} />
             <Line type="monotone" dataKey="gallery_click" name="Gallery Clicks" stroke="#b89fd4" strokeWidth={1.5} dot={false} />
@@ -297,14 +461,14 @@ function AnalyticsTab() {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Event type bar chart */}
         <div style={{ background: CARD, border: `1px solid ${BORDER}` }} className="p-6">
-          <p style={{ fontFamily: MONO, color: "#fff", fontSize: "0.75rem", letterSpacing: "0.15em", textTransform: "uppercase" }} className="mb-5">
+          <p style={{ fontFamily: MONO, color: "#fff", fontSize: "0.9375rem", letterSpacing: "0.15em", textTransform: "uppercase" }} className="mb-5">
             Events by Type
           </p>
           <ResponsiveContainer width="100%" height={200}>
             <BarChart data={typeData} margin={{ top: 5, right: 10, bottom: 5, left: -20 }}>
               <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.04)" />
-              <XAxis dataKey="name" tick={{ fontFamily: MONO, fontSize: 9, fill: "rgba(255,255,255,0.3)" }} tickLine={false} axisLine={false} />
-              <YAxis tick={{ fontFamily: MONO, fontSize: 9, fill: "rgba(255,255,255,0.3)" }} tickLine={false} axisLine={false} allowDecimals={false} />
+              <XAxis dataKey="name" tick={{ fontFamily: MONO, fontSize: 9, fill: "rgba(255,255,255,0.85)" }} tickLine={false} axisLine={false} />
+              <YAxis tick={{ fontFamily: MONO, fontSize: 9, fill: "rgba(255,255,255,0.85)" }} tickLine={false} axisLine={false} allowDecimals={false} />
               <Tooltip
                 contentStyle={{ background: "#1a2a3a", border: "1px solid rgba(255,255,255,0.1)", borderRadius: 0, fontFamily: MONO, fontSize: 11 }}
               />
@@ -315,12 +479,12 @@ function AnalyticsTab() {
 
         {/* Top pages */}
         <div style={{ background: CARD, border: `1px solid ${BORDER}` }} className="p-6">
-          <p style={{ fontFamily: MONO, color: "#fff", fontSize: "0.75rem", letterSpacing: "0.15em", textTransform: "uppercase" }} className="mb-5">
-            Top Pages (last 30 days)
+          <p style={{ fontFamily: MONO, color: "#fff", fontSize: "0.9375rem", letterSpacing: "0.15em", textTransform: "uppercase" }} className="mb-5">
+            Top Pages — {period.label}
           </p>
           <div className="space-y-2">
             {topPages.length === 0 && (
-              <p style={{ fontFamily: BODY, color: "rgba(255,255,255,0.5)", fontSize: "0.875rem" }}>No data yet</p>
+              <p style={{ fontFamily: BODY, color: "rgba(255,255,255,0.9)", fontSize: "1rem" }}>No data yet</p>
             )}
             {topPages.map(([path, count]) => (
               <div key={path} className="flex items-center gap-3">
@@ -331,7 +495,7 @@ function AnalyticsTab() {
                 </div>
                 <div
                   className="text-right flex-shrink-0"
-                  style={{ fontFamily: MONO, color: TEAL, fontSize: "0.75rem", minWidth: "3rem" }}
+                  style={{ fontFamily: MONO, color: TEAL, fontSize: "0.9375rem", minWidth: "3rem" }}
                 >
                   {count}
                 </div>
@@ -352,17 +516,17 @@ function AnalyticsTab() {
 
       {/* Recent form submissions */}
       <div style={{ background: CARD, border: `1px solid ${BORDER}` }} className="p-6">
-        <p style={{ fontFamily: MONO, color: "#fff", fontSize: "0.75rem", letterSpacing: "0.15em", textTransform: "uppercase" }} className="mb-5">
+        <p style={{ fontFamily: MONO, color: "#fff", fontSize: "0.9375rem", letterSpacing: "0.15em", textTransform: "uppercase" }} className="mb-5">
           Recent Form Activity
         </p>
         {recentForms.length === 0 ? (
-          <p style={{ fontFamily: BODY, color: "rgba(255,255,255,0.25)", fontSize: "0.875rem" }}>No submissions yet</p>
+          <p style={{ fontFamily: BODY, color: "rgba(255,255,255,0.25)", fontSize: "1rem" }}>No submissions yet</p>
         ) : (
           <table className="w-full">
             <thead>
               <tr style={{ borderBottom: `1px solid ${BORDER}` }}>
                 {["Type", "Page", "Details", "Date"].map(h => (
-                  <th key={h} className="pb-3 text-left" style={{ fontFamily: MONO, color: "rgba(255,255,255,0.65)", fontSize: "0.6875rem", letterSpacing: "0.15em", textTransform: "uppercase", fontWeight: 400 }}>
+                  <th key={h} className="pb-3 text-left" style={{ fontFamily: MONO, color: "rgba(255,255,255,0.95)", fontSize: "1rem", letterSpacing: "0.15em", textTransform: "uppercase", fontWeight: 400 }}>
                     {h}
                   </th>
                 ))}
@@ -385,7 +549,7 @@ function AnalyticsTab() {
                     </span>
                   </td>
                   <td className="py-2.5 pr-4">
-                    <span style={{ fontFamily: MONO, color: "rgba(255,255,255,0.85)", fontSize: "0.75rem" }}>
+                    <span style={{ fontFamily: MONO, color: "rgba(255,255,255,0.85)", fontSize: "0.9375rem" }}>
                       {e.page_url || "—"}
                     </span>
                   </td>
@@ -395,7 +559,7 @@ function AnalyticsTab() {
                     </span>
                   </td>
                   <td className="py-2.5">
-                    <span style={{ fontFamily: MONO, color: "rgba(255,255,255,0.6)", fontSize: "0.6875rem" }}>
+                    <span style={{ fontFamily: MONO, color: "rgba(255,255,255,0.95)", fontSize: "1rem" }}>
                       {new Date(e.created_at).toLocaleDateString("en-GB", { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" })}
                     </span>
                   </td>
@@ -405,6 +569,8 @@ function AnalyticsTab() {
           </table>
         )}
       </div>
+      </div>
+      )}
     </div>
   );
 }
@@ -414,7 +580,7 @@ function CharCounter({ value, min, max }: { value: string; min: number; max: num
   const len   = (value || "").length;
   const color = len >= min && len <= max ? "#3dd68c" : len >= Math.round(min * 0.7) && len <= Math.round(max * 1.15) ? "#f59e6a" : "#f87171";
   return (
-    <span style={{ fontFamily: MONO, fontSize: "0.625rem", color, letterSpacing: "0.08em" }}>
+    <span style={{ fontFamily: MONO, fontSize: "0.8125rem", color, letterSpacing: "0.08em" }}>
       {len} / {min}–{max}
     </span>
   );
@@ -654,7 +820,7 @@ Respond with ONLY raw JSON, no markdown: {"title":"...","description":"...","key
     width: "100%", background: CARD, border: `1px solid ${BORDER}`, color: "#fff",
     fontFamily: BODY, fontSize: "15px", padding: "10px 14px", outline: "none",
   } as const;
-  const labelStyle = { fontFamily: MONO, color: "rgba(255,255,255,0.4)", fontSize: "11px", letterSpacing: "0.18em", textTransform: "uppercase" as const, display: "block", marginBottom: "6px" };
+  const labelStyle = { fontFamily: MONO, color: "rgba(255,255,255,0.9)", fontSize: "11px", letterSpacing: "0.18em", textTransform: "uppercase" as const, display: "block", marginBottom: "6px" };
   const focusIn  = (e: React.FocusEvent<HTMLInputElement | HTMLTextAreaElement>) => { e.currentTarget.style.borderColor = "rgba(0,212,232,0.5)"; };
   const focusOut = (e: React.FocusEvent<HTMLInputElement | HTMLTextAreaElement>) => { e.currentTarget.style.borderColor = BORDER; };
 
@@ -682,7 +848,7 @@ Respond with ONLY raw JSON, no markdown: {"title":"...","description":"...","key
               </span>
             </div>
             <button onClick={onClose} className="w-8 h-8 flex items-center justify-center"
-              style={{ border: `1px solid ${BORDER}`, color: "rgba(255,255,255,0.5)", background: "transparent" }}
+              style={{ border: `1px solid ${BORDER}`, color: "rgba(255,255,255,0.9)", background: "transparent" }}
               onMouseEnter={e => { e.currentTarget.style.color = "#fff"; }}
               onMouseLeave={e => { e.currentTarget.style.color = "rgba(255,255,255,0.5)"; }}
             ><X size={14} /></button>
@@ -717,7 +883,7 @@ Respond with ONLY raw JSON, no markdown: {"title":"...","description":"...","key
             {/* Score bars */}
             <div style={{ border: `1px solid ${BORDER}`, background: CARD }}>
               <div className="px-4 pt-4 pb-3" style={{ borderBottom: `1px solid ${BORDER}` }}>
-                <p style={{ fontFamily: MONO, color: "rgba(255,255,255,0.35)", fontSize: "10px", letterSpacing: "0.2em", textTransform: "uppercase", marginBottom: "12px" }}>SEO Analysis</p>
+                <p style={{ fontFamily: MONO, color: "rgba(255,255,255,0.85)", fontSize: "10px", letterSpacing: "0.2em", textTransform: "uppercase", marginBottom: "12px" }}>SEO Analysis</p>
                 <div className="grid grid-cols-3 gap-3">
                   {([
                     { label: "Basics",      earned: scoreData.basics_score,      possible: scoreData.basics_possible },
@@ -729,7 +895,7 @@ Respond with ONLY raw JSON, no markdown: {"title":"...","description":"...","key
                     return (
                       <div key={cat.label}>
                         <div className="flex items-center justify-between mb-1">
-                          <span style={{ fontFamily: MONO, color: "rgba(255,255,255,0.4)", fontSize: "10px", letterSpacing: "0.1em", textTransform: "uppercase" }}>{cat.label}</span>
+                          <span style={{ fontFamily: MONO, color: "rgba(255,255,255,0.9)", fontSize: "10px", letterSpacing: "0.1em", textTransform: "uppercase" }}>{cat.label}</span>
                           <span style={{ fontFamily: MONO, color: catColor, fontSize: "11px" }}>{cat.possible === 0 ? "—" : `${cat.earned}/${cat.possible}`}</span>
                         </div>
                         <div style={{ height: "3px", background: "rgba(255,255,255,0.08)", borderRadius: "2px" }}>
@@ -749,7 +915,7 @@ Respond with ONLY raw JSON, no markdown: {"title":"...","description":"...","key
                         <div key={i} className="flex items-start gap-3 p-2.5" style={{ background: "rgba(248,113,113,0.06)", border: "1px solid rgba(248,113,113,0.15)" }}>
                           <div className="w-2 h-2 rounded-full mt-1.5 flex-shrink-0" style={{ background: "#f87171" }} />
                           <div className="min-w-0">
-                            <span style={{ fontFamily: MONO, fontSize: "10px", color: "rgba(255,255,255,0.4)", textTransform: "uppercase", letterSpacing: "0.08em" }}>{c.label} </span>
+                            <span style={{ fontFamily: MONO, fontSize: "10px", color: "rgba(255,255,255,0.9)", textTransform: "uppercase", letterSpacing: "0.08em" }}>{c.label} </span>
                             <span style={{ fontFamily: BODY, fontSize: "14px", color: "rgba(255,255,255,0.85)" }}>{c.message}</span>
                           </div>
                           <span style={{ fontFamily: MONO, fontSize: "10px", color: "#f87171", flexShrink: 0, marginLeft: "auto" }}>−{c.points_possible}pts</span>
@@ -766,7 +932,7 @@ Respond with ONLY raw JSON, no markdown: {"title":"...","description":"...","key
                         <div key={i} className="flex items-start gap-3 p-2.5" style={{ background: "rgba(245,158,106,0.05)", border: "1px solid rgba(245,158,106,0.15)" }}>
                           <div className="w-2 h-2 rounded-full mt-1.5 flex-shrink-0" style={{ background: "#f59e6a" }} />
                           <div className="min-w-0">
-                            <span style={{ fontFamily: MONO, fontSize: "10px", color: "rgba(255,255,255,0.4)", textTransform: "uppercase", letterSpacing: "0.08em" }}>{c.label} </span>
+                            <span style={{ fontFamily: MONO, fontSize: "10px", color: "rgba(255,255,255,0.9)", textTransform: "uppercase", letterSpacing: "0.08em" }}>{c.label} </span>
                             <span style={{ fontFamily: BODY, fontSize: "14px", color: "rgba(255,255,255,0.8)" }}>{c.message}</span>
                           </div>
                         </div>
@@ -789,7 +955,7 @@ Respond with ONLY raw JSON, no markdown: {"title":"...","description":"...","key
                         {scoreData.good_signals.map((c, i) => (
                           <div key={i} className="flex items-start gap-3 p-2" style={{ border: "1px solid rgba(61,214,140,0.1)" }}>
                             <div className="w-2 h-2 rounded-full mt-1.5 flex-shrink-0" style={{ background: "#3dd68c" }} />
-                            <span style={{ fontFamily: BODY, fontSize: "14px", color: "rgba(255,255,255,0.6)" }}>{c.message}</span>
+                            <span style={{ fontFamily: BODY, fontSize: "14px", color: "rgba(255,255,255,0.95)" }}>{c.message}</span>
                           </div>
                         ))}
                       </div>
@@ -829,7 +995,7 @@ Respond with ONLY raw JSON, no markdown: {"title":"...","description":"...","key
                   onBlur={e  => { e.currentTarget.style.borderColor = BORDER; }}
                 />
                 <button onClick={() => setShowKey(s => !s)} className="w-9 flex items-center justify-center"
-                  style={{ border: `1px solid ${BORDER}`, background: "transparent", color: "rgba(255,255,255,0.4)" }}
+                  style={{ border: `1px solid ${BORDER}`, background: "transparent", color: "rgba(255,255,255,0.9)" }}
                 >{showKey ? <EyeOff size={13} /> : <Eye size={13} />}</button>
                 <button onClick={handleAutoOptimise} disabled={aiLoading}
                   className="flex items-center gap-2 px-4 py-2 transition-all"
@@ -840,7 +1006,7 @@ Respond with ONLY raw JSON, no markdown: {"title":"...","description":"...","key
                 </button>
               </div>
               {aiError && <p style={{ fontFamily: BODY, color: "#f87171", fontSize: "14px", marginBottom: "8px" }}>{aiError}</p>}
-              <p style={{ fontFamily: BODY, color: "rgba(255,255,255,0.3)", fontSize: "13px" }}>
+              <p style={{ fontFamily: BODY, color: "rgba(255,255,255,0.85)", fontSize: "13px" }}>
                 Fixes failing checks only. Review changes before saving. API key stored in session only.
               </p>
             </div>
@@ -851,7 +1017,7 @@ Respond with ONLY raw JSON, no markdown: {"title":"...","description":"...","key
         {activeTab === "seo" && (
           <div className="px-6 py-5 space-y-6">
             <div className="space-y-4">
-              <p style={{ fontFamily: MONO, color: "rgba(255,255,255,0.35)", fontSize: "10px", letterSpacing: "0.2em", textTransform: "uppercase" }}>SEO Meta</p>
+              <p style={{ fontFamily: MONO, color: "rgba(255,255,255,0.85)", fontSize: "10px", letterSpacing: "0.2em", textTransform: "uppercase" }}>SEO Meta</p>
               <div>
                 <div className="flex items-center justify-between mb-1.5">
                   <label style={labelStyle}>Meta Title</label>
@@ -892,7 +1058,7 @@ Respond with ONLY raw JSON, no markdown: {"title":"...","description":"...","key
                 className="flex items-center gap-2.5 px-3 py-2 transition-all"
                 style={{ border: `1px solid ${draft.no_index ? "#f87171" : BORDER}`, background: draft.no_index ? "rgba(248,113,113,0.1)" : "transparent" }}
               >
-                {draft.no_index ? <EyeOff size={13} style={{ color: "#f87171" }} /> : <Eye size={13} style={{ color: "rgba(255,255,255,0.4)" }} />}
+                {draft.no_index ? <EyeOff size={13} style={{ color: "#f87171" }} /> : <Eye size={13} style={{ color: "rgba(255,255,255,0.9)" }} />}
                 <span style={{ fontFamily: MONO, fontSize: "11px", letterSpacing: "0.12em", textTransform: "uppercase", color: draft.no_index ? "#f87171" : "rgba(255,255,255,0.4)" }}>
                   {draft.no_index ? "No-Index: On — hidden from Google" : "No-Index: Off — visible to Google"}
                 </span>
@@ -906,7 +1072,7 @@ Respond with ONLY raw JSON, no markdown: {"title":"...","description":"...","key
           <div className="px-6 py-5">
             <div className="flex items-center justify-between mb-5">
               <div className="flex items-center gap-3">
-                <p style={{ fontFamily: MONO, color: "rgba(255,255,255,0.4)", fontSize: "10px", letterSpacing: "0.18em", textTransform: "uppercase" }}>
+                <p style={{ fontFamily: MONO, color: "rgba(255,255,255,0.9)", fontSize: "10px", letterSpacing: "0.18em", textTransform: "uppercase" }}>
                   {wordCount > 0 ? `${wordCount} words · ${blocks.length} blocks` : "No content yet"}
                 </p>
                 {dbUpdatedAt && (
@@ -920,7 +1086,7 @@ Respond with ONLY raw JSON, no markdown: {"title":"...","description":"...","key
                   onClick={() => loadPageContent(true)}
                   disabled={extracting}
                   className="flex items-center gap-1.5 px-3 py-1.5"
-                  style={{ fontFamily: MONO, fontSize: "10px", letterSpacing: "0.1em", textTransform: "uppercase", color: "rgba(255,255,255,0.5)", border: `1px solid ${BORDER}`, background: "transparent", cursor: "pointer" }}
+                  style={{ fontFamily: MONO, fontSize: "10px", letterSpacing: "0.1em", textTransform: "uppercase", color: "rgba(255,255,255,0.9)", border: `1px solid ${BORDER}`, background: "transparent", cursor: "pointer" }}
                   onMouseEnter={e => { e.currentTarget.style.color = "#fff"; }}
                   onMouseLeave={e => { e.currentTarget.style.color = "rgba(255,255,255,0.5)"; }}
                 ><RefreshCw size={10} /> Reload Saved</button>
@@ -937,10 +1103,10 @@ Respond with ONLY raw JSON, no markdown: {"title":"...","description":"...","key
             </div>
 
             {contentLoading ? (
-              <p style={{ fontFamily: BODY, color: "rgba(255,255,255,0.3)", fontSize: "14px" }}>Loading…</p>
+              <p style={{ fontFamily: BODY, color: "rgba(255,255,255,0.85)", fontSize: "14px" }}>Loading…</p>
             ) : blocks.length === 0 ? (
               <div className="py-12 text-center" style={{ border: `1px dashed ${BORDER}` }}>
-                <p style={{ fontFamily: MONO, color: "rgba(255,255,255,0.3)", fontSize: "11px", letterSpacing: "0.15em", textTransform: "uppercase" }}>No content blocks</p>
+                <p style={{ fontFamily: MONO, color: "rgba(255,255,255,0.85)", fontSize: "11px", letterSpacing: "0.15em", textTransform: "uppercase" }}>No content blocks</p>
                 <p style={{ fontFamily: BODY, color: "rgba(255,255,255,0.2)", fontSize: "13px", marginTop: "6px" }}>Click "Extract from Live Page" to auto-populate, or add blocks manually.</p>
                 <button onClick={extractFromPage} className="flex items-center gap-2 px-4 py-2 mx-auto mt-4"
                   style={{ fontFamily: MONO, fontSize: "10px", letterSpacing: "0.1em", textTransform: "uppercase", color: TEAL, border: `1px solid rgba(0,212,232,0.4)`, background: "rgba(0,212,232,0.04)", cursor: "pointer" }}
@@ -957,8 +1123,8 @@ Respond with ONLY raw JSON, no markdown: {"title":"...","description":"...","key
                     h1: { indent: 0,  fontSize: "22px", fontWeight: 600, color: "#ffffff",               borderLeft: `3px solid ${TEAL}` },
                     h2: { indent: 16, fontSize: "17px", fontWeight: 500, color: "rgba(255,255,255,0.9)", borderLeft: "3px solid rgba(0,212,232,0.4)" },
                     h3: { indent: 32, fontSize: "14px", fontWeight: 500, color: "rgba(255,255,255,0.8)", borderLeft: "3px solid rgba(255,255,255,0.15)" },
-                    p:  { indent: 32, fontSize: "14px", fontWeight: 400, color: "rgba(255,255,255,0.65)", rows: 2 },
-                    img:{ indent: 0,  fontSize: "13px", fontWeight: 400, color: "rgba(255,255,255,0.65)" },
+                    p:  { indent: 32, fontSize: "14px", fontWeight: 400, color: "rgba(255,255,255,0.95)", rows: 2 },
+                    img:{ indent: 0,  fontSize: "13px", fontWeight: 400, color: "rgba(255,255,255,0.95)" },
                   };
                   const c = cfg[block.type] ?? cfg.p;
                   const typeLabel = block.type.toUpperCase();
@@ -1022,10 +1188,10 @@ Respond with ONLY raw JSON, no markdown: {"title":"...","description":"...","key
                   );
                 })}
                 <div className="flex items-center gap-2 pt-2">
-                  <span style={{ fontFamily: MONO, color: "rgba(255,255,255,0.3)", fontSize: "10px", letterSpacing: "0.12em", textTransform: "uppercase" }}>Add:</span>
+                  <span style={{ fontFamily: MONO, color: "rgba(255,255,255,0.85)", fontSize: "10px", letterSpacing: "0.12em", textTransform: "uppercase" }}>Add:</span>
                   {(["h1","h2","h3","p","img"] as const).map(t => (
                     <button key={t} onClick={() => addBlock(t)} className="px-2 py-1"
-                      style={{ fontFamily: MONO, fontSize: "10px", letterSpacing: "0.1em", textTransform: "uppercase", color: "rgba(255,255,255,0.45)", border: `1px solid ${BORDER}`, background: "transparent", cursor: "pointer" }}
+                      style={{ fontFamily: MONO, fontSize: "10px", letterSpacing: "0.1em", textTransform: "uppercase", color: "rgba(255,255,255,0.9)", border: `1px solid ${BORDER}`, background: "transparent", cursor: "pointer" }}
                       onMouseEnter={e => { e.currentTarget.style.color = TEAL; e.currentTarget.style.borderColor = "rgba(0,212,232,0.4)"; }}
                       onMouseLeave={e => { e.currentTarget.style.color = "rgba(255,255,255,0.45)"; e.currentTarget.style.borderColor = BORDER; }}
                     >{t.toUpperCase()}</button>
@@ -1039,7 +1205,7 @@ Respond with ONLY raw JSON, no markdown: {"title":"...","description":"...","key
         {/* ── Footer ── */}
         <div className="flex items-center justify-end gap-3 px-6 py-4" style={{ borderTop: `1px solid ${BORDER}` }}>
           <button onClick={onClose} className="px-5 py-2.5 transition-all"
-            style={{ fontFamily: MONO, fontSize: "11px", letterSpacing: "0.15em", textTransform: "uppercase", color: "rgba(255,255,255,0.5)", border: `1px solid ${BORDER}`, background: "transparent" }}
+            style={{ fontFamily: MONO, fontSize: "11px", letterSpacing: "0.15em", textTransform: "uppercase", color: "rgba(255,255,255,0.9)", border: `1px solid ${BORDER}`, background: "transparent" }}
             onMouseEnter={e => { e.currentTarget.style.color = "#fff"; }}
             onMouseLeave={e => { e.currentTarget.style.color = "rgba(255,255,255,0.5)"; }}
           >Cancel</button>
@@ -1064,14 +1230,39 @@ function SeoTab() {
   const [loading, setLoading]         = useState(true);
   const [saving, setSaving]           = useState<string | null>(null);
   const [editingIdx, setEditingIdx]   = useState<number | null>(null);
+  const [pageContentMap, setPageContentMap] = useState<Map<string, string>>(new Map());
 
   useEffect(() => {
-    supabase.from("seo_settings").select("*").order("page_path").then(({ data }) => {
-      const dbRows = (data ?? []) as SeoRow[];
+    Promise.all([
+      supabase.from("seo_settings").select("*").order("page_path"),
+      supabase.from("pages").select("page_path, content_blocks"),
+    ]).then(([seoRes, pagesRes]) => {
+      const dbRows = (seoRes.data ?? []) as SeoRow[];
       const dbMap  = new Map(dbRows.map(r => [r.page_path, r]));
       const defaults = SITE_SEO_DEFAULTS.filter(d => !dbMap.has(d.page_path))
         .map(d => ({ ...d, isNew: true, isDirty: false }));
       setRows([...dbRows.map(r => ({ ...r, isDirty: false })), ...defaults]);
+
+      const contentMap = new Map<string, string>();
+      for (const page of (pagesRes.data ?? []) as { page_path: string; content_blocks: ContentBlock[] | null }[]) {
+        const blocks: ContentBlock[] = Array.isArray(page.content_blocks) ? page.content_blocks : [];
+        const pagePath = page.page_path;
+        const pageDefaults = PAGE_BLOCK_DEFAULTS[pagePath] ?? [];
+        let merged = blocks;
+        if (pageDefaults.length > 0) {
+          const savedMap = new Map(blocks.map(b => [b.id, b]));
+          merged = pageDefaults.map(def => savedMap.has(def.id) ? { ...def, ...savedMap.get(def.id) } : def);
+          const extra = blocks.filter(b => !pageDefaults.some(d => d.id === b.id));
+          merged = [...merged, ...extra];
+        }
+        contentMap.set(pagePath, flattenBlocks(merged));
+      }
+      for (const [pagePath, defaults] of Object.entries(PAGE_BLOCK_DEFAULTS)) {
+        if (!contentMap.has(pagePath)) {
+          contentMap.set(pagePath, flattenBlocks(defaults));
+        }
+      }
+      setPageContentMap(contentMap);
       setLoading(false);
     });
   }, []);
@@ -1132,7 +1323,7 @@ function SeoTab() {
       )}
 
       <div className="flex items-center justify-between">
-        <p style={{ fontFamily: BODY, color: "rgba(255,255,255,0.6)", fontSize: "0.875rem" }}>
+        <p style={{ fontFamily: BODY, color: "rgba(255,255,255,0.95)", fontSize: "1rem" }}>
           Click any row to edit, run SEO analysis, or auto-optimise with Claude AI.
         </p>
         <button
@@ -1151,13 +1342,13 @@ function SeoTab() {
           <thead>
             <tr style={{ borderBottom: `1px solid ${BORDER}` }}>
               {["Path", "Title", "Description", "Score", ""].map((h, i) => (
-                <th key={i} className="pb-3 pr-4 text-left" style={{ fontFamily: MONO, color: "rgba(255,255,255,0.3)", fontSize: "0.5rem", letterSpacing: "0.2em", textTransform: "uppercase", fontWeight: 400 }}>{h}</th>
+                <th key={i} className="pb-3 pr-4 text-left" style={{ fontFamily: MONO, color: "rgba(255,255,255,0.85)", fontSize: "0.5rem", letterSpacing: "0.2em", textTransform: "uppercase", fontWeight: 400 }}>{h}</th>
               ))}
             </tr>
           </thead>
           <tbody>
             {sortedRows.map(({ row, idx, isServiceRoot, depth }) => {
-              const score = computeSeoScore({ page_path: row.page_path, title: row.title, description: row.description, focus_keyword: row.focus_keyword ?? "", keywords: row.keywords, og_image: row.og_image, no_index: row.no_index });
+              const score = computeSeoScore({ page_path: row.page_path, title: row.title, description: row.description, focus_keyword: row.focus_keyword ?? "", keywords: row.keywords, og_image: row.og_image, no_index: row.no_index, body_content: pageContentMap.get(row.page_path) });
               return (
                 <tr
                   key={idx}
@@ -1177,7 +1368,7 @@ function SeoTab() {
                       {depth > 0 && (
                         <span style={{ color: "rgba(0,212,232,0.3)", fontFamily: MONO, fontSize: "0.7rem", marginRight: "5px", flexShrink: 0 }}>└</span>
                       )}
-                      <span style={{ fontFamily: MONO, fontSize: "0.6875rem", color: isServiceRoot ? TEAL : depth > 0 ? "rgba(255,255,255,0.7)" : "rgba(255,255,255,0.9)", fontWeight: isServiceRoot ? 600 : 400 }}>
+                      <span style={{ fontFamily: MONO, fontSize: "1rem", color: isServiceRoot ? TEAL : depth > 0 ? "rgba(255,255,255,0.7)" : "rgba(255,255,255,0.9)", fontWeight: isServiceRoot ? 600 : 400 }}>
                         {row.page_path}
                       </span>
                       {saving === row.page_path && <RefreshCw size={9} className="animate-spin ml-2 flex-shrink-0" style={{ color: TEAL }} />}
@@ -1226,7 +1417,7 @@ function SeoTab() {
       </div>
 
       {rows.length === 0 && (
-        <p style={{ fontFamily: BODY, color: "rgba(255,255,255,0.25)", fontSize: "0.875rem" }} className="text-center py-8">
+        <p style={{ fontFamily: BODY, color: "rgba(255,255,255,0.25)", fontSize: "1rem" }} className="text-center py-8">
           No SEO overrides yet. Click "Add Page" to get started.
         </p>
       )}
@@ -1237,14 +1428,39 @@ function SeoTab() {
 // ─── Performance tab ─────────────────────────────────────────────────────────
 function PerformanceTab() {
   const [rows, setRows] = useState<SeoRow[]>([]);
+  const [perfContentMap, setPerfContentMap] = useState<Map<string, string>>(new Map());
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     (async () => {
-      const { data } = await supabase.from("pages").select("*");
-      const dbMap = new Map((data ?? []).map((r: SeoRow) => [r.page_path, r]));
+      const [seoRes, pagesRes] = await Promise.all([
+        supabase.from("seo_settings").select("*"),
+        supabase.from("pages").select("page_path, content_blocks"),
+      ]);
+      const dbMap = new Map((seoRes.data ?? []).map((r: SeoRow) => [r.page_path, r]));
       const merged = SITE_SEO_DEFAULTS.map(def => ({ ...def, ...(dbMap.get(def.page_path) ?? {}) }));
       setRows(merged);
+
+      const cMap = new Map<string, string>();
+      for (const page of (pagesRes.data ?? []) as { page_path: string; content_blocks: ContentBlock[] | null }[]) {
+        const blocks: ContentBlock[] = Array.isArray(page.content_blocks) ? page.content_blocks : [];
+        const pagePath = page.page_path;
+        const pageDefaults = PAGE_BLOCK_DEFAULTS[pagePath] ?? [];
+        let mergedBlocks = blocks;
+        if (pageDefaults.length > 0) {
+          const savedMap = new Map(blocks.map(b => [b.id, b]));
+          mergedBlocks = pageDefaults.map(def => savedMap.has(def.id) ? { ...def, ...savedMap.get(def.id) } : def);
+          const extra = blocks.filter(b => !pageDefaults.some(d => d.id === b.id));
+          mergedBlocks = [...mergedBlocks, ...extra];
+        }
+        cMap.set(pagePath, flattenBlocks(mergedBlocks));
+      }
+      for (const [pagePath, defaults] of Object.entries(PAGE_BLOCK_DEFAULTS)) {
+        if (!cMap.has(pagePath)) {
+          cMap.set(pagePath, flattenBlocks(defaults));
+        }
+      }
+      setPerfContentMap(cMap);
       setLoading(false);
     })();
   }, []);
@@ -1252,7 +1468,7 @@ function PerformanceTab() {
   if (loading) return <Spinner />;
 
   const scored = rows.map(r => {
-    const s = computeSeoScore({ page_path: r.page_path, title: r.title, description: r.description, focus_keyword: r.focus_keyword ?? "", keywords: r.keywords, og_image: r.og_image, no_index: r.no_index });
+    const s = computeSeoScore({ page_path: r.page_path, title: r.title, description: r.description, focus_keyword: r.focus_keyword ?? "", keywords: r.keywords, og_image: r.og_image, no_index: r.no_index, body_content: perfContentMap.get(r.page_path) });
     return { row: r, score: s.total_score, color: s.color, label: s.label };
   }).sort((a, b) => b.score - a.score);
 
@@ -1260,7 +1476,7 @@ function PerformanceTab() {
     { key: "Good",              color: "#3dd68c", desc: "Score ≥ 85" },
     { key: "Needs Improvement", color: "#f59e6a", desc: "Score 60–84" },
     { key: "Poor",              color: "#f87171", desc: "Score < 60" },
-    { key: "Incomplete",        color: "rgba(255,255,255,0.4)", desc: "Missing keyword/content" },
+    { key: "Incomplete",        color: "rgba(255,255,255,0.9)", desc: "Missing keyword/content" },
   ];
 
   return (
@@ -1274,7 +1490,7 @@ function PerformanceTab() {
               <div className="w-3 h-3 rounded-full mb-3" style={{ background: band.color }} />
               <p style={{ fontFamily: MONO, color: band.color, fontSize: "10px", letterSpacing: "0.15em", textTransform: "uppercase" }}>{band.key}</p>
               <p style={{ fontFamily: SANS, color: "#fff", fontWeight: 300, fontSize: "2rem", lineHeight: 1 }} className="mt-1">{count}</p>
-              <p style={{ fontFamily: BODY, color: "rgba(255,255,255,0.35)", fontSize: "12px" }} className="mt-1">{band.desc}</p>
+              <p style={{ fontFamily: BODY, color: "rgba(255,255,255,0.85)", fontSize: "12px" }} className="mt-1">{band.desc}</p>
             </div>
           );
         })}
@@ -1283,7 +1499,7 @@ function PerformanceTab() {
       {/* Page list */}
       <div style={{ border: `1px solid ${BORDER}`, background: CARD }}>
         <div className="px-5 py-3" style={{ borderBottom: `1px solid ${BORDER}` }}>
-          <p style={{ fontFamily: MONO, color: "rgba(255,255,255,0.5)", fontSize: "10px", letterSpacing: "0.2em", textTransform: "uppercase" }}>All Pages — SEO Score</p>
+          <p style={{ fontFamily: MONO, color: "rgba(255,255,255,0.9)", fontSize: "10px", letterSpacing: "0.2em", textTransform: "uppercase" }}>All Pages — SEO Score</p>
         </div>
         <div className="divide-y" style={{ borderColor: BORDER }}>
           {scored.map(({ row, score, color, label }) => (
@@ -1294,7 +1510,7 @@ function PerformanceTab() {
                 <div style={{ height: "100%", width: `${score}%`, background: color, borderRadius: "2px", transition: "width 0.3s" }} />
               </div>
               <span style={{ fontFamily: MONO, color, fontSize: "11px", width: "36px", textAlign: "right", flexShrink: 0 }}>{score}</span>
-              <span style={{ fontFamily: MONO, color: "rgba(255,255,255,0.35)", fontSize: "10px", letterSpacing: "0.1em", textTransform: "uppercase", width: "110px", textAlign: "right", flexShrink: 0 }}>{label}</span>
+              <span style={{ fontFamily: MONO, color: "rgba(255,255,255,0.85)", fontSize: "10px", letterSpacing: "0.1em", textTransform: "uppercase", width: "110px", textAlign: "right", flexShrink: 0 }}>{label}</span>
             </div>
           ))}
         </div>
@@ -1410,14 +1626,14 @@ function PricingTab() {
             >
               <div className="flex items-center gap-3">
                 <span className="w-4 h-px" style={{ background: color }} />
-                <p style={{ fontFamily: MONO, color, fontSize: "0.75rem", letterSpacing: "0.2em", textTransform: "uppercase" }}>
+                <p style={{ fontFamily: MONO, color, fontSize: "0.9375rem", letterSpacing: "0.2em", textTransform: "uppercase" }}>
                   {deptMeta?.label ?? dept}
                 </p>
-                <span style={{ fontFamily: MONO, color: "rgba(255,255,255,0.3)", fontSize: "10px" }}>
+                <span style={{ fontFamily: MONO, color: "rgba(255,255,255,0.85)", fontSize: "10px" }}>
                   ({grouped[dept].length} tiers)
                 </span>
               </div>
-              {isCollapsed ? <ChevronRight size={13} style={{ color: "rgba(255,255,255,0.35)" }} /> : <ChevronDown size={13} style={{ color: "rgba(255,255,255,0.35)" }} />}
+              {isCollapsed ? <ChevronRight size={13} style={{ color: "rgba(255,255,255,0.85)" }} /> : <ChevronDown size={13} style={{ color: "rgba(255,255,255,0.85)" }} />}
             </button>
 
             {!isCollapsed && <div className="grid grid-cols-1 md:grid-cols-3 gap-4 p-4">
@@ -1434,7 +1650,7 @@ function PricingTab() {
                   {row.highlight && (
                     <div
                       className="absolute top-0 right-0 px-2.5 py-1"
-                      style={{ fontFamily: MONO, fontSize: "0.625rem", letterSpacing: "0.15em", textTransform: "uppercase", background: color, color: "#0e1822" }}
+                      style={{ fontFamily: MONO, fontSize: "0.8125rem", letterSpacing: "0.15em", textTransform: "uppercase", background: color, color: "#0e1822" }}
                     >
                       Recommended
                     </div>
@@ -1442,7 +1658,7 @@ function PricingTab() {
 
                   {/* Tier name */}
                   <div>
-                    <label style={{ fontFamily: MONO, color: "rgba(255,255,255,0.7)", fontSize: "0.625rem", letterSpacing: "0.15em", textTransform: "uppercase" }}>
+                    <label style={{ fontFamily: MONO, color: "rgba(255,255,255,0.7)", fontSize: "0.8125rem", letterSpacing: "0.15em", textTransform: "uppercase" }}>
                       Tier name
                     </label>
                     <input
@@ -1460,7 +1676,7 @@ function PricingTab() {
 
                   {/* Price */}
                   <div>
-                    <label style={{ fontFamily: MONO, color: "rgba(255,255,255,0.7)", fontSize: "0.625rem", letterSpacing: "0.15em", textTransform: "uppercase" }}>
+                    <label style={{ fontFamily: MONO, color: "rgba(255,255,255,0.7)", fontSize: "0.8125rem", letterSpacing: "0.15em", textTransform: "uppercase" }}>
                       Price (£)
                     </label>
                     <div className="flex items-center gap-3 mt-1">
@@ -1497,12 +1713,12 @@ function PricingTab() {
                   {/* Features */}
                   <div>
                     <div className="flex items-center justify-between mb-2">
-                      <label style={{ fontFamily: MONO, color: "rgba(255,255,255,0.7)", fontSize: "0.625rem", letterSpacing: "0.15em", textTransform: "uppercase" }}>
+                      <label style={{ fontFamily: MONO, color: "rgba(255,255,255,0.7)", fontSize: "0.8125rem", letterSpacing: "0.15em", textTransform: "uppercase" }}>
                         Features ({row.features.length})
                       </label>
                       <button
                         onClick={() => setEditingFeatures(editingFeatures === row.id ? null : row.id)}
-                        style={{ fontFamily: MONO, fontSize: "0.625rem", letterSpacing: "0.15em", color, textTransform: "uppercase" }}
+                        style={{ fontFamily: MONO, fontSize: "0.8125rem", letterSpacing: "0.15em", color, textTransform: "uppercase" }}
                       >
                         {editingFeatures === row.id ? "Done" : "Edit"}
                       </button>
@@ -1539,7 +1755,7 @@ function PricingTab() {
                         <button
                           onClick={() => updateRow(row.id, "features", [...row.features, ""])}
                           className="flex items-center gap-1 mt-1 transition-opacity hover:opacity-100 opacity-50"
-                          style={{ fontFamily: MONO, fontSize: "0.625rem", letterSpacing: "0.15em", color, textTransform: "uppercase" }}
+                          style={{ fontFamily: MONO, fontSize: "0.8125rem", letterSpacing: "0.15em", color, textTransform: "uppercase" }}
                         >
                           <Plus size={10} /> Add feature
                         </button>
@@ -1553,7 +1769,7 @@ function PricingTab() {
                           </li>
                         ))}
                         {row.features.length > 4 && (
-                          <li style={{ fontFamily: MONO, color: "rgba(255,255,255,0.55)", fontSize: "0.6875rem", letterSpacing: "0.1em" }}>
+                          <li style={{ fontFamily: MONO, color: "rgba(255,255,255,0.9)", fontSize: "1rem", letterSpacing: "0.1em" }}>
                             +{row.features.length - 4} more
                           </li>
                         )}
@@ -1563,7 +1779,7 @@ function PricingTab() {
 
                   {/* Highlight toggle */}
                   <div className="flex items-center justify-between pt-2" style={{ borderTop: `1px solid ${BORDER}` }}>
-                    <span style={{ fontFamily: MONO, color: "rgba(255,255,255,0.7)", fontSize: "0.625rem", letterSpacing: "0.15em", textTransform: "uppercase" }}>
+                    <span style={{ fontFamily: MONO, color: "rgba(255,255,255,0.7)", fontSize: "0.8125rem", letterSpacing: "0.15em", textTransform: "uppercase" }}>
                       Recommended tier
                     </span>
                     <button
@@ -1594,7 +1810,7 @@ function PricingTab() {
                       disabled={saving === row.id}
                       className="w-full flex items-center justify-center gap-2 py-2.5 transition-all"
                       style={{
-                        fontFamily: MONO, fontSize: "0.6875rem", letterSpacing: "0.15em", textTransform: "uppercase",
+                        fontFamily: MONO, fontSize: "1rem", letterSpacing: "0.15em", textTransform: "uppercase",
                         background: color, color: "#0e1822", opacity: saving === row.id ? 0.6 : 1,
                       }}
                     >
@@ -1710,6 +1926,8 @@ function RatesTab() {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving]   = useState<string | null>(null);
   const [saved, setSaved]     = useState<string | null>(null);
+  const [collapsedCats, setCollapsedCats] = useState<Set<string>>(new Set());
+  const [catsInited, setCatsInited] = useState(false);
 
   useEffect(() => {
     supabase.from("pricing_rates").select("*").then(({ data }) => {
@@ -1758,17 +1976,42 @@ function RatesTab() {
         Edit rates used across all quote builders. Changes take effect immediately on the live site.
       </p>
 
+      {(() => {
+        const visibleCats = RATE_CATEGORY_ORDER.filter(cat => grouped[cat]);
+        if (!catsInited && visibleCats.length > 0) {
+          setCollapsedCats(new Set(visibleCats));
+          setCatsInited(true);
+        }
+        return null;
+      })()}
+
       {RATE_CATEGORY_ORDER.filter(cat => grouped[cat]).map(cat => {
         const catColor = cat === "global" ? TEAL : (DEPT_COLORS[cat] ?? TEAL);
+        const isCollapsed = collapsedCats.has(cat);
+        const toggleCat = () => setCollapsedCats(prev => {
+          const next = new Set(prev);
+          next.has(cat) ? next.delete(cat) : next.add(cat);
+          return next;
+        });
         return (
-          <div key={cat}>
-            <div className="flex items-center gap-3 mb-3">
-              <span className="w-4 h-px" style={{ background: catColor }} />
-              <p style={{ fontFamily: MONO, color: catColor, fontSize: "0.75rem", letterSpacing: "0.2em", textTransform: "uppercase" }}>
-                {RATE_CATEGORY_LABELS[cat] ?? cat}
-              </p>
-            </div>
-            <div style={{ background: CARD, border: `1px solid ${BORDER}` }}>
+          <div key={cat} style={{ border: `1px solid ${BORDER}` }}>
+            <button
+              onClick={toggleCat}
+              className="w-full flex items-center justify-between px-4 py-3"
+              style={{ background: CARD, border: "none", cursor: "pointer" }}
+            >
+              <div className="flex items-center gap-3">
+                <span className="w-4 h-px" style={{ background: catColor }} />
+                <p style={{ fontFamily: MONO, color: catColor, fontSize: "0.9375rem", letterSpacing: "0.2em", textTransform: "uppercase" }}>
+                  {RATE_CATEGORY_LABELS[cat] ?? cat}
+                </p>
+                <span style={{ fontFamily: MONO, color: "rgba(255,255,255,0.85)", fontSize: "10px" }}>
+                  ({grouped[cat].length} rates)
+                </span>
+              </div>
+              {isCollapsed ? <ChevronRight size={13} style={{ color: "rgba(255,255,255,0.85)" }} /> : <ChevronDown size={13} style={{ color: "rgba(255,255,255,0.85)" }} />}
+            </button>
+            {!isCollapsed && <div style={{ background: CARD }}>
               {grouped[cat].map((entry, i) => {
                 const unit = RATE_UNITS[entry.fullKey] ?? "£";
                 return (
@@ -1778,11 +2021,11 @@ function RatesTab() {
                     style={{ borderBottom: i < grouped[cat].length - 1 ? `1px solid rgba(255,255,255,0.04)` : "none" }}
                   >
                     <div style={{ flex: 1, minWidth: 0 }}>
-                      <p style={{ fontFamily: BODY, color: "rgba(255,255,255,0.85)", fontSize: "0.875rem" }}>{entry.label}</p>
+                      <p style={{ fontFamily: BODY, color: "rgba(255,255,255,0.85)", fontSize: "1rem" }}>{entry.label}</p>
                       <p style={{ fontFamily: MONO, color: "rgba(255,255,255,0.22)", fontSize: "0.5rem", letterSpacing: "0.1em" }}>{entry.fullKey}</p>
                     </div>
                     <div className="flex items-center gap-2 flex-shrink-0">
-                      <span style={{ fontFamily: MONO, color: "rgba(255,255,255,0.35)", fontSize: "0.875rem" }}>{unit}</span>
+                      <span style={{ fontFamily: MONO, color: "rgba(255,255,255,0.85)", fontSize: "1rem" }}>{unit}</span>
                       <input
                         type="number"
                         value={entry.value}
@@ -1812,7 +2055,7 @@ function RatesTab() {
                   </div>
                 );
               })}
-            </div>
+            </div>}
           </div>
         );
       })}
@@ -1850,7 +2093,7 @@ function SettingsTab() {
           <Key size={14} style={{ color: TEAL }} />
           <p style={{ fontFamily: "'DM Mono', monospace", color: TEAL, fontSize: "10px", letterSpacing: "0.25em", textTransform: "uppercase" }}>API Keys</p>
         </div>
-        <p style={{ fontFamily: "'Inter', sans-serif", color: "rgba(255,255,255,0.55)", fontSize: "14px", marginBottom: "24px" }}>
+        <p style={{ fontFamily: "'Inter', sans-serif", color: "rgba(255,255,255,0.9)", fontSize: "14px", marginBottom: "24px" }}>
           API keys are saved to your browser session only — they are never sent to our servers. You'll need to re-enter them if you clear your browser data.
         </p>
 
@@ -1863,7 +2106,7 @@ function SettingsTab() {
               </div>
               <div>
                 <p style={{ fontFamily: "'DM Mono', monospace", color: "#fff", fontSize: "12px", letterSpacing: "0.1em" }}>Claude (Anthropic)</p>
-                <p style={{ fontFamily: "'Inter', sans-serif", color: "rgba(255,255,255,0.35)", fontSize: "12px" }}>Used for AI Auto-Optimise in the SEO editor</p>
+                <p style={{ fontFamily: "'Inter', sans-serif", color: "rgba(255,255,255,0.85)", fontSize: "12px" }}>Used for AI Auto-Optimise in the SEO editor</p>
               </div>
             </div>
             <div className="flex gap-2">
@@ -1879,7 +2122,7 @@ function SettingsTab() {
               <button
                 onClick={() => setShowClaude(s => !s)}
                 className="w-10 flex items-center justify-center flex-shrink-0"
-                style={{ border: `1px solid ${BORDER}`, background: "transparent", color: "rgba(255,255,255,0.4)", cursor: "pointer" }}
+                style={{ border: `1px solid ${BORDER}`, background: "transparent", color: "rgba(255,255,255,0.9)", cursor: "pointer" }}
               >{showClaude ? <EyeOff size={13} /> : <Eye size={13} />}</button>
             </div>
           </div>
@@ -1892,7 +2135,7 @@ function SettingsTab() {
               </div>
               <div>
                 <p style={{ fontFamily: "'DM Mono', monospace", color: "#fff", fontSize: "12px", letterSpacing: "0.1em" }}>ChatGPT (OpenAI)</p>
-                <p style={{ fontFamily: "'Inter', sans-serif", color: "rgba(255,255,255,0.35)", fontSize: "12px" }}>Used for AI Auto-Optimise in the SEO editor (GPT-4o Mini)</p>
+                <p style={{ fontFamily: "'Inter', sans-serif", color: "rgba(255,255,255,0.85)", fontSize: "12px" }}>Used for AI Auto-Optimise in the SEO editor (GPT-4o Mini)</p>
               </div>
             </div>
             <div className="flex gap-2">
@@ -1908,7 +2151,7 @@ function SettingsTab() {
               <button
                 onClick={() => setShowOpenAI(s => !s)}
                 className="w-10 flex items-center justify-center flex-shrink-0"
-                style={{ border: `1px solid ${BORDER}`, background: "transparent", color: "rgba(255,255,255,0.4)", cursor: "pointer" }}
+                style={{ border: `1px solid ${BORDER}`, background: "transparent", color: "rgba(255,255,255,0.9)", cursor: "pointer" }}
               >{showOpenAI ? <EyeOff size={13} /> : <Eye size={13} />}</button>
             </div>
           </div>
@@ -1923,7 +2166,7 @@ function SettingsTab() {
             {saved ? <Check size={12} /> : <Save size={12} />}
             {saved ? "Saved to Session" : "Save to Session"}
           </button>
-          <p style={{ fontFamily: "'Inter', sans-serif", color: "rgba(255,255,255,0.3)", fontSize: "12px" }}>
+          <p style={{ fontFamily: "'Inter', sans-serif", color: "rgba(255,255,255,0.85)", fontSize: "12px" }}>
             Keys are saved in sessionStorage — cleared when you close the browser tab.
           </p>
         </div>
@@ -1958,10 +2201,10 @@ function TabTrigger({
       className="flex items-center gap-2.5 px-5 py-3 transition-all data-[state=active]:text-[#00d4e8]"
       style={{
         fontFamily: MONO,
-        fontSize: "0.75rem",
+        fontSize: "0.9375rem",
         letterSpacing: "0.15em",
         textTransform: "uppercase",
-        color: "rgba(255,255,255,0.6)",
+        color: "rgba(255,255,255,0.95)",
         borderBottom: "2px solid transparent",
         background: "transparent",
         cursor: "pointer",
@@ -1991,11 +2234,11 @@ function Dashboard() {
         style={{ borderBottom: `1px solid ${BORDER}`, background: CARD }}
       >
         <div className="flex items-center gap-4">
-          <span style={{ fontFamily: MONO, color: "rgba(255,255,255,0.65)", fontSize: "0.625rem", letterSpacing: "0.25em", textTransform: "uppercase" }}>
+          <span style={{ fontFamily: MONO, color: "rgba(255,255,255,0.95)", fontSize: "0.8125rem", letterSpacing: "0.25em", textTransform: "uppercase" }}>
             Web Balance
           </span>
-          <span style={{ color: "rgba(255,255,255,0.3)" }}>·</span>
-          <span style={{ fontFamily: MONO, color: TEAL, fontSize: "0.625rem", letterSpacing: "0.25em", textTransform: "uppercase" }}>
+          <span style={{ color: "rgba(255,255,255,0.85)" }}>·</span>
+          <span style={{ fontFamily: MONO, color: TEAL, fontSize: "0.8125rem", letterSpacing: "0.25em", textTransform: "uppercase" }}>
             Admin
           </span>
         </div>
@@ -2003,8 +2246,8 @@ function Dashboard() {
           onClick={signOut}
           className="flex items-center gap-2 px-4 py-2 transition-all"
           style={{
-            fontFamily: MONO, fontSize: "0.625rem", letterSpacing: "0.15em", textTransform: "uppercase",
-            color: "rgba(255,255,255,0.65)", border: `1px solid ${BORDER}`, background: "transparent",
+            fontFamily: MONO, fontSize: "0.8125rem", letterSpacing: "0.15em", textTransform: "uppercase",
+            color: "rgba(255,255,255,0.95)", border: `1px solid ${BORDER}`, background: "transparent",
           }}
           onMouseEnter={e => { e.currentTarget.style.color = "#fff"; e.currentTarget.style.borderColor = "rgba(255,255,255,0.25)"; }}
           onMouseLeave={e => { e.currentTarget.style.color = "rgba(255,255,255,0.4)"; e.currentTarget.style.borderColor = BORDER; }}
@@ -2022,7 +2265,7 @@ function Dashboard() {
               <TabTrigger value="analytics"   icon={BarChart2}   label="Analytics" />
               <TabTrigger value="seo"         icon={Globe}       label="SEO" />
               <TabTrigger value="performance" icon={TrendingUp}  label="Performance" />
-              <TabTrigger value="pricing"     icon={DollarSign}  label="£ Packages" />
+              <TabTrigger value="pricing"     icon={DollarSign}  label="Packages" />
               <TabTrigger value="rates"       icon={Sliders}     label="Rates" />
               <TabTrigger value="settings"    icon={Settings}    label="Settings" />
             </Tabs.List>

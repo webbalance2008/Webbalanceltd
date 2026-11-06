@@ -96,8 +96,8 @@ export function SupportPage() {
   return (
     <>
       <SEOHead
-        title="Website Support & Maintenance Plans"
-        description="Keep your website fast, secure, and always evolving with a Web Balance support plan. Monthly care packages from £49/mo including updates, backups, and priority help."
+        title="Website Support & Maintenance Plans | Web Balance"
+        description="Keep your website fast, secure and always evolving with a website support plan from Web Balance. Monthly care packages with expert UK-based support."
         path="/support"
         keywords="website support plan, web maintenance, website care plan, website management UK"
       />

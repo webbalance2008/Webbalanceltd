@@ -19,8 +19,8 @@ export function ContactPage() {
   return (
     <div className="min-h-screen" style={{ background: "#16212e" }}>
       <SEOHead
-        title="Contact Us"
-        description="Get in touch with the Web Balance team. Whether you have a project in mind or just want to explore what's possible — we'd love to hear from you."
+        title="Contact Web Balance — Start Your Digital Project"
+        description="Contact Web Balance to start your next digital project. Whether you have a website in mind or want to explore what is possible, we would love to hear from you."
         path="/contact"
         keywords="contact web design agency, get a website quote, web design enquiry UK"
       />

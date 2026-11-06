@@ -338,10 +338,10 @@ export function HostingStartPage() {
   return (
     <div className="min-h-screen" style={{ backgroundColor: DEPT_BG }}>
       <SEOHead
-        title="Hosting Quote Builder"
-        description="Configure your managed hosting plan with our step-by-step wizard. UK-based servers, daily backups, SSL, and expert support — get a tailored hosting estimate."
+        title="Hosting Quote Builder — Configure Your Plan"
+        description="Configure your managed hosting plan with our step-by-step wizard. UK-based servers, daily backups, SSL and expert support — get a hosting quote now."
         path="/hosting/start"
-        keywords="managed hosting quote, UK web hosting, hosting pricing, business hosting plan"
+        keywords="hosting quote, UK web hosting, hosting pricing, business hosting plan"
       />
 
       {/* ── Progress / Step indicator bar ──────────────────────────────────── */}

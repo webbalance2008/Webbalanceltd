@@ -189,10 +189,10 @@ export function PackagesPage() {
   return (
     <>
       <SEOHead
-        title="Packages — Mix &amp; Match Services | Web Balance"
-        description="Build your perfect digital package. Mix and match Web Design, Web Apps, SEO, Hosting, and Branding services — see your total instantly."
+        title="Digital Services Packages — Mix & Match"
+        description="Build your perfect digital services package. Mix and match web design, web apps, SEO, hosting and branding from Web Balance — see your total instantly."
         path="/packages"
-        keywords="web design packages, digital services pricing, mix and match web services, website pricing UK"
+        keywords="digital services packages, web design pricing, mix and match web services, website pricing UK"
       />
       <div style={{ backgroundColor: "#16212e", minHeight: "100vh" }}>
         {/* ── Hero ─────────────────────────────────────────────────── */}

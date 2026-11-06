@@ -101,10 +101,10 @@ export function Home() {
   return (
     <>
       <SEOHead
-        title="Web Balance | Award-Winning Web Design &amp; Development Agency"
-        description="Web Balance builds high-performance websites, custom web apps, and digital experiences for ambitious UK businesses. Bespoke design, SEO, hosting &amp; branding — all under one roof."
+        title="Web Balance: Leading Web Design & Development Agency"
+        description="Discover Web Balance, the award-winning digital agency in the UK. Bespoke web design, custom web apps, SEO, hosting and branding — all under one roof."
         path="/"
-        keywords="web design UK, bespoke website design, web development agency, SEO services, custom web apps, hosting, branding"
+        keywords="web design agency UK, bespoke website design, web development, SEO services, custom web apps, hosting, branding"
       />
       <div className="relative">
         {SECTION_META.map(({ Component }, i) => (

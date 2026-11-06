@@ -22,10 +22,10 @@ export default function TestimonialsPage() {
   return (
     <>
       <SEOHead
-        title="Client Testimonials"
-        description="Hear from the businesses Web Balance has helped grow online. Real results, real relationships — from Aberdeen to Edinburgh and beyond."
+        title="Client Testimonials & Reviews — Web Balance"
+        description="Read client testimonials from businesses Web Balance has helped grow online. Real results, real relationships — from Aberdeen to Edinburgh and beyond."
         path="/testimonials"
-        keywords="web design testimonials, client reviews, web agency reviews UK"
+        keywords="web design testimonials, client reviews, web agency reviews UK, web design reviews"
       />
       <div className="min-h-screen" style={{ background: "#16212e" }}>
         {/* Hero */}

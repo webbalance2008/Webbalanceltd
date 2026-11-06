@@ -26,8 +26,8 @@ export function InsightsPage() {
   return (
     <>
       <SEOHead
-        title="Insights — Web Design &amp; Digital Marketing Blog"
-        description="Practical articles on web design, SEO, branding, and digital strategy from the Web Balance team. Stay ahead of the curve."
+        title="Insights — Web Design & Digital Marketing Blog"
+        description="Practical articles on our web design blog covering SEO, branding and digital strategy from the Web Balance team. Tips to help your business stay ahead."
         path="/insights"
         keywords="web design blog, digital marketing insights, SEO articles, website tips, UX design"
       />

@@ -47,8 +47,8 @@ export function CityServicePage() {
   return (
     <div className="min-h-screen" style={{ backgroundColor: "#16212e" }}>
       <SEOHead
-        title={`${service.name} in ${city.name}`}
-        description={`Professional ${service.name.toLowerCase()} services in ${city.name}. Web Balance delivers tailored ${service.name.toLowerCase()} solutions for ${city.name} businesses across ${city.region}.`}
+        title={`${service.name} in ${city.name} — Web Balance`}
+        description={`Professional ${service.name.toLowerCase()} services in ${city.name}. Web Balance delivers tailored ${service.name.toLowerCase()} solutions for businesses across ${city.region}.`}
         path={`/our-reach/${city.slug}/${service.slug}`}
         keywords={`${service.name.toLowerCase()} ${city.name}, ${service.name.toLowerCase()} agency ${city.name}, digital services ${city.name}`}
       />

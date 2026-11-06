@@ -30,8 +30,8 @@ export function WebDesignPage() {
   return (
     <>
       <SEOHead
-        title="Web Design Services"
-        description="Bespoke, conversion-focused website design for ambitious UK brands. We craft beautiful, high-performance websites tailored to your business — no templates, no shortcuts."
+        title="Bespoke Web Design Services for Ambitious UK Brands"
+        description="Bespoke web design tailored for UK brands. Our conversion-focused websites combine stunning design with fast performance to grow your business online."
         path="/web-design"
         keywords="bespoke web design, website design UK, conversion-focused design, custom website, web design agency"
       />

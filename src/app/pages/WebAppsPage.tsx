@@ -20,8 +20,8 @@ export function WebAppsPage() {
   return (
     <>
       <SEOHead
-        title="Custom Web App Development"
-        description="We build powerful, scalable custom web applications — from booking systems and SaaS platforms to customer portals and internal tools. Built for performance, designed for people."
+        title="Custom Web App Development for UK Businesses"
+        description="We build powerful, scalable custom web app solutions — from booking systems and SaaS platforms to customer portals and internal tools. Built for performance."
         path="/web-apps"
         keywords="custom web app development, SaaS platform, booking system, customer portal, web application UK"
       />
