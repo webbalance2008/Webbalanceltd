@@ -284,8 +284,8 @@ export function computeSeoScore(input: SeoInput): SeoScoreResult {
     ? Math.round((total_earned / total_possible) * 100)
     : 0;
 
-  // Label
-  const incomplete = total_possible < 60; // less than 60% of max 100 pts available
+  // Label — "Incomplete" only when no title and no description are set
+  const incomplete = (input.title ?? '').trim().length === 0 && (input.description ?? '').trim().length === 0;
   let label: SeoScoreResult['label'];
   if (incomplete) label = 'Incomplete';
   else if (total_score >= 85) label = 'Good';
